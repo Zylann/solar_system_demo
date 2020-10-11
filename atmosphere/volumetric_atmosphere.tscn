@@ -11,6 +11,7 @@ shader_param/u_clip_mode = true
 shader_param/u_day_color = Color( 0.5, 0.8, 1, 1 )
 shader_param/u_night_color = Color( 0.133333, 0.227451, 0.419608, 1 )
 shader_param/u_sun_position = Vector3( 0, 0, 10 )
+shader_param/u_density = 0.2
 
 [sub_resource type="QuadMesh" id=2]
 size = Vector2( 2, 2 )

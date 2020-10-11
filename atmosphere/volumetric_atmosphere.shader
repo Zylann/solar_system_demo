@@ -10,6 +10,7 @@ uniform bool u_clip_mode = false;
 uniform vec4 u_day_color : hint_color = vec4(0.5, 0.8, 1.0, 1.0);
 uniform vec4 u_night_color : hint_color = vec4(0.2, 0.4, 0.8, 1.0);
 uniform vec3 u_sun_position = vec3(0.0, 0.0, 0.0);
+uniform float u_density = 0.2;
 
 varying vec3 v_planet_center_viewspace;
 varying vec3 v_sun_center_viewspace;
@@ -86,7 +87,7 @@ void fragment() {
 		float distance_through_ground = rs_ground.y - rs_ground.x;
 		float t_begin = rs_atmo.x;
 		float t_end = min(rs_atmo.y, rs_ground.x); // TODO Factor depth into this one
-		float atmo_factor = min(t_end - t_begin, linear_depth) * 0.2 / atmosphere_radius;
+		float atmo_factor = min(t_end - t_begin, linear_depth) * u_density / atmosphere_radius;
 		atmo_factor = pow(atmo_factor * 8.0, 4.0);
 		
 		vec3 sun_dir = normalize(v_sun_center_viewspace - v_planet_center_viewspace);

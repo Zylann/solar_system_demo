@@ -7,6 +7,9 @@ const SWITCH_MARGIN_RATIO = 1.1
 var planet_radius = 1.0
 var atmosphere_height = 0.1
 var directional_light : DirectionalLight
+var day_color := Color(0.3, 0.7, 1.0)
+var night_color := Color(0.1, 0.5, 0.8)
+#var density := 0.2
 
 var _material : ShaderMaterial
 var _far_mesh : ArrayMesh
@@ -23,6 +26,9 @@ func _ready():
 	_material.set_shader_param("u_planet_radius", planet_radius)
 	_material.set_shader_param("u_atmosphere_height", atmosphere_height)
 	_material.set_shader_param("u_clip_mode", false)
+	_material.set_shader_param("u_day_color", day_color)
+	_material.set_shader_param("u_night_color", night_color)
+	#_material.set_shader_param("u_density", density)
 	
 	mesh = _far_mesh
 	extra_cull_margin = planet_radius + atmosphere_height

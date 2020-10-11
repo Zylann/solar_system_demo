@@ -13,6 +13,7 @@ var orbit_revolution_time := 0.0
 var self_revolution_time := 0.0
 var orbit_tilt := 0.0
 var self_tilt := 0.0
+var atmosphere_color := Color(0.5, 0.7, 1.0)
 
 # State values
 var orbit_revolution_progress := 0.0

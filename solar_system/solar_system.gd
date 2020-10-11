@@ -44,6 +44,7 @@ func _ready():
 	planet.distance_to_parent = 14400.0
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 50.0 * 60.0
+	planet.atmosphere_color = Color(0.6, 0.4, 0.1)
 	_bodies.append(planet)
 
 	planet = StellarBody.new()
@@ -54,6 +55,7 @@ func _ready():
 	planet.distance_to_parent = 25600.0
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 150.0 * 60.0
+	planet.atmosphere_color = Color(0.8, 1.2, 1.5)
 	var earth_id = len(_bodies)
 	_bodies.append(planet)
 
@@ -65,6 +67,7 @@ func _ready():
 	planet.distance_to_parent = 3200.0
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 1.0 * 60.0
+	planet.atmosphere_color = Color(0.2, 0.2, 0.2)
 	_bodies.append(planet)
 
 	planet = StellarBody.new()
@@ -75,6 +78,7 @@ func _ready():
 	planet.distance_to_parent = 48000.0
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 100.0 * 60.0
+	planet.atmosphere_color = Color(0.8, 0.7, 0.2)
 	_bodies.append(planet)
 
 	planet = StellarBody.new()
@@ -85,10 +89,12 @@ func _ready():
 	planet.distance_to_parent = 70400.0
 	planet.self_revolution_time = 8.0 * 60.0
 	planet.orbit_revolution_time = 300.0 * 60.0
+	planet.atmosphere_color = Color(1.8, 1.4, 1.0)
 	_bodies.append(planet)
 	
 	_directional_light = DirectionalLight.new()
 	_directional_light.shadow_enabled = true
+	_directional_light.shadow_color = Color(0.1, 0.1, 0.1)
 	_directional_light.directional_shadow_normal_bias = 0.2
 	_directional_light.directional_shadow_split_1 = 0.1
 	_directional_light.directional_shadow_split_2 = 0.2
@@ -120,8 +126,10 @@ func _ready():
 		var atmo = VolumetricAtmosphereScene.instance()
 		#atmo.scale = Vector3(1, 1, 1) * (0.99 * body.radius)
 		atmo.planet_radius = body.radius
-		atmo.atmosphere_height = 0.12 * body.radius
+		atmo.atmosphere_height = 0.15 * body.radius
 		atmo.directional_light = _directional_light
+		atmo.day_color = body.atmosphere_color
+		atmo.night_color = body.atmosphere_color.darkened(0.8)
 		mi.add_child(atmo)
 		
 		body.node = mi
