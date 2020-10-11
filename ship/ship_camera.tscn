@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://ship/ship_camera.gd" type="Script" id=1]
+
+[node name="Camera" type="Camera"]
+current = true
+fov = 80.0
+near = 0.1
+far = 100000.0
+script = ExtResource( 1 )
+distance_to_target = 20.0

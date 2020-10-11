@@ -1,0 +1,57 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://solar_system/space_background.png" type="Texture" id=1]
+[ext_resource path="res://solar_system/solar_system.gd" type="Script" id=2]
+[ext_resource path="res://ship/ship.tscn" type="PackedScene" id=3]
+[ext_resource path="res://ship/hud.gd" type="Script" id=4]
+[ext_resource path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" type="Script" id=5]
+[ext_resource path="res://solar_system/materials/sun_yellow.tres" type="Material" id=6]
+
+[sub_resource type="PanoramaSky" id=1]
+panorama = ExtResource( 1 )
+
+[sub_resource type="Environment" id=2]
+background_mode = 2
+background_sky = SubResource( 1 )
+glow_enabled = true
+glow_levels/5 = false
+glow_levels/6 = true
+glow_levels/7 = true
+glow_intensity = 1.0
+glow_blend_mode = 0
+glow_hdr_threshold = 0.8
+glow_bicubic_upscale = true
+
+[sub_resource type="SphereMesh" id=3]
+
+[node name="GameWorld" type="Node"]
+script = ExtResource( 2 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 2 )
+
+[node name="Ship" parent="." instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 10000, 0, -100 )
+
+[node name="HUD" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LensFlare" type="Node" parent="."]
+script = ExtResource( 5 )
+flareStrength = 10.0
+flareBias = 0.95
+flareBlur = 3.398
+distortion = 7.422
+ghostSpacing = 0.3
+haloWidth = 0.449
+
+[node name="TestSun" type="MeshInstance" parent="."]
+visible = false
+mesh = SubResource( 3 )
+material/0 = ExtResource( 6 )

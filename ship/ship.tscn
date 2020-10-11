@@ -1,0 +1,95 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://ship/ship.gd" type="Script" id=1]
+[ext_resource path="res://ship/mouse_capture.gd" type="Script" id=2]
+[ext_resource path="res://ship/ship_controller.gd" type="Script" id=3]
+
+
+
+
+[sub_resource type="ParticlesMaterial" id=6]
+emission_shape = 2
+emission_box_extents = Vector3( 100, 100, 100 )
+gravity = Vector3( 0, 0, 0 )
+
+[sub_resource type="SpatialMaterial" id=7]
+flags_unshaded = true
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_color = Color( 0.498039, 0.498039, 0.498039, 1 )
+
+[sub_resource type="QuadMesh" id=8]
+material = SubResource( 7 )
+size = Vector2( 0.3, 0.3 )
+
+[sub_resource type="CubeMesh" id=1]
+size = Vector3( 4, 4, 4 )
+
+[sub_resource type="CubeMesh" id=2]
+size = Vector3( 2, 2, 4 )
+
+[sub_resource type="CubeMesh" id=3]
+size = Vector3( 10, 0.5, 1 )
+
+[sub_resource type="CubeMesh" id=4]
+size = Vector3( 0.5, 3, 8 )
+
+[sub_resource type="CylinderMesh" id=5]
+top_radius = 0.75
+bottom_radius = 1.5
+radial_segments = 16
+
+[node name="Ship" type="Spatial"]
+script = ExtResource( 1 )
+acceleration = 1000.0
+
+[node name="Controller" type="Node" parent="."]
+script = ExtResource( 3 )
+mouse_turn_sensitivity = 0.01
+
+[node name="MouseCapture" type="Control" parent="."]
+mouse_filter = 2
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MotionParticles" type="Particles" parent="."]
+amount = 200
+lifetime = 5.0
+visibility_aabb = AABB( -100, -100, -200, 200, 200, 400 )
+local_coords = false
+process_material = SubResource( 6 )
+draw_pass_1 = SubResource( 8 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.731018, 0 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="MeshInstance5" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.68923 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="MeshInstance2" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0636897, 0, 0.441463 )
+mesh = SubResource( 3 )
+material/0 = null
+
+[node name="MeshInstance3" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.85951, 0, 0.165126 )
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="MeshInstance4" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0117, 0, 0.165126 )
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="MeshInstance6" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0.00810301, 0.506909, 2.91225 )
+mesh = SubResource( 5 )
+material/0 = null

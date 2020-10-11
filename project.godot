@@ -1,0 +1,33 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[  ]
+_global_script_class_icons={
+
+}
+
+[application]
+
+config/name="Solar System"
+run/main_scene="res://main.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+DDD="*res://addons/zylann.debug_draw/debug_draw.gd"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "SIsilicon.vfx.lens flare" )
+
+[rendering]
+
+environment/default_clear_color=Color( 0, 0, 0, 1 )
+environment/default_environment="res://default_env.tres"

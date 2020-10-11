@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=2]
+
+[ext_resource path="res://textures/vertical_white_gradient.png" type="Texture" id=1]
+[ext_resource path="res://atmosphere/atmosphere_ring.shader" type="Shader" id=2]
+
+
+[resource]
+shader = ExtResource( 2 )
+shader_param/albedo = Color( 0.415686, 0.415686, 0.415686, 1 )
+shader_param/texture_albedo = ExtResource( 1 )
