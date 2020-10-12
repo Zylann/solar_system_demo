@@ -45,11 +45,10 @@ __meta__ = {
 
 [node name="LensFlare" type="Node" parent="."]
 script = ExtResource( 5 )
-flareStrength = 10.0
+flareStrength = 4.0
 flareBias = 0.95
-flareBlur = 3.398
+flareBlur = 3.0
 distortion = 7.422
-ghostSpacing = 0.3
 haloWidth = 0.449
 
 [node name="TestSun" type="MeshInstance" parent="."]

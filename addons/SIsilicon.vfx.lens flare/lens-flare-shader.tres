@@ -109,13 +109,13 @@ noise = SubResource( 4 )
 
 [resource]
 shader = SubResource( 1 )
-shader_param/lod = 0.0
+shader_param/lod = 2.0
 shader_param/ghosts = 7
 shader_param/ghost_dispersal = 0.3
-shader_param/halo_width = 0.282
-shader_param/distort = 6.57
-shader_param/bloom_scale = 0.294
-shader_param/bloom_bias = 7.295
+shader_param/halo_width = 0.25
+shader_param/distort = 2.0
+shader_param/bloom_scale = 10.0
+shader_param/bloom_bias = 1.05
 shader_param/distortion_quality = null
 shader_param/lens_color = SubResource( 3 )
 shader_param/lens_dirt = ExtResource( 1 )
