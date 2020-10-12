@@ -1,5 +1,8 @@
 extends RigidBody
 
+const StellarBody = preload("../solar_system/stellar_body.gd")
+const Util = preload("../util/util.gd")
+
 const ShipCameraScene = preload("./ship_camera.tscn")
 
 export var linear_acceleration = 10.0
@@ -73,6 +76,19 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 	
 	# Angular damping?
 	#state.apply_torque_impulse(-state.angular_velocity * 0.01)
+	
+	# Gravity
+	var stellar_body : StellarBody = _get_solar_system().get_reference_stellar_body()
+	if stellar_body.type != StellarBody.TYPE_SUN:
+		var pull_center := stellar_body.node.global_transform.origin
+		var gravity_dir := (pull_center - gtrans.origin).normalized()
+		var d := pull_center.distance_to(gtrans.origin)
+		# In case you dive into a stellar body, gravity actually reduces as you get closer to
+		# the core, because some mass is now behind you
+		d = abs(d - stellar_body.radius) + stellar_body.radius
+		var stellar_mass := Util.get_sphere_volume(stellar_body.radius)
+		var f := 0.01 * stellar_mass / (d * d)
+		state.add_force(gravity_dir * f, Vector3())
 
 	DDD.set_text("Speed", state.linear_velocity.length())
 	DDD.set_text("X", gtrans.origin.x)

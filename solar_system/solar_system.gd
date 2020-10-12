@@ -281,3 +281,8 @@ func get_stellar_body_count() -> int:
 
 func get_stellar_body(idx: int) -> StellarBody:
 	return _bodies[idx]
+
+
+func get_reference_stellar_body() -> StellarBody:
+	return _bodies[_reference_body_id]
+
