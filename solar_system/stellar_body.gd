@@ -23,4 +23,5 @@ var year_count := 0
 
 # Godot stuff
 var node : Spatial
+var static_body : StaticBody
 

@@ -1,15 +1,19 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://ship/ship.gd" type="Script" id=1]
 [ext_resource path="res://ship/mouse_capture.gd" type="Script" id=2]
 [ext_resource path="res://ship/ship_controller.gd" type="Script" id=3]
 
-[sub_resource type="ParticlesMaterial" id=1]
+[sub_resource type="CapsuleShape" id=9]
+radius = 2.30789
+height = 5.4093
+
+[sub_resource type="ParticlesMaterial" id=10]
 emission_shape = 2
 emission_box_extents = Vector3( 100, 100, 100 )
 gravity = Vector3( 0, 0, 0 )
 
-[sub_resource type="SpatialMaterial" id=2]
+[sub_resource type="SpatialMaterial" id=11]
 flags_unshaded = true
 params_billboard_mode = 3
 particles_anim_h_frames = 1
@@ -17,14 +21,14 @@ particles_anim_v_frames = 1
 particles_anim_loop = false
 albedo_color = Color( 0.498039, 0.498039, 0.498039, 1 )
 
-[sub_resource type="QuadMesh" id=3]
-material = SubResource( 2 )
+[sub_resource type="QuadMesh" id=12]
+material = SubResource( 11 )
 size = Vector2( 0.3, 0.3 )
 
-[sub_resource type="CubeMesh" id=4]
+[sub_resource type="CubeMesh" id=13]
 size = Vector3( 4, 4, 4 )
 
-[sub_resource type="CubeMesh" id=5]
+[sub_resource type="CubeMesh" id=14]
 size = Vector3( 2, 2, 4 )
 
 [sub_resource type="CubeMesh" id=6]
@@ -38,9 +42,18 @@ top_radius = 0.75
 bottom_radius = 1.5
 radial_segments = 16
 
-[node name="Ship" type="Spatial"]
+[node name="Ship" type="RigidBody"]
+gravity_scale = 0.0
+can_sleep = false
+linear_damp = 0.5
+angular_damp = 1.0
 script = ExtResource( 1 )
-acceleration = 1000.0
+linear_acceleration = 120000.0
+angular_acceleration = 300.0
+
+[node name="FlightCollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.699685, -0.800026 )
+shape = SubResource( 9 )
 
 [node name="Controller" type="Node" parent="."]
 script = ExtResource( 3 )
@@ -53,40 +66,44 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="MotionParticles" type="Particles" parent="."]
+[node name="Visual" type="Node" parent="."]
+
+[node name="VisualRoot" type="Spatial" parent="Visual"]
+
+[node name="MotionParticles" type="Particles" parent="Visual/VisualRoot"]
 amount = 200
 lifetime = 5.0
 visibility_aabb = AABB( -100, -100, -200, 200, 200, 400 )
 local_coords = false
-process_material = SubResource( 1 )
-draw_pass_1 = SubResource( 3 )
+process_material = SubResource( 10 )
+draw_pass_1 = SubResource( 12 )
 
-[node name="MeshInstance" type="MeshInstance" parent="."]
+[node name="MeshInstance" type="MeshInstance" parent="Visual/VisualRoot"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.731018, 0 )
-mesh = SubResource( 4 )
+mesh = SubResource( 13 )
 material/0 = null
 
-[node name="MeshInstance5" type="MeshInstance" parent="."]
+[node name="MeshInstance5" type="MeshInstance" parent="Visual/VisualRoot"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.68923 )
-mesh = SubResource( 5 )
+mesh = SubResource( 14 )
 material/0 = null
 
-[node name="MeshInstance2" type="MeshInstance" parent="."]
+[node name="MeshInstance2" type="MeshInstance" parent="Visual/VisualRoot"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0636897, 0, 0.441463 )
 mesh = SubResource( 6 )
 material/0 = null
 
-[node name="MeshInstance3" type="MeshInstance" parent="."]
+[node name="MeshInstance3" type="MeshInstance" parent="Visual/VisualRoot"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.85951, 0, 0.165126 )
 mesh = SubResource( 7 )
 material/0 = null
 
-[node name="MeshInstance4" type="MeshInstance" parent="."]
+[node name="MeshInstance4" type="MeshInstance" parent="Visual/VisualRoot"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0117, 0, 0.165126 )
 mesh = SubResource( 7 )
 material/0 = null
 
-[node name="MeshInstance6" type="MeshInstance" parent="."]
+[node name="MeshInstance6" type="MeshInstance" parent="Visual/VisualRoot"]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0.00810301, 0.506909, 2.91225 )
 mesh = SubResource( 8 )
 material/0 = null

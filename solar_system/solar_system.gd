@@ -24,7 +24,8 @@ onready var _ship = $Ship
 var _bodies := []
 var _reference_body_id := 0
 var _directional_light : DirectionalLight
-var _physics_process_count := 0
+var _physics_count := 0
+var _physics_count_on_last_reference_change = 0
 
 
 func _ready():
@@ -151,8 +152,10 @@ func _input(event):
 
 
 func _physics_process(delta: float):
-	# Check when to change referential
-	if _physics_process_count > 0:
+	# Check when to change referential.
+	# Only do so after a few frames elapsed from the last change, because in Godot,
+	# physics are deferred in shitty ways even if we presently are in _physics_process
+	if _physics_count > 0 and _physics_count - _physics_count_on_last_reference_change > 10:
 		if _reference_body_id == 0:
 			for i in len(_bodies):
 				var body : StellarBody = _bodies[i]
@@ -219,12 +222,17 @@ func _physics_process(delta: float):
 		_environment.background_sky_orientation = Basis()
 	
 	DDD.set_text("Reference body", _bodies[_reference_body_id].name)
-	_physics_process_count += 1
+	_physics_count += 1
 
 
 func set_reference_body(ref_id: int):
 	if _reference_body_id == ref_id:
 		return
+	
+	var previous_body = _bodies[_reference_body_id]
+	if previous_body.static_body != null:
+		previous_body.static_body.queue_free()
+	
 	_reference_body_id = ref_id
 	var body = _bodies[_reference_body_id]
 	print("Setting reference to ", ref_id, " (", body.name, ")")
@@ -234,6 +242,18 @@ func set_reference_body(ref_id: int):
 	# TODO Also have relative velocity of the body,
 	# so the ship can integrate it so it looks seamless
 	info.inverse_transform = trans.affine_inverse() * body.node.transform
+	_physics_count_on_last_reference_change = _physics_count
+	
+	if body.type == StellarBody.TYPE_ROCKY:
+		var shape = SphereShape.new()
+		shape.radius = body.radius
+		var cs = CollisionShape.new()
+		cs.shape = shape
+		var sb = StaticBody.new()
+		sb.add_child(cs)
+		body.node.add_child(sb)
+		body.static_body = sb
+	
 	emit_signal("reference_body_changed", info)
 
 
