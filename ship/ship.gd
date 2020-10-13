@@ -7,9 +7,11 @@ export var linear_acceleration = 10.0
 export var angular_acceleration = 1000.0
 
 onready var _visual_root = $Visual/VisualRoot
+onready var _controller = $Controller
 
 var _move_cmd := Vector3()
 var _turn_cmd := Vector3()
+var _exit_ship_cmd := false
 
 #var _linear_velocity := Vector3()
 #var _angular_velocity := Quat()
@@ -20,8 +22,12 @@ var _ref_change_info = null
 func _ready():
 	_visual_root.global_transform = global_transform
 		
-	_get_solar_system().connect(
+	get_solar_system().connect(
 		"reference_body_changed", self, "_on_solar_system_reference_body_changed")
+
+
+func enable_controller():
+	_controller.set_enabled(true)
 
 
 func _on_solar_system_reference_body_changed(info):
@@ -33,7 +39,7 @@ func _on_solar_system_reference_body_changed(info):
 	#_linear_velocity = info.inverse_transform.basis * _linear_velocity
 
 
-func _get_solar_system():
+func get_solar_system():
 	return get_parent()
 
 
@@ -72,7 +78,7 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 	#state.apply_torque_impulse(-state.angular_velocity * 0.01)
 	
 	# Gravity
-	var stellar_body : StellarBody = _get_solar_system().get_reference_stellar_body()
+	var stellar_body : StellarBody = get_solar_system().get_reference_stellar_body()
 	if stellar_body.type != StellarBody.TYPE_SUN:
 		var pull_center := stellar_body.node.global_transform.origin
 		var gravity_dir := (pull_center - gtrans.origin).normalized()

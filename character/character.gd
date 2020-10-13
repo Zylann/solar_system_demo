@@ -2,6 +2,7 @@ extends KinematicBody
 
 const StellarBody = preload("../solar_system/stellar_body.gd")
 const SolarSystem = preload("../solar_system/solar_system.gd")
+const Ship = preload("../ship/ship.gd")
 
 const VERTICAL_CORRECTION_SPEED = PI
 const MOVE_ACCELERATION = 40.0
@@ -16,6 +17,7 @@ onready var _visual_head : Spatial = $Visual/Head
 var _velocity := Vector3()
 var _jump_cmd := false
 var _jump_cooldown := 0.0
+var _interact_cmd := false
 
 
 func _physics_process(delta: float):
@@ -78,6 +80,10 @@ func _physics_process(delta: float):
 			_velocity += planet_up * JUMP_SPEED
 			_jump_cmd = false
 			_jump_cooldown = JUMP_COOLDOWN_TIME
+	
+	if _interact_cmd:
+		_interact()
+		_interact_cmd = false
 
 
 func _input(event):
@@ -85,7 +91,27 @@ func _input(event):
 		if event.pressed:
 			match event.scancode:
 				KEY_SPACE:
-					_jump_cmd = true	
+					_jump_cmd = true
+				KEY_E:
+					_interact_cmd = true
+
+
+func _interact():
+	var space_state := get_world().direct_space_state
+	var camera := get_viewport().get_camera()
+	var front := -camera.global_transform.basis.z
+	var pos = camera.global_transform.origin
+	var hit = space_state.intersect_ray(pos, pos + front * 10.0, [self])
+	if not hit.empty():
+		if hit.collider is Ship:
+			_enter_ship(hit.collider)
+
+
+func _enter_ship(ship: Ship):
+	var camera = get_viewport().get_camera()
+	camera.set_target(ship)
+	ship.enable_controller()
+	queue_free()
 
 
 func _process(delta: float):

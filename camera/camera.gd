@@ -1,6 +1,7 @@
 extends Camera
 
 const CameraHints = preload("./camera_hints.gd")
+const Util = preload("../util/util.gd")
 
 const HINTS_NODE_NAME = "CameraHints"
 
@@ -9,6 +10,9 @@ export var height_modifier := 0.33
 export var target_height_modifier := 1.5
 export var side_offset := 0.0
 export(NodePath) var initial_target = NodePath()
+# When turned on, the camera will automatically search inside the target for the actual
+# anchor to follow, which must have a CameraHints child node
+export var auto_find_camera_anchor = false
 
 var _default_distance_to_target := 5.0
 var _default_height_modifier := 0.33
@@ -53,8 +57,16 @@ func set_target(target: Spatial):
 	assert(target != null)
 	_target = target
 	
-	if _target.has_node(HINTS_NODE_NAME):
-		var hints : CameraHints = _target.get_node(HINTS_NODE_NAME)
+	var hints : CameraHints
+	if auto_find_camera_anchor:
+		hints = Util.find_node_by_type(target, CameraHints)
+		if hints != null:
+			_target = hints.get_parent()
+	
+	elif _target.has_node(HINTS_NODE_NAME):
+		hints = _target.get_node(HINTS_NODE_NAME)
+	
+	if hints != null:
 		distance_to_target = hints.distance_to_target
 		height_modifier = hints.height_modifier
 		target_height_modifier = hints.target_height_modifier

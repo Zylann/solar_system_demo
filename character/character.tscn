@@ -35,6 +35,7 @@ script = ExtResource( 3 )
 distance_to_target = 2.0
 height_modifier = 0.0
 target_height_modifier = 0.2
+side_offset = 1.0
 
 [node name="Visual" type="Spatial" parent="."]
 
