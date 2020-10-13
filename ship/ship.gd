@@ -3,8 +3,6 @@ extends RigidBody
 const StellarBody = preload("../solar_system/stellar_body.gd")
 const Util = preload("../util/util.gd")
 
-const ShipCameraScene = preload("./ship_camera.tscn")
-
 export var linear_acceleration = 10.0
 export var angular_acceleration = 1000.0
 
@@ -21,11 +19,7 @@ var _ref_change_info = null
 
 func _ready():
 	_visual_root.global_transform = global_transform
-	
-	var camera = ShipCameraScene.instance()
-	camera.set_target(_visual_root)
-	get_parent().call_deferred("add_child", camera)
-	
+		
 	_get_solar_system().connect(
 		"reference_body_changed", self, "_on_solar_system_reference_body_changed")
 

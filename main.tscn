@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://solar_system/space_background.png" type="Texture" id=1]
 [ext_resource path="res://solar_system/solar_system.gd" type="Script" id=2]
@@ -6,6 +6,8 @@
 [ext_resource path="res://ship/hud.gd" type="Script" id=4]
 [ext_resource path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" type="Script" id=5]
 [ext_resource path="res://solar_system/materials/sun_yellow.tres" type="Material" id=6]
+[ext_resource path="res://mouse_capture.tscn" type="PackedScene" id=7]
+[ext_resource path="res://camera/camera.tscn" type="PackedScene" id=8]
 
 [sub_resource type="PanoramaSky" id=1]
 panorama = ExtResource( 1 )
@@ -31,6 +33,9 @@ script = ExtResource( 2 )
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 2 )
 
+[node name="Camera" parent="." instance=ExtResource( 8 )]
+initial_target = NodePath("../Ship/Visual/VisualRoot")
+
 [node name="Ship" parent="." instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12000, 0, -100 )
 
@@ -55,3 +60,5 @@ haloWidth = 0.449
 visible = false
 mesh = SubResource( 3 )
 material/0 = ExtResource( 6 )
+
+[node name="MouseCapture" parent="." instance=ExtResource( 7 )]
