@@ -1,4 +1,5 @@
 [gd_resource type="Environment" format=2]
 
 [resource]
-background_mode = 2
+background_mode = 1
+background_color = Color( 0.243137, 0.243137, 0.243137, 1 )
