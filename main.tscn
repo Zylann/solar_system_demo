@@ -3,7 +3,7 @@
 [ext_resource path="res://solar_system/space_background.png" type="Texture" id=1]
 [ext_resource path="res://solar_system/solar_system.gd" type="Script" id=2]
 [ext_resource path="res://ship/ship.tscn" type="PackedScene" id=3]
-[ext_resource path="res://ship/hud.gd" type="Script" id=4]
+[ext_resource path="res://gui/hud.gd" type="Script" id=4]
 [ext_resource path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" type="Script" id=5]
 [ext_resource path="res://solar_system/materials/sun_yellow.tres" type="Material" id=6]
 [ext_resource path="res://mouse_capture.tscn" type="PackedScene" id=7]
@@ -11,6 +11,7 @@
 [ext_resource path="res://addons/SIsilicon.vfx.lens flare/lens-dirt-default.jpeg" type="Texture" id=9]
 [ext_resource path="res://gui/crosshair.png" type="Texture" id=10]
 [ext_resource path="res://gui/select_rect.png" type="Texture" id=11]
+
 
 [sub_resource type="PanoramaSky" id=1]
 panorama = ExtResource( 1 )
