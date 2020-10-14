@@ -20,8 +20,16 @@ var orbit_revolution_progress := 0.0
 var self_revolution_progress := 0.0
 var day_count := 0
 var year_count := 0
+var static_bodies_are_in_tree := false
 
 # Godot stuff
 var node : Spatial
-var static_body : StaticBody
+var static_bodies := []
+
+
+func _notification(what: int):
+	if what == NOTIFICATION_PREDELETE:
+		if not static_bodies_are_in_tree:
+			for sb in static_bodies:
+				sb.free()
 

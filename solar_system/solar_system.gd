@@ -2,6 +2,7 @@ extends Node
 
 
 const StellarBody = preload("./stellar_body.gd")
+const PlanetGenerator = preload("./planet_generator.gd")
 
 const SunMaterial = preload("./materials/sun_yellow.tres")
 const PlanetRockMaterial = preload("materials/planet_surface_rocks.tres")
@@ -103,26 +104,45 @@ func _ready():
 	_directional_light.directional_shadow_blend_splits = true
 	_directional_light.directional_shadow_max_distance = 200.0
 	
+	var generator = PlanetGenerator.new()
+	
 	for i in len(_bodies):
 		var body : StellarBody = _bodies[i]
+		print("Generating ", body.name, "...")
 
-		var mesh := SphereMesh.new()
-		mesh.radial_segments = 128
-		mesh.rings = 64
-		mesh.radius = body.radius
-		mesh.height = mesh.radius * 2.0
+		var root := Spatial.new()
+		root.name = body.name
+		body.node = root
+		add_child(root)
 
-		var mi := MeshInstance.new()
-		mi.mesh = mesh
-		mi.name = body.name
-		
-		var mat : SpatialMaterial
 		if body.type == StellarBody.TYPE_SUN:
-			mat = SunMaterial
+			var mi = MeshInstance.new()
+			var mesh = SphereMesh.new()
+			mesh.radius = body.radius
+			mesh.height = 2.0 * mesh.radius
+			mi.mesh = mesh
+			mi.material_override = SunMaterial
 			mi.cast_shadow = false
-		else:
-			mat = PlanetRockMaterial
-		mi.material_override = mat
+			root.add_child(mi)
+			
+		elif body.type == StellarBody.TYPE_ROCKY:
+			var mat : SpatialMaterial = PlanetRockMaterial
+			
+			generator.set_radius(body.radius)
+			generator.set_quad_count(int(body.radius) / 2)
+			var parts = generator.generate(true)
+			
+			for part in parts:
+				var mi = MeshInstance.new()
+				mi.mesh = part.mesh
+				mi.material_override = mat
+				root.add_child(mi)
+				
+				var cs = CollisionShape.new()
+				cs.shape = part.shape
+				var sb = StaticBody.new()
+				sb.add_child(cs)
+				body.static_bodies.append(sb)
 		
 		var atmo = VolumetricAtmosphereScene.instance()
 		#atmo.scale = Vector3(1, 1, 1) * (0.99 * body.radius)
@@ -131,10 +151,7 @@ func _ready():
 		atmo.directional_light = _directional_light
 		atmo.day_color = body.atmosphere_color
 		atmo.night_color = body.atmosphere_color.darkened(0.8)
-		mi.add_child(atmo)
-		
-		body.node = mi
-		add_child(mi)
+		root.add_child(atmo)
 
 	sun.node.add_child(_directional_light)
 
@@ -230,8 +247,9 @@ func set_reference_body(ref_id: int):
 		return
 	
 	var previous_body = _bodies[_reference_body_id]
-	if previous_body.static_body != null:
-		previous_body.static_body.queue_free()
+	for sb in previous_body.static_bodies:
+		sb.get_parent().remove_child(sb)
+	previous_body.static_bodies_are_in_tree = false
 	
 	_reference_body_id = ref_id
 	var body = _bodies[_reference_body_id]
@@ -244,15 +262,9 @@ func set_reference_body(ref_id: int):
 	info.inverse_transform = trans.affine_inverse() * body.node.transform
 	_physics_count_on_last_reference_change = _physics_count
 	
-	if body.type == StellarBody.TYPE_ROCKY:
-		var shape = SphereShape.new()
-		shape.radius = body.radius
-		var cs = CollisionShape.new()
-		cs.shape = shape
-		var sb = StaticBody.new()
-		sb.add_child(cs)
+	for sb in body.static_bodies:
 		body.node.add_child(sb)
-		body.static_body = sb
+	body.static_bodies_are_in_tree = true
 	
 	emit_signal("reference_body_changed", info)
 
