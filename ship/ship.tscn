@@ -104,3 +104,5 @@ material/0 = null
 [node name="CameraHints" type="Node" parent="Visual/VisualRoot"]
 script = ExtResource( 2 )
 distance_to_target = 20.0
+height_modifier = 0.4
+target_height_modifier = 6.0

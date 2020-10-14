@@ -1,45 +1,83 @@
 extends Control
 
 const StellarBody = preload("../solar_system/stellar_body.gd")
+const Util = preload("../util/util.gd")
 
 onready var _solar_system = get_parent()
+onready var _target_planet_label = $TargetPlanetLabel
+onready var _target_label_rect = $TargetPlanetRect
 
-var _labels = []
+var _target_planet_screen_pos := Vector2()
 
 
 func _process(delta: float):
-	if len(_labels) != _solar_system.get_stellar_body_count():
-		for label in _labels:
-			label.queue_free()
-		_labels.resize(_solar_system.get_stellar_body_count())
-		for i in len(_labels):
-			var label = Label.new()
-			var body = _solar_system.get_stellar_body(i)
-			if body.type == StellarBody.TYPE_SUN:
-				label.modulate = Color(1, 1, 0)
-			else:
-				label.modulate = Color(0, 1, 0)
-			_labels[i] = label
-			label.text = body.name
-			#label.hide()
-			add_child(label)
-
 	var camera := get_viewport().get_camera()
 	if camera == null:
 		return
-
-	var forward := -camera.global_transform.basis.z
-	var camera_pos := camera.global_transform.origin
 	
-	for i in len(_labels):
-		var body = _solar_system.get_stellar_body(i)
-		var label : Label = _labels[i]
-		var pos = body.node.global_transform.origin
-		var dir = (camera_pos - pos).normalized()
-		if dir.dot(forward) > 0:
-			label.hide()
-		else:
-			label.show()
-			var pos2d = camera.unproject_position(pos)
-			label.rect_position = pos2d
+	# Pointed planet info
+	var pointed_body := _find_pointed_planet(camera)
+	if pointed_body == null:
+		_target_planet_label.hide()
+		_target_label_rect.hide()
+	else:
+		var body_pos := pointed_body.node.global_transform.origin
+		var right := camera.global_transform.basis.x
+		var body_edge_pos := body_pos + right * pointed_body.radius
+		var screen_center := camera.unproject_position(body_pos)
+		var screen_edge_pos := camera.unproject_position(body_edge_pos)
+		var screen_radius := max(16, screen_center.distance_to(screen_edge_pos))
 		
+		if screen_radius > get_viewport().size.x * 0.5:
+			# Too big to be worth displaying
+			_target_planet_label.hide()
+			_target_label_rect.hide()
+			
+		else:
+			_target_planet_label.show()
+			_target_label_rect.show()
+			
+			var camera_pos := camera.global_transform.origin
+			var distance := body_pos.distance_to(camera_pos)
+			var screen_radius_v := Vector2(screen_radius, screen_radius)
+			var screen_top_left_pos := screen_center - screen_radius_v
+			
+			_target_planet_label.rect_position = \
+				screen_center + 1.2 * Vector2(screen_radius, -screen_radius)
+			_target_planet_label.text = "Planet: {0}\nDistance: {1}m" \
+				.format([pointed_body.name, Util.format_integer_with_commas(int(distance))])
+				
+			_target_label_rect.rect_position = screen_top_left_pos
+			_target_label_rect.rect_size = 2.0 * screen_radius_v
+
+
+func _find_pointed_planet(camera: Camera) -> StellarBody:
+	var camera_pos := camera.global_transform.origin
+	var mouse_pos = get_viewport().get_mouse_position()
+	var ray_origin = camera.project_ray_origin(mouse_pos)
+	var ray_normal = camera.project_ray_normal(mouse_pos)
+	var pointed_body = null
+	var closest_distance_squared = -1.0
+	for i in _solar_system.get_stellar_body_count():
+		var body = _solar_system.get_stellar_body(i)
+		var body_pos = body.node.global_transform.origin
+		var body_dir = (body_pos - camera_pos).normalized()
+		if Util.ray_intersects_sphere(ray_origin, ray_normal, body_pos, body.radius):
+			var d = body_pos.distance_squared_to(camera_pos)
+			if d < closest_distance_squared or closest_distance_squared < 0.0:
+				pointed_body = body
+				closest_distance_squared = d
+	return pointed_body
+
+
+#static func int_max(a: int, b: int) -> int:
+#	return a if a > b else b
+
+
+#static func try_unproject(camera: Camera, pos: Vector3):
+#	var cam_trans = camera.global_transform
+#	var forward = -cam_trans.basis.z
+#	var dir = (pos - cam_trans.origin).normalized()
+#	if dir.dot(forward) <= 0.0:
+#		return null
+#	return camera.unproject_position(pos)
