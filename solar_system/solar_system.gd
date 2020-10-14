@@ -98,7 +98,7 @@ func _ready():
 	_directional_light.shadow_enabled = true
 	_directional_light.shadow_color = Color(0.1, 0.1, 0.1)
 	_directional_light.directional_shadow_normal_bias = 0.2
-	_directional_light.directional_shadow_split_1 = 0.1
+	_directional_light.directional_shadow_split_1 = 0.06
 	_directional_light.directional_shadow_split_2 = 0.2
 	_directional_light.directional_shadow_split_3 = 0.5
 	_directional_light.directional_shadow_blend_splits = true
