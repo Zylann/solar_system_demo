@@ -20,6 +20,7 @@ var _default_target_height_modifier := 1.5
 var _default_side_offset := 0.0
 
 var _target : Spatial = null
+var _target_rigidbody : RigidBody = null
 var _prev_target_pos := Vector3()
 var _max_target_speed := 50.0
 
@@ -59,6 +60,10 @@ func _on_solar_system_reference_body_changed(info):
 func set_target(target: Spatial):
 	assert(target != null)
 	_target = target
+	
+	_target_rigidbody = null
+	if target is RigidBody:
+		_target_rigidbody = target
 	
 	var hints : CameraHints
 	if auto_find_camera_anchor:
@@ -117,7 +122,7 @@ func _physics_process(delta: float):
 	
 	# Collision avoidance
 	var dss := get_world().direct_space_state
-	var ignored := [_target] if _target is RigidBody else []
+	var ignored := [_target_rigidbody] if _target_rigidbody != null else []
 	var hit := dss.intersect_ray(tt.origin, ideal_trans.origin, ignored)
 	if not hit.empty():
 		#var hit_normal = hit.normal
