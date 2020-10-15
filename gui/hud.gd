@@ -44,11 +44,21 @@ func _process(_delta: float):
 			
 			_target_planet_label.rect_position = \
 				screen_center + 1.2 * Vector2(screen_radius, -screen_radius)
-			_target_planet_label.text = "Planet: {0}\nDistance: {1}m" \
-				.format([pointed_body.name, Util.format_integer_with_commas(int(distance))])
-				
+			_target_planet_label.text = "{0}: {1}\nDistance: {2}m" \
+				.format([_get_stellar_body_type_name(pointed_body), pointed_body.name, 
+					Util.format_integer_with_commas(int(distance))])
+			
 			_target_label_rect.rect_position = screen_top_left_pos
 			_target_label_rect.rect_size = 2.0 * screen_radius_v
+
+
+func _get_stellar_body_type_name(body: StellarBody) -> String:
+	if body.type == StellarBody.TYPE_SUN:
+		return "Star"
+	var parent_body = _solar_system.get_stellar_body(body.parent_id)
+	if parent_body.type != StellarBody.TYPE_SUN:
+		return "Moon"
+	return "Planet"
 
 
 func _find_pointed_planet(camera: Camera) -> StellarBody:
