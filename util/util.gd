@@ -20,9 +20,11 @@ static func format_integer_with_commas(n: int) -> String:
 	if n < 1000:
 		return str(n)
 	if n < 1000000:
-		return str(n / 1000, ",", n % 1000)
+		return str(n / 1000, ",", str(n % 1000).pad_zeros(3))
 	if n < 10000000000:
-		return str(n / 1000000, ",", (n / 1000) % 10000000, ",", n % 1000)
+		return str(n / 1000000, ",", 
+			str((n / 1000) % 10000000).pad_zeros(3), ",", 
+			str(n % 1000).pad_zeros(3))
 	push_error("Number too big for shitty function")
 	assert(false)
 	return "<error>"
