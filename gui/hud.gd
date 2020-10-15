@@ -10,7 +10,7 @@ onready var _target_label_rect = $TargetPlanetRect
 var _target_planet_screen_pos := Vector2()
 
 
-func _process(delta: float):
+func _process(_delta: float):
 	var camera := get_viewport().get_camera()
 	if camera == null:
 		return
@@ -61,7 +61,6 @@ func _find_pointed_planet(camera: Camera) -> StellarBody:
 	for i in _solar_system.get_stellar_body_count():
 		var body = _solar_system.get_stellar_body(i)
 		var body_pos = body.node.global_transform.origin
-		var body_dir = (body_pos - camera_pos).normalized()
 		if Util.ray_intersects_sphere(ray_origin, ray_normal, body_pos, body.radius):
 			var d = body_pos.distance_squared_to(camera_pos)
 			if d < closest_distance_squared or closest_distance_squared < 0.0:
