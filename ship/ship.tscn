@@ -1,17 +1,35 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://ship/ship.gd" type="Script" id=1]
 [ext_resource path="res://camera/camera_hints.gd" type="Script" id=2]
 [ext_resource path="res://ship/ship_controller.gd" type="Script" id=3]
+[ext_resource path="res://ship/speed_particles.shader" type="Shader" id=4]
+[ext_resource path="res://ship/motion_particles.gd" type="Script" id=5]
+[ext_resource path="res://ship/speed_particle.png" type="Texture" id=6]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 2.30789
 height = 5.4093
 
+[sub_resource type="ShaderMaterial" id=10]
+shader = ExtResource( 4 )
+shader_param/u_position = Vector3( 0, 0, 0 )
+shader_param/u_velocity = Vector3( 0, 0, -20 )
+shader_param/u_texture = ExtResource( 6 )
+
+[sub_resource type="Gradient" id=11]
+offsets = PoolRealArray( 0, 0.389241, 0.515823, 0.64557, 1 )
+colors = PoolColorArray( 1, 1, 1, 0, 1, 1, 1, 0.92638, 1, 1, 1, 1, 1, 1, 1, 0.909849, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=12]
+gradient = SubResource( 11 )
+width = 16
+
 [sub_resource type="ParticlesMaterial" id=2]
 emission_shape = 2
 emission_box_extents = Vector3( 100, 100, 100 )
 gravity = Vector3( 0, 0, 0 )
+color_ramp = SubResource( 12 )
 
 [sub_resource type="SpatialMaterial" id=3]
 flags_unshaded = true
@@ -64,12 +82,15 @@ mouse_turn_sensitivity = 0.01
 [node name="VisualRoot" type="Spatial" parent="Visual"]
 
 [node name="MotionParticles" type="Particles" parent="Visual/VisualRoot"]
+material_override = SubResource( 10 )
+cast_shadow = 0
 amount = 200
-lifetime = 5.0
-visibility_aabb = AABB( -100, -100, -200, 200, 200, 400 )
+lifetime = 0.5
+visibility_aabb = AABB( -100, -100, -100, 200, 200, 200 )
 local_coords = false
 process_material = SubResource( 2 )
 draw_pass_1 = SubResource( 4 )
+script = ExtResource( 5 )
 
 [node name="MeshInstance" type="MeshInstance" parent="Visual/VisualRoot"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.731018, 0 )
@@ -106,3 +127,7 @@ script = ExtResource( 2 )
 distance_to_target = 20.0
 height_modifier = 0.4
 target_height_modifier = 6.0
+
+[node name="DirectionalLight" type="DirectionalLight" parent="Visual"]
+transform = Transform( 0.939214, -0.178905, 0.293036, 0, 0.853505, 0.521084, -0.343332, -0.48941, 0.801624, 0, 16.7113, 0 )
+editor_only = true
