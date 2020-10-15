@@ -27,11 +27,14 @@ var _wait_for_fucking_physics := 0
 var _last_ref_change_info = null
 
 
-func _ready():
+func _init():
 	_default_distance_to_target = distance_to_target
 	_default_height_modifier = height_modifier
 	_default_target_height_modifier = target_height_modifier
-	
+	_default_side_offset = side_offset
+
+
+func _ready():
 	if initial_target != NodePath():
 		set_target(get_node(initial_target))
 	
@@ -77,7 +80,11 @@ func set_target(target: Spatial):
 		target_height_modifier = _default_target_height_modifier
 		side_offset = _default_side_offset
 	
-	_prev_target_pos = _get_target_transform().origin
+	var tt = _get_target_transform()
+	_prev_target_pos = tt.origin
+	# Not setting `global_transform` because Godot logs an annoyng error
+	# when the node is not in the tree, but the meaning is global here
+	transform = _get_ideal_transform(tt)
 
 
 func _get_ideal_transform(target_transform: Transform) -> Transform:

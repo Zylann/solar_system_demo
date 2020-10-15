@@ -7,20 +7,31 @@ const PlanetGenerator = preload("./planet_generator.gd")
 const SunMaterial = preload("./materials/sun_yellow.tres")
 const PlanetRockMaterial = preload("materials/planet_surface_rocks.tres")
 const VolumetricAtmosphereScene = preload("../atmosphere/volumetric_atmosphere.tscn")
+const CameraScene = preload("../camera/camera.tscn")
+const ShipScene = preload("../ship/ship.tscn")
 
 const BODY_REFERENCE_ENTRY_RADIUS_FACTOR = 3.0
 const BODY_REFERENCE_EXIT_RADIUS_FACTOR = 3.25 # Must be higher for hysteresis
 
-
 class ReferenceChangeInfo:
 	var inverse_transform : Transform
 
+class LoadingProgress:
+	var progress := 0.0
+	var message := ""
+	var finished := false
+
 
 signal reference_body_changed(info)
+signal loading_progressed(info)
 
 
 onready var _environment = $WorldEnvironment.environment
-onready var _ship = $Ship
+onready var _spawn_point = $SpawnPoint
+onready var _mouse_capture = $MouseCapture
+onready var _hud = $HUD
+
+var _ship = null
 
 var _bodies := []
 var _reference_body_id := 0
@@ -30,6 +41,9 @@ var _physics_count_on_last_reference_change = 0
 
 
 func _ready():
+	set_physics_process(false)
+	_hud.hide()
+	
 	var sun = StellarBody.new()
 	sun.type = StellarBody.TYPE_SUN
 	sun.radius = 1500.0
@@ -80,7 +94,7 @@ func _ready():
 	planet.distance_to_parent = 48000.0
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 100.0 * 60.0
-	planet.atmosphere_color = Color(0.8, 0.7, 0.2)
+	planet.atmosphere_color = Color(1.8, 1.4, 1.0)
 	_bodies.append(planet)
 
 	planet = StellarBody.new()
@@ -91,7 +105,7 @@ func _ready():
 	planet.distance_to_parent = 70400.0
 	planet.self_revolution_time = 8.0 * 60.0
 	planet.orbit_revolution_time = 300.0 * 60.0
-	planet.atmosphere_color = Color(1.8, 1.4, 1.0)
+	planet.atmosphere_color = Color(1.5, 1.3, 0.9)
 	_bodies.append(planet)
 	
 	_directional_light = DirectionalLight.new()
@@ -105,10 +119,15 @@ func _ready():
 	_directional_light.directional_shadow_max_distance = 200.0
 	
 	var generator = PlanetGenerator.new()
+	var progress_info = LoadingProgress.new()
 	
 	for i in len(_bodies):
 		var body : StellarBody = _bodies[i]
-		print("Generating ", body.name, "...")
+		
+		progress_info.message = "Generating {0}...".format([body.name])
+		progress_info.progress = float(i) / float(len(_bodies))
+		emit_signal("loading_progressed", progress_info)
+		yield(get_tree(), "idle_frame")
 
 		var root := Spatial.new()
 		root.name = body.name
@@ -154,18 +173,35 @@ func _ready():
 		root.add_child(atmo)
 
 	sun.node.add_child(_directional_light)
+	
+	# Spawn player
+	_mouse_capture.capture()
+	# Camera must process before the ship so we have to spawn it before...
+	var camera = CameraScene.instance()
+	camera.auto_find_camera_anchor = true
+	add_child(camera)
+	_ship = ShipScene.instance()
+	_ship.global_transform = _spawn_point.global_transform
+	add_child(_ship)
+	camera.set_target(_ship)
+	_hud.show()
+	
+	set_physics_process(true)
+
+	progress_info.finished = true
+	emit_signal("loading_progressed", progress_info)
 
 
 # DEBUG
-func _input(event):
-	if event is InputEventKey:
-		if event.pressed:
-			match event.scancode:
-				KEY_R:
-					if _reference_body_id == 0:
-						set_reference_body(2)
-					else:
-						set_reference_body(0)
+#func _input(event):
+#	if event is InputEventKey:
+#		if event.pressed:
+#			match event.scancode:
+#				KEY_R:
+#					if _reference_body_id == 0:
+#						set_reference_body(2)
+#					else:
+#						set_reference_body(0)
 
 
 func _physics_process(delta: float):
