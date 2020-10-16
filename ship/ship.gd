@@ -3,8 +3,10 @@ extends RigidBody
 const StellarBody = preload("../solar_system/stellar_body.gd")
 const Util = preload("../util/util.gd")
 
-export var linear_acceleration = 10.0
-export var angular_acceleration = 1000.0
+export var linear_acceleration := 10.0
+export var angular_acceleration := 1000.0
+export var speed_cap_on_planet := 40.0
+export var speed_cap_in_space := 400.0
 
 onready var _visual_root = $Visual/VisualRoot
 onready var _controller = $Controller
@@ -15,13 +17,14 @@ var _exit_ship_cmd := false
 
 #var _linear_velocity := Vector3()
 #var _angular_velocity := Quat()
+var _planet_damping_amount := 0.0
 
 var _ref_change_info = null
 
 
 func _ready():
 	_visual_root.global_transform = global_transform
-		
+	
 	get_solar_system().connect(
 		"reference_body_changed", self, "_on_solar_system_reference_body_changed")
 
@@ -57,7 +60,7 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 		state.transform = _ref_change_info.inverse_transform * state.transform
 		state.linear_velocity = _ref_change_info.inverse_transform.basis * state.linear_velocity
 		_ref_change_info = null
-		
+	
 	var gtrans := state.transform
 	var forward := -gtrans.basis.z
 	var right := gtrans.basis.x
@@ -76,8 +79,9 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 	
 	# Angular damping?
 	#state.apply_torque_impulse(-state.angular_velocity * 0.01)
-	
+
 	# Gravity
+	var speed_cap := speed_cap_in_space
 	var stellar_body : StellarBody = get_solar_system().get_reference_stellar_body()
 	if stellar_body.type != StellarBody.TYPE_SUN:
 		var pull_center := stellar_body.node.global_transform.origin
@@ -89,6 +93,17 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 		var stellar_mass := Util.get_sphere_volume(stellar_body.radius)
 		var f := 0.01 * stellar_mass / (d * d)
 		state.add_force(gravity_dir * f, Vector3())
+		
+		# Near-planet damping
+		var distance_to_surface := d - stellar_body.radius
+		_planet_damping_amount = \
+			1.0 - clamp((distance_to_surface - 50.0) / stellar_body.radius, 0.0, 1.0)
+		DDD.set_text("Atmosphere damping amount", _planet_damping_amount)
+		speed_cap = lerp(speed_cap_in_space, speed_cap_on_planet, _planet_damping_amount)
+	
+	var speed := state.linear_velocity.length()
+	if speed > speed_cap:
+		state.linear_velocity = state.linear_velocity.normalized() * speed_cap
 
 	DDD.set_text("Speed", state.linear_velocity.length())
 	DDD.set_text("X", gtrans.origin.x)
