@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://ship/ship.gd" type="Script" id=1]
 [ext_resource path="res://camera/camera_hints.gd" type="Script" id=2]
@@ -6,32 +6,37 @@
 [ext_resource path="res://ship/speed_particles.shader" type="Shader" id=4]
 [ext_resource path="res://ship/motion_particles.gd" type="Script" id=5]
 [ext_resource path="res://ship/speed_particle.png" type="Texture" id=6]
+[ext_resource path="res://ship/model/ship.gltf" type="PackedScene" id=7]
 
 [sub_resource type="CapsuleShape" id=1]
-radius = 2.30789
-height = 5.4093
+radius = 3.03344
+height = 10.5521
 
-[sub_resource type="ShaderMaterial" id=10]
+[sub_resource type="CapsuleShape" id=8]
+radius = 1.52219
+height = 6.94857
+
+[sub_resource type="ShaderMaterial" id=9]
 shader = ExtResource( 4 )
 shader_param/u_position = Vector3( 0, 0, 0 )
 shader_param/u_velocity = Vector3( 0, 0, -20 )
 shader_param/u_texture = ExtResource( 6 )
 
-[sub_resource type="Gradient" id=11]
+[sub_resource type="Gradient" id=3]
 offsets = PoolRealArray( 0, 0.389241, 0.515823, 0.64557, 1 )
 colors = PoolColorArray( 1, 1, 1, 0, 1, 1, 1, 0.92638, 1, 1, 1, 1, 1, 1, 1, 0.909849, 1, 1, 1, 0 )
 
-[sub_resource type="GradientTexture" id=12]
-gradient = SubResource( 11 )
+[sub_resource type="GradientTexture" id=4]
+gradient = SubResource( 3 )
 width = 16
 
-[sub_resource type="ParticlesMaterial" id=2]
+[sub_resource type="ParticlesMaterial" id=5]
 emission_shape = 2
 emission_box_extents = Vector3( 100, 100, 100 )
 gravity = Vector3( 0, 0, 0 )
-color_ramp = SubResource( 12 )
+color_ramp = SubResource( 4 )
 
-[sub_resource type="SpatialMaterial" id=3]
+[sub_resource type="SpatialMaterial" id=6]
 flags_unshaded = true
 params_billboard_mode = 3
 particles_anim_h_frames = 1
@@ -39,26 +44,9 @@ particles_anim_v_frames = 1
 particles_anim_loop = false
 albedo_color = Color( 0.498039, 0.498039, 0.498039, 1 )
 
-[sub_resource type="QuadMesh" id=4]
-material = SubResource( 3 )
+[sub_resource type="QuadMesh" id=7]
+material = SubResource( 6 )
 size = Vector2( 0.3, 0.3 )
-
-[sub_resource type="CubeMesh" id=5]
-size = Vector3( 4, 4, 4 )
-
-[sub_resource type="CubeMesh" id=6]
-size = Vector3( 2, 2, 4 )
-
-[sub_resource type="CubeMesh" id=7]
-size = Vector3( 10, 0.5, 1 )
-
-[sub_resource type="CubeMesh" id=8]
-size = Vector3( 0.5, 3, 8 )
-
-[sub_resource type="CylinderMesh" id=9]
-top_radius = 0.75
-bottom_radius = 1.5
-radial_segments = 16
 
 [node name="Ship" type="RigidBody"]
 gravity_scale = 0.0
@@ -67,11 +55,24 @@ linear_damp = 0.5
 angular_damp = 1.0
 script = ExtResource( 1 )
 linear_acceleration = 120000.0
-angular_acceleration = 300.0
 
 [node name="FlightCollisionShape" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.699685, -0.800026 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.297878, -0.538365 )
 shape = SubResource( 1 )
+
+[node name="FlightCollisionShape2" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7.09019, -0.750727, -1.21641 )
+shape = SubResource( 8 )
+
+[node name="FlightCollisionShape3" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6.65316, -0.750727, -1.21641 )
+shape = SubResource( 8 )
+
+[node name="CharacterSpawnPosition" type="Position3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.881683, 10.9499 )
+
+[node name="GroundCheckPosition" type="Position3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.71605, 0.65127 )
 
 [node name="Controller" type="Node" parent="."]
 script = ExtResource( 3 )
@@ -81,46 +82,19 @@ mouse_turn_sensitivity = 0.01
 
 [node name="VisualRoot" type="Spatial" parent="Visual"]
 
+[node name="ship" parent="Visual/VisualRoot" instance=ExtResource( 7 )]
+transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
+
 [node name="MotionParticles" type="Particles" parent="Visual/VisualRoot"]
-material_override = SubResource( 10 )
+material_override = SubResource( 9 )
 cast_shadow = 0
 amount = 200
 lifetime = 0.5
 visibility_aabb = AABB( -100, -100, -100, 200, 200, 200 )
 local_coords = false
-process_material = SubResource( 2 )
-draw_pass_1 = SubResource( 4 )
+process_material = SubResource( 5 )
+draw_pass_1 = SubResource( 7 )
 script = ExtResource( 5 )
-
-[node name="MeshInstance" type="MeshInstance" parent="Visual/VisualRoot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.731018, 0 )
-mesh = SubResource( 5 )
-material/0 = null
-
-[node name="MeshInstance5" type="MeshInstance" parent="Visual/VisualRoot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.68923 )
-mesh = SubResource( 6 )
-material/0 = null
-
-[node name="MeshInstance2" type="MeshInstance" parent="Visual/VisualRoot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0636897, 0, 0.441463 )
-mesh = SubResource( 7 )
-material/0 = null
-
-[node name="MeshInstance3" type="MeshInstance" parent="Visual/VisualRoot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.85951, 0, 0.165126 )
-mesh = SubResource( 8 )
-material/0 = null
-
-[node name="MeshInstance4" type="MeshInstance" parent="Visual/VisualRoot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0117, 0, 0.165126 )
-mesh = SubResource( 8 )
-material/0 = null
-
-[node name="MeshInstance6" type="MeshInstance" parent="Visual/VisualRoot"]
-transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0.00810301, 0.506909, 2.91225 )
-mesh = SubResource( 9 )
-material/0 = null
 
 [node name="CameraHints" type="Node" parent="Visual/VisualRoot"]
 script = ExtResource( 2 )
@@ -129,5 +103,7 @@ height_modifier = 0.4
 target_height_modifier = 6.0
 
 [node name="DirectionalLight" type="DirectionalLight" parent="Visual"]
-transform = Transform( 0.939214, -0.178905, 0.293036, 0, 0.853505, 0.521084, -0.343332, -0.48941, 0.801624, 0, 16.7113, 0 )
+transform = Transform( 0.939214, -0.216764, -0.266253, -6.7796e-08, -0.775496, 0.631352, -0.343332, -0.592975, -0.728357, 0.241943, 15.964, -0.240347 )
 editor_only = true
+
+[editable path="Visual/VisualRoot/ship"]

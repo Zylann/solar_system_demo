@@ -10,6 +10,7 @@ export var speed_cap_in_space := 400.0
 
 onready var _visual_root = $Visual/VisualRoot
 onready var _controller = $Controller
+onready var _interior_static_body = $Visual/VisualRoot/ship/Interior2
 
 var _move_cmd := Vector3()
 var _turn_cmd := Vector3()
@@ -24,6 +25,7 @@ var _ref_change_info = null
 
 func _ready():
 	_visual_root.global_transform = global_transform
+	_interior_static_body.get_parent().remove_child(_interior_static_body)
 	
 	get_solar_system().connect(
 		"reference_body_changed", self, "_on_solar_system_reference_body_changed")

@@ -4,6 +4,8 @@ const StellarBody = preload("../solar_system/stellar_body.gd")
 var CharacterScene = load("res://character/character.tscn")
 
 onready var _ship = get_parent()
+onready var _character_spawn_position_node : Spatial = get_node("../CharacterSpawnPosition")
+onready var _ground_check_position_node : Spatial = get_node("../GroundCheckPosition")
 
 export var keyboard_turn_sensitivity := 0.1
 export var keyboard_move_sensitivity := 0.1
@@ -60,10 +62,12 @@ func _try_exit_ship():
 	var ship = get_parent()
 	if ship.linear_velocity.length() > 1.0:
 		# Still moving
+		print("Still moving")
 		return
 	var stellar_body : StellarBody = ship.get_solar_system().get_reference_stellar_body()
 	if stellar_body.type != StellarBody.TYPE_ROCKY:
 		# Can't walk on this
+		print("Can't walk on this")
 		return
 	var planet_center := stellar_body.node.global_transform.origin
 	var space_state : PhysicsDirectSpaceState = ship.get_world().direct_space_state
@@ -73,15 +77,19 @@ func _try_exit_ship():
 	# Is the ship not upside down?
 	if down.dot(-ship_trans.basis.y) < 0.8:
 		# The ship isn't right
+		print("Ship not straight")
 		return
-	var hit := space_state.intersect_ray(ship_pos, ship_pos + down * 2.0)
+	var ground_check_pos := _ground_check_position_node.global_transform.origin
+	var hit := space_state.intersect_ray(ground_check_pos, ground_check_pos + down * 2.0, [self])
 	if hit.empty():
 		# No ground under the ship
+		print("No ground under ship")
 		return
-	var spawn_pos := ship_pos + ship_trans.basis.x * 8.0
-	hit = space_state.intersect_ray(spawn_pos, spawn_pos + down * 2.0)
+	var spawn_pos := _character_spawn_position_node.global_transform.origin
+	hit = space_state.intersect_ray(spawn_pos, spawn_pos + down * 5.0)
 	if hit.empty():
 		# No ground under spawn position
+		print("No ground under spawn position")
 		return
 	# Let's do this
 	var character = CharacterScene.instance()
