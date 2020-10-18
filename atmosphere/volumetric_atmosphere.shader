@@ -83,18 +83,27 @@ void fragment() {
 		vec2 rs_ground = 
 			ray_sphere(v_planet_center_viewspace, u_planet_radius, ray_origin, ray_dir);
 		
-		float distance_through_sphere = rs_atmo.y - rs_atmo.x;
-		float distance_through_ground = rs_ground.y - rs_ground.x;
-		float t_begin = rs_atmo.x;
-		float t_end = min(rs_atmo.y, rs_ground.x); // TODO Factor depth into this one
-		float atmo_factor = min(t_end - t_begin, linear_depth) * u_density / atmosphere_radius;
-		atmo_factor = pow(atmo_factor * 8.0, 4.0);
+		//float distance_through_sphere = rs_atmo.y - rs_atmo.x;
+		//float distance_through_ground = rs_ground.y - rs_ground.x;
+		float t_begin = max(rs_atmo.x, 0.0);
+		//float t_end = min(rs_atmo.y, rs_ground.x);
+		float t_end = max(rs_atmo.y, 0.0);
+		t_end = min(t_end, linear_depth);
+		float distance_through_fog = max(t_end - t_begin, 0.0);
+		//distance_through_fog = 1.0;
+		float raw_atmo_factor = distance_through_fog * u_density / atmosphere_radius;
+		// TODO Really need to figure out an integral, or will need a marching shader.
+		// This makes the atmosphere look great in the distance but that means ground is barely affected
+		float atmo_factor = pow(raw_atmo_factor * 4.0, 4.0);
+		//float atmo_factor = pow(raw_atmo_factor + 0.78, 32.0);
+		//atmo_factor = max(atmo_factor, raw_atmo_factor);
+		//atmo_factor = exp(atmo_factor * 0.01);
 		
 		vec3 sun_dir = normalize(v_sun_center_viewspace - v_planet_center_viewspace);
 		vec3 hit_pos = ray_origin + ray_dir * max(min(rs_ground.x, rs_ground.y), 0.0);
 		vec3 hit_local_norm = normalize(hit_pos - v_planet_center_viewspace);
 		float dp = max(dot(sun_dir, hit_local_norm) * 0.2 + 0.08, 0.0);
-		//float dp = 1.0;
+		//dp = 1.0;
 		
 		/*float t_sun_plane = ray_plane(v_planet_center_viewspace, sun_dir, ray_origin, ray_dir);
 		t_sun_plane = clamp(t_sun_plane, rs_atmo.x, rs_atmo.y);
@@ -108,6 +117,7 @@ void fragment() {
 		// TODO Height param
 		//col = mix(col, vec3(1.0), atmo_factor);
 		ALBEDO = col;
+		//ALBEDO = vec3(0.0, distance_through_fog, 0.0);
 		/*if(t_begin < 1.7) {
 			ALBEDO = vec3(0.0, 1.0, 0.0);
 		}*/
