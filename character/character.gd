@@ -3,6 +3,8 @@ extends KinematicBody
 const StellarBody = preload("../solar_system/stellar_body.gd")
 const SolarSystem = preload("../solar_system/solar_system.gd")
 const Ship = preload("../ship/ship.gd")
+const Util = preload("../util/util.gd")
+const CollisionLayers = preload("../collision_layers.gd")
 
 const VERTICAL_CORRECTION_SPEED = PI
 const MOVE_ACCELERATION = 40.0
@@ -89,7 +91,7 @@ func _physics_process(delta: float):
 
 func _input(event):
 	if event is InputEventKey:
-		if event.pressed:
+		if event.pressed and not event.is_echo():
 			match event.scancode:
 				KEY_SPACE:
 					_jump_cmd = true
@@ -104,10 +106,13 @@ func _interact():
 	var camera := get_viewport().get_camera()
 	var front := -camera.global_transform.basis.z
 	var pos = camera.global_transform.origin
-	var hit = space_state.intersect_ray(pos, pos + front * 10.0, [self])
+	var hit = space_state.intersect_ray(
+		pos, pos + front * 10.0, [], CollisionLayers.DEFAULT, false, true)
 	if not hit.empty():
-		if hit.collider is Ship:
-			_enter_ship(hit.collider)
+		if hit.collider.name == "CommandPanel":
+			var ship = Util.find_parent_by_type(hit.collider, Ship)
+			if ship != null:
+				_enter_ship(ship)
 
 
 func _enter_ship(ship: Ship):

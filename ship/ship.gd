@@ -3,6 +3,9 @@ extends RigidBody
 const StellarBody = preload("../solar_system/stellar_body.gd")
 const Util = preload("../util/util.gd")
 
+const STATE_LANDED = 0
+const STATE_FLYING = 1
+
 export var linear_acceleration := 10.0
 export var angular_acceleration := 1000.0
 export var speed_cap_on_planet := 40.0
@@ -10,22 +13,33 @@ export var speed_cap_in_space := 400.0
 
 onready var _visual_root = $Visual/VisualRoot
 onready var _controller = $Controller
-onready var _interior_static_body = $Visual/VisualRoot/ship/Interior2
+onready var _landed_nodes = [
+	$Visual/VisualRoot/ship/Interior2,
+	$Visual/VisualRoot/ship/HatchDown/KinematicBody,
+	$CommandPanel
+]
+onready var _landed_node_parents = []
+onready var _flight_collision_shapes = [
+	$FlightCollisionShape,
+	#$FlightCollisionShape2,
+	#$FlightCollisionShape3
+]
+onready var _animation_player = $AnimationPlayer
 
 var _move_cmd := Vector3()
 var _turn_cmd := Vector3()
 var _exit_ship_cmd := false
-
-#var _linear_velocity := Vector3()
-#var _angular_velocity := Quat()
+var _state := STATE_FLYING
 var _planet_damping_amount := 0.0
-
 var _ref_change_info = null
 
 
 func _ready():
+	for n in _landed_nodes:
+		_landed_node_parents.append(n.get_parent())
+	
 	_visual_root.global_transform = global_transform
-	_interior_static_body.get_parent().remove_child(_interior_static_body)
+	enable_controller()
 	
 	get_solar_system().connect(
 		"reference_body_changed", self, "_on_solar_system_reference_body_changed")
@@ -33,6 +47,39 @@ func _ready():
 
 func enable_controller():
 	_controller.set_enabled(true)
+	for n in _landed_nodes:
+		n.get_parent().remove_child(n)
+	for cs in _flight_collision_shapes:
+		cs.disabled = false
+	mode = RigidBody.MODE_RIGID
+	_close_hatch()
+	_state = STATE_FLYING
+
+
+func disable_controller():
+	_controller.set_enabled(false)
+	for i in len(_landed_nodes):
+		_landed_node_parents[i].add_child(_landed_nodes[i])
+	for cs in _flight_collision_shapes:
+		cs.disabled = true
+	mode = RigidBody.MODE_STATIC
+	_open_hatch()
+	_state = STATE_LANDED
+
+
+func _notification(what: int):
+	if what == NOTIFICATION_PREDELETE:
+		if _state != STATE_LANDED:
+			for n in _landed_nodes:
+				n.free()
+
+
+func _open_hatch():
+	_animation_player.play("hatch_open")
+
+
+func _close_hatch():
+	_animation_player.play_backwards("hatch_open")
 
 
 func _on_solar_system_reference_body_changed(info):
@@ -114,36 +161,3 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 	
 	_visual_root.global_transform = gtrans
 	#print("SHIP: ", gtrans.origin)
-
-
-#func _physics_process(delta: float):
-#	var gtrans := global_transform
-#	var forward := -gtrans.basis.z
-#	var right := gtrans.basis.x
-#	var up := gtrans.basis.y
-#
-#	_linear_velocity += _move_cmd.z * forward * acceleration
-#
-#	_turn_cmd.x = clamp(_turn_cmd.x, -1, 1)
-#	_turn_cmd.y = clamp(_turn_cmd.y, -1, 1)
-#	_turn_cmd.z = clamp(_turn_cmd.z, -1, 1)
-#
-#	var pitch_turn = Quat(right, _turn_cmd.y)
-#	var yaw_turn = Quat(up, _turn_cmd.x)
-#	var roll_turn = Quat(forward, _turn_cmd.z)
-#	_angular_velocity = pitch_turn * _angular_velocity
-#	_angular_velocity = yaw_turn * _angular_velocity
-#	_angular_velocity = roll_turn * _angular_velocity
-#
-#	_angular_velocity = _angular_velocity.slerp(Quat(), delta * 2.0)
-#	_linear_velocity *= (1.0 - delta * 0.25)
-#
-#	gtrans.origin += _linear_velocity * delta
-#	gtrans.basis = Basis(_angular_velocity) * gtrans.basis
-#	global_transform = gtrans
-#
-#	DDD.set_text("Speed", _linear_velocity.length())
-#	DDD.set_text("X", gtrans.origin.x)
-#	DDD.set_text("Y", gtrans.origin.y)
-#	DDD.set_text("Z", gtrans.origin.z)
-

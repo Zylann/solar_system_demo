@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://ship/ship.gd" type="Script" id=1]
 [ext_resource path="res://camera/camera_hints.gd" type="Script" id=2]
@@ -12,31 +12,65 @@
 radius = 3.03344
 height = 10.5521
 
-[sub_resource type="CapsuleShape" id=8]
+[sub_resource type="CapsuleShape" id=2]
 radius = 1.52219
 height = 6.94857
 
-[sub_resource type="ShaderMaterial" id=9]
+[sub_resource type="SphereShape" id=11]
+radius = 1.65989
+
+[sub_resource type="Animation" id=10]
+resource_name = "hatch_open"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Visual/VisualRoot/ship/HatchDown:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 1.23307e-06, 1.99996 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 104, 0, 0 ), Vector3( 47.86, 0, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Visual/VisualRoot/ship/HatchUp:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( -19.01, 0, 0 ), Vector3( 87.938, 0, 0 ) ]
+}
+
+[sub_resource type="BoxShape" id=9]
+extents = Vector3( 1, 1.66367, 0.115274 )
+
+[sub_resource type="ShaderMaterial" id=3]
 shader = ExtResource( 4 )
 shader_param/u_position = Vector3( 0, 0, 0 )
 shader_param/u_velocity = Vector3( 0, 0, -20 )
 shader_param/u_texture = ExtResource( 6 )
 
-[sub_resource type="Gradient" id=3]
+[sub_resource type="Gradient" id=4]
 offsets = PoolRealArray( 0, 0.389241, 0.515823, 0.64557, 1 )
 colors = PoolColorArray( 1, 1, 1, 0, 1, 1, 1, 0.92638, 1, 1, 1, 1, 1, 1, 1, 0.909849, 1, 1, 1, 0 )
 
-[sub_resource type="GradientTexture" id=4]
-gradient = SubResource( 3 )
+[sub_resource type="GradientTexture" id=5]
+gradient = SubResource( 4 )
 width = 16
 
-[sub_resource type="ParticlesMaterial" id=5]
+[sub_resource type="ParticlesMaterial" id=6]
 emission_shape = 2
 emission_box_extents = Vector3( 100, 100, 100 )
 gravity = Vector3( 0, 0, 0 )
-color_ramp = SubResource( 4 )
+color_ramp = SubResource( 5 )
 
-[sub_resource type="SpatialMaterial" id=6]
+[sub_resource type="SpatialMaterial" id=7]
 flags_unshaded = true
 params_billboard_mode = 3
 particles_anim_h_frames = 1
@@ -44,8 +78,8 @@ particles_anim_v_frames = 1
 particles_anim_loop = false
 albedo_color = Color( 0.498039, 0.498039, 0.498039, 1 )
 
-[sub_resource type="QuadMesh" id=7]
-material = SubResource( 6 )
+[sub_resource type="QuadMesh" id=8]
+material = SubResource( 7 )
 size = Vector2( 0.3, 0.3 )
 
 [node name="Ship" type="RigidBody"]
@@ -62,14 +96,14 @@ shape = SubResource( 1 )
 
 [node name="FlightCollisionShape2" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7.09019, -0.750727, -1.21641 )
-shape = SubResource( 8 )
+shape = SubResource( 2 )
 
 [node name="FlightCollisionShape3" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6.65316, -0.750727, -1.21641 )
-shape = SubResource( 8 )
+shape = SubResource( 2 )
 
 [node name="CharacterSpawnPosition" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.881683, 10.9499 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.881683, -2.34405 )
 
 [node name="GroundCheckPosition" type="Position3D" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.71605, 0.65127 )
@@ -78,6 +112,16 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.71605, 0.65127 )
 script = ExtResource( 3 )
 mouse_turn_sensitivity = 0.01
 
+[node name="CommandPanel" type="Area" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74615, -2.57037 )
+
+[node name="CollisionShape" type="CollisionShape" parent="CommandPanel"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.141755, 0 )
+shape = SubResource( 11 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/hatch_open = SubResource( 10 )
+
 [node name="Visual" type="Node" parent="."]
 
 [node name="VisualRoot" type="Spatial" parent="Visual"]
@@ -85,15 +129,24 @@ mouse_turn_sensitivity = 0.01
 [node name="ship" parent="Visual/VisualRoot" instance=ExtResource( 7 )]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
 
+[node name="HatchDown" parent="Visual/VisualRoot/ship" index="3"]
+transform = Transform( 1, 0, 0, 0, -0.241922, -0.970295, 0, 0.970295, -0.241922, 0, -1.0341, -4.21388 )
+
+[node name="KinematicBody" type="KinematicBody" parent="Visual/VisualRoot/ship/HatchDown" index="0"]
+
+[node name="CollisionShape" type="CollisionShape" parent="Visual/VisualRoot/ship/HatchDown/KinematicBody"]
+transform = Transform( 1, -1.7053e-13, 4.26326e-14, 0, 1, 0, 0, 0, 1, 5.68434e-13, -1.61023, 0.0508492 )
+shape = SubResource( 9 )
+
 [node name="MotionParticles" type="Particles" parent="Visual/VisualRoot"]
-material_override = SubResource( 9 )
+material_override = SubResource( 3 )
 cast_shadow = 0
 amount = 200
 lifetime = 0.5
 visibility_aabb = AABB( -100, -100, -100, 200, 200, 200 )
 local_coords = false
-process_material = SubResource( 5 )
-draw_pass_1 = SubResource( 7 )
+process_material = SubResource( 6 )
+draw_pass_1 = SubResource( 8 )
 script = ExtResource( 5 )
 
 [node name="CameraHints" type="Node" parent="Visual/VisualRoot"]
@@ -101,6 +154,15 @@ script = ExtResource( 2 )
 distance_to_target = 20.0
 height_modifier = 0.4
 target_height_modifier = 6.0
+
+[node name="InteriorLight" type="OmniLight" parent="Visual/VisualRoot"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0306, -0.153431 )
+light_color = Color( 0.972549, 0.85098, 0.439216, 1 )
+light_energy = 2.0
+shadow_enabled = true
+omni_range = 6.0
+omni_attenuation = 2.37841
+omni_shadow_mode = 0
 
 [node name="DirectionalLight" type="DirectionalLight" parent="Visual"]
 transform = Transform( 0.939214, -0.216764, -0.266253, -6.7796e-08, -0.775496, 0.631352, -0.343332, -0.592975, -0.728357, 0.241943, 15.964, -0.240347 )

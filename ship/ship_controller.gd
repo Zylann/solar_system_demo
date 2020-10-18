@@ -93,11 +93,11 @@ func _try_exit_ship():
 		return
 	# Let's do this
 	var character = CharacterScene.instance()
-	character.translation = spawn_pos - down * 2.0
+	character.translation = spawn_pos
 	ship.get_parent().add_child(character)
 	var camera = get_viewport().get_camera()
 	camera.set_target(character)
-	set_enabled(false)
+	ship.disable_controller()
 
 
 # TODO I could not use `_unhandled_input`
