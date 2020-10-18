@@ -2,7 +2,7 @@
 
 [resource]
 resource_name = "Body"
-albedo_color = Color( 0.158069, 0.319994, 0.148222, 1 )
+albedo_color = Color( 0.301961, 0.6, 0.286275, 1 )
 metallic = 0.815603
 roughness = 0.329787
 emission_enabled = true
