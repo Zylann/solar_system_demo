@@ -25,6 +25,18 @@ onready var _flight_collision_shapes = [
 	#$FlightCollisionShape3
 ]
 onready var _animation_player = $AnimationPlayer
+onready var _main_jets = [
+	$Visual/VisualRoot/JetVFXMainLeft,
+	$Visual/VisualRoot/JetVFXMainRight,
+]
+onready var _left_roll_jets = [
+	$Visual/VisualRoot/JetVFXLeftWing1,
+	$Visual/VisualRoot/JetVFXLeftWing2
+]
+onready var _right_roll_jets = [
+	$Visual/VisualRoot/JetVFXRightWing1,
+	$Visual/VisualRoot/JetVFXRightWing2
+]
 
 var _move_cmd := Vector3()
 var _turn_cmd := Vector3()
@@ -153,6 +165,18 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 	var speed := state.linear_velocity.length()
 	if speed > speed_cap:
 		state.linear_velocity = state.linear_velocity.normalized() * speed_cap
+	
+	# Jets
+	var main_jet_power = _move_cmd.z
+	for jet in _main_jets:
+		jet.set_power(main_jet_power)
+	DDD.set_text("turn_cmd", _turn_cmd)
+	var left_roll_jet_power = max(_turn_cmd.z, 0.0)
+	var right_roll_jet_power = max(-_turn_cmd.z, 0.0)
+	for jet in _left_roll_jets:
+		jet.set_power(left_roll_jet_power)
+	for jet in _right_roll_jets:
+		jet.set_power(right_roll_jet_power)
 
 	DDD.set_text("Speed", state.linear_velocity.length())
 	DDD.set_text("X", gtrans.origin.x)

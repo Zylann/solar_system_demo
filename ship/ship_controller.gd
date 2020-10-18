@@ -8,7 +8,6 @@ onready var _character_spawn_position_node : Spatial = get_node("../CharacterSpa
 onready var _ground_check_position_node : Spatial = get_node("../GroundCheckPosition")
 
 export var keyboard_turn_sensitivity := 0.1
-export var keyboard_move_sensitivity := 0.1
 export var mouse_turn_sensitivity := 0.1
 
 var _turn_cmd := Vector3()
@@ -45,8 +44,15 @@ func _process(delta: float):
 	if Input.is_key_pressed(KEY_D):
 		_turn_cmd.z += keyboard_turn_sensitivity
 	
-	_ship.set_move_cmd(delta * motor * keyboard_move_sensitivity)
-	_ship.set_turn_cmd(_turn_cmd * delta)
+	_turn_cmd.x = clamp(_turn_cmd.x, -1.0, 1.0)
+	_turn_cmd.y = clamp(_turn_cmd.y, -1.0, 1.0)
+	_turn_cmd.z = clamp(_turn_cmd.z, -1.0, 1.0)
+	motor.x = clamp(motor.x, -1.0, 1.0)
+	motor.y = clamp(motor.y, -1.0, 1.0)
+	motor.z = clamp(motor.z, -1.0, 1.0)
+	
+	_ship.set_move_cmd(motor)
+	_ship.set_turn_cmd(_turn_cmd)
 	_turn_cmd = Vector3()
 	#ship.set_antiroll(not Input.is_key_pressed(KEY_CONTROL))
 #	flyer.set_turn_cmd(turn)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://ship/ship.gd" type="Script" id=1]
 [ext_resource path="res://camera/camera_hints.gd" type="Script" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://ship/motion_particles.gd" type="Script" id=5]
 [ext_resource path="res://ship/speed_particle.png" type="Texture" id=6]
 [ext_resource path="res://ship/model/ship.gltf" type="PackedScene" id=7]
+[ext_resource path="res://ship/jet_vfx.tscn" type="PackedScene" id=8]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 3.03344
@@ -50,25 +51,25 @@ tracks/1/keys = {
 [sub_resource type="BoxShape" id=9]
 extents = Vector3( 1, 1.66367, 0.115274 )
 
-[sub_resource type="ShaderMaterial" id=3]
+[sub_resource type="ShaderMaterial" id=12]
 shader = ExtResource( 4 )
 shader_param/u_position = Vector3( 0, 0, 0 )
 shader_param/u_velocity = Vector3( 0, 0, -20 )
 shader_param/u_texture = ExtResource( 6 )
 
-[sub_resource type="Gradient" id=4]
+[sub_resource type="Gradient" id=13]
 offsets = PoolRealArray( 0, 0.389241, 0.515823, 0.64557, 1 )
 colors = PoolColorArray( 1, 1, 1, 0, 1, 1, 1, 0.92638, 1, 1, 1, 1, 1, 1, 1, 0.909849, 1, 1, 1, 0 )
 
-[sub_resource type="GradientTexture" id=5]
-gradient = SubResource( 4 )
+[sub_resource type="GradientTexture" id=14]
+gradient = SubResource( 13 )
 width = 16
 
-[sub_resource type="ParticlesMaterial" id=6]
+[sub_resource type="ParticlesMaterial" id=15]
 emission_shape = 2
 emission_box_extents = Vector3( 100, 100, 100 )
 gravity = Vector3( 0, 0, 0 )
-color_ramp = SubResource( 5 )
+color_ramp = SubResource( 14 )
 
 [sub_resource type="SpatialMaterial" id=7]
 flags_unshaded = true
@@ -88,7 +89,9 @@ can_sleep = false
 linear_damp = 0.5
 angular_damp = 1.0
 script = ExtResource( 1 )
-linear_acceleration = 120000.0
+linear_acceleration = 220.0
+angular_acceleration = 3.0
+speed_cap_in_space = 340.0
 
 [node name="FlightCollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.297878, -0.538365 )
@@ -110,7 +113,8 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.71605, 0.65127 )
 
 [node name="Controller" type="Node" parent="."]
 script = ExtResource( 3 )
-mouse_turn_sensitivity = 0.01
+keyboard_turn_sensitivity = 1.0
+mouse_turn_sensitivity = 0.1
 
 [node name="CommandPanel" type="Area" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74615, -2.57037 )
@@ -139,13 +143,13 @@ transform = Transform( 1, -1.7053e-13, 4.26326e-14, 0, 1, 0, 0, 0, 1, 5.68434e-1
 shape = SubResource( 9 )
 
 [node name="MotionParticles" type="Particles" parent="Visual/VisualRoot"]
-material_override = SubResource( 3 )
+material_override = SubResource( 12 )
 cast_shadow = 0
 amount = 200
 lifetime = 0.5
 visibility_aabb = AABB( -100, -100, -100, 200, 200, 200 )
 local_coords = false
-process_material = SubResource( 6 )
+process_material = SubResource( 15 )
 draw_pass_1 = SubResource( 8 )
 script = ExtResource( 5 )
 
@@ -163,6 +167,24 @@ shadow_enabled = true
 omni_range = 6.0
 omni_attenuation = 2.37841
 omni_shadow_mode = 0
+
+[node name="JetVFXMainLeft" parent="Visual/VisualRoot" instance=ExtResource( 8 )]
+transform = Transform( -0.65, 0, -2.53119e-07, 0, 0.65, 0, 2.53119e-07, 0, -0.65, -3.55307, -0.220573, 6.47426 )
+
+[node name="JetVFXMainRight" parent="Visual/VisualRoot" instance=ExtResource( 8 )]
+transform = Transform( -0.65, 0, -2.53119e-07, 0, 0.65, 0, 2.53119e-07, 0, -0.65, 3.56022, -0.220573, 6.47425 )
+
+[node name="JetVFXLeftWing1" parent="Visual/VisualRoot" instance=ExtResource( 8 )]
+transform = Transform( 0.214803, 6.7333e-08, -0.10705, 0.10705, -4.29633e-08, 0.214803, 4.11005e-08, -0.24, -6.8486e-08, -5.75988, -1.13909, 2.13196 )
+
+[node name="JetVFXLeftWing2" parent="Visual/VisualRoot" instance=ExtResource( 8 )]
+transform = Transform( 0.214803, 6.7333e-08, -0.10705, 0.10705, -4.29633e-08, 0.214803, 4.11005e-08, -0.24, -6.8486e-08, -6.85655, -1.64187, -1.04728 )
+
+[node name="JetVFXRightWing1" parent="Visual/VisualRoot" instance=ExtResource( 8 )]
+transform = Transform( 0.215075, 1.86069e-08, 0.106502, -0.106502, -4.27436e-08, 0.215075, 3.56423e-08, -0.24, -3.00475e-08, 5.76443, -1.12076, 2.13129 )
+
+[node name="JetVFXRightWing2" parent="Visual/VisualRoot" instance=ExtResource( 8 )]
+transform = Transform( 0.215075, 1.86069e-08, 0.106502, -0.106502, -4.27436e-08, 0.215075, 3.56423e-08, -0.24, -3.00475e-08, 6.84852, -1.65759, -1.04728 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="Visual"]
 transform = Transform( 0.939214, -0.216764, -0.266253, -6.7796e-08, -0.775496, 0.631352, -0.343332, -0.592975, -0.728357, 0.241943, 15.964, -0.240347 )
