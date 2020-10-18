@@ -13,6 +13,7 @@ const JUMP_SPEED = 8.0
 onready var _head : Spatial = $Head
 onready var _visual_root : Spatial = $Visual
 onready var _visual_head : Spatial = $Visual/Head
+onready var _flashlight : SpotLight = $Visual/Body/FlashLight
 
 var _velocity := Vector3()
 var _jump_cmd := false
@@ -94,6 +95,8 @@ func _input(event):
 					_jump_cmd = true
 				KEY_E:
 					_interact_cmd = true
+				KEY_F:
+					_flashlight.visible = not _flashlight.visible
 
 
 func _interact():

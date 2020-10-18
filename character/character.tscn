@@ -44,6 +44,12 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.272492, 0 )
 mesh = SubResource( 2 )
 material/0 = null
 
+[node name="FlashLight" type="SpotLight" parent="Visual/Body"]
+visible = false
+spot_range = 60.0
+spot_attenuation = 1.93187
+spot_angle_attenuation = 0.732043
+
 [node name="Head" type="MeshInstance" parent="Visual"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.676365, 0 )
 mesh = SubResource( 3 )
