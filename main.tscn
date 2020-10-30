@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://solar_system/space_background.png" type="Texture" id=1]
 [ext_resource path="res://solar_system/solar_system.gd" type="Script" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" type="Script" id=5]
 [ext_resource path="res://gui/fonts/hack_regular_16_dynamic_font.tres" type="DynamicFont" id=6]
 [ext_resource path="res://mouse_capture.tscn" type="PackedScene" id=7]
+[ext_resource path="res://voxel_debug_info.gd" type="Script" id=8]
 [ext_resource path="res://addons/SIsilicon.vfx.lens flare/lens-dirt-default.jpeg" type="Texture" id=9]
 [ext_resource path="res://gui/crosshair.png" type="Texture" id=10]
 [ext_resource path="res://gui/select_rect.png" type="Texture" id=11]
@@ -144,4 +145,8 @@ margin_top = 18.0
 margin_right = 800.0
 margin_bottom = 32.0
 max_value = 1.0
+
+[node name="VoxelDebugInfo" type="Node" parent="."]
+script = ExtResource( 8 )
+
 [connection signal="loading_progressed" from="." to="LoadingScreen" method="_on_GameWorld_loading_progressed"]

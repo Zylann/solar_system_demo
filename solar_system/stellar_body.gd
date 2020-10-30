@@ -24,6 +24,7 @@ var static_bodies_are_in_tree := false
 
 # Godot stuff
 var node : Spatial
+var volume : VoxelLodTerrain
 var static_bodies := []
 
 

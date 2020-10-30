@@ -9,3 +9,6 @@ near = 0.1
 far = 100000.0
 script = ExtResource( 1 )
 distance_to_target = 20.0
+
+[node name="VoxelViewer" type="VoxelViewer" parent="."]
+view_distance = 100000

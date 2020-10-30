@@ -9,6 +9,7 @@ const PlanetRockMaterial = preload("materials/planet_surface_rocks.tres")
 const VolumetricAtmosphereScene = preload("../atmosphere/volumetric_atmosphere.tscn")
 const CameraScene = preload("../camera/camera.tscn")
 const ShipScene = preload("../ship/ship.tscn")
+const BasePlanetVoxelGraph = preload("./voxel_graph_planet.tres")
 
 const BODY_REFERENCE_ENTRY_RADIUS_FACTOR = 3.0
 const BODY_REFERENCE_EXIT_RADIUS_FACTOR = 3.25 # Must be higher for hysteresis
@@ -118,7 +119,7 @@ func _ready():
 	_directional_light.directional_shadow_blend_splits = true
 	_directional_light.directional_shadow_max_distance = 200.0
 	
-	var generator = PlanetGenerator.new()
+	#var generator = PlanetGenerator.new()
 	var progress_info = LoadingProgress.new()
 	
 	for i in len(_bodies):
@@ -147,21 +148,37 @@ func _ready():
 		elif body.type == StellarBody.TYPE_ROCKY:
 			var mat : SpatialMaterial = PlanetRockMaterial
 			
-			generator.set_radius(body.radius)
-			generator.set_quad_count(int(body.radius) / 2)
-			var parts = generator.generate(true)
+			var generator : VoxelGeneratorGraph = BasePlanetVoxelGraph.duplicate(true)
+			var sphere_node_id := 9
+			generator.set_node_default_input(sphere_node_id, 3, body.radius)
 			
-			for part in parts:
-				var mi = MeshInstance.new()
-				mi.mesh = part.mesh
-				mi.material_override = mat
-				root.add_child(mi)
-				
-				var cs = CollisionShape.new()
-				cs.shape = part.shape
-				var sb = StaticBody.new()
-				sb.add_child(cs)
-				body.static_bodies.append(sb)
+			var volume := VoxelLodTerrain.new()
+			volume.lod_count = 6
+			volume.lod_split_scale = 3
+			volume.stream = generator
+			# TODO Need to uncap this value in the module
+			volume.view_distance = 100000
+			volume.voxel_bounds = AABB(Vector3(-1024, -1024, -1024), Vector3(2048, 2048, 2048))
+			volume.material = PlanetRockMaterial
+			#volume.set_process_mode(VoxelLodTerrain.PROCESS_MODE_PHYSICS)
+			body.volume = volume
+			root.add_child(volume)
+			
+#			generator.set_radius(body.radius)
+#			generator.set_quad_count(int(body.radius) / 4)
+#			var parts = generator.generate(true)
+#
+#			for part in parts:
+#				var mi = MeshInstance.new()
+#				mi.mesh = part.mesh
+#				mi.material_override = mat
+#				root.add_child(mi)
+#
+#				var cs = CollisionShape.new()
+#				cs.shape = part.shape
+#				var sb = StaticBody.new()
+#				sb.add_child(cs)
+#				body.static_bodies.append(sb)
 		
 		var atmo = VolumetricAtmosphereScene.instance()
 		#atmo.scale = Vector3(1, 1, 1) * (0.99 * body.radius)
@@ -190,18 +207,6 @@ func _ready():
 
 	progress_info.finished = true
 	emit_signal("loading_progressed", progress_info)
-
-
-# DEBUG
-#func _input(event):
-#	if event is InputEventKey:
-#		if event.pressed:
-#			match event.scancode:
-#				KEY_R:
-#					if _reference_body_id == 0:
-#						set_reference_body(2)
-#					else:
-#						set_reference_body(0)
 
 
 func _physics_process(delta: float):
@@ -276,6 +281,21 @@ func _physics_process(delta: float):
 	
 	DDD.set_text("Reference body", _bodies[_reference_body_id].name)
 	_physics_count += 1
+
+	# DEBUG
+	for i in len(_bodies):
+		var body : StellarBody = _bodies[i]
+		if body.volume == null:
+			continue
+		DDD.set_text(str("BLOCK COUNT in ", body.name), body.volume.debug_get_block_count())
+		#var stats = body.volume.get_statistics()
+		#for k in stats:
+		#	if k.begins_with("time_"):
+		#		var t = stats[k]
+		#		if t > 8000:
+		#			DDD.set_text(str("!! ", body.name, " ", k), t)
+		#if stats.blocked_lods > 0:
+		#	DDD.set_text(str("!! blocked lods on ", body.name), stats.blocked_lods)
 
 
 func set_reference_body(ref_id: int):

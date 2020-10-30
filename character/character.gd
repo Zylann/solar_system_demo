@@ -20,7 +20,9 @@ onready var _flashlight : SpotLight = $Visual/Body/FlashLight
 var _velocity := Vector3()
 var _jump_cmd := false
 var _jump_cooldown := 0.0
+var _dig_cmd := false
 var _interact_cmd := false
+var _build_cmd := false
 
 
 func _physics_process(delta: float):
@@ -88,6 +90,38 @@ func _physics_process(delta: float):
 		_interact()
 		_interact_cmd = false
 
+	_process_dig_actions()
+
+
+func _process_dig_actions():
+	var camera := get_viewport().get_camera()
+	var front := -camera.global_transform.basis.z
+	var cam_pos = camera.global_transform.origin
+	var space_state := get_world().direct_space_state
+	var hit = space_state.intersect_ray(cam_pos, cam_pos + front * 50.0, [self])
+	if not hit.empty():
+		if hit.collider is VoxelLodTerrain:
+			DDD.draw_box(hit.position, Vector3(0.5,0.5,0.5))
+			DDD.draw_ray_3d(hit.position, hit.normal, 1.0, Color(1,1,0))
+	
+	if not hit.empty():
+		if hit.collider is VoxelLodTerrain:
+			var volume : VoxelLodTerrain = hit.collider
+			if _dig_cmd:
+				_dig_cmd = false
+				var vt : VoxelTool = volume.get_voxel_tool()
+				var pos = volume.get_global_transform().affine_inverse() * hit.position
+				vt.channel = VoxelBuffer.CHANNEL_SDF
+				vt.mode = VoxelTool.MODE_REMOVE
+				vt.do_sphere(pos, 3.5)
+			if _build_cmd:
+				_build_cmd = false
+				var vt : VoxelTool = volume.get_voxel_tool()
+				var pos = volume.get_global_transform().affine_inverse() * hit.position
+				vt.channel = VoxelBuffer.CHANNEL_SDF
+				vt.mode = VoxelTool.MODE_ADD
+				vt.do_sphere(pos, 3.5)
+
 
 func _input(event):
 	if event is InputEventKey:
@@ -99,6 +133,14 @@ func _input(event):
 					_interact_cmd = true
 				KEY_F:
 					_flashlight.visible = not _flashlight.visible
+					
+	elif event is InputEventMouseButton:
+		if event.pressed:
+			match event.button_index:
+				BUTTON_LEFT:
+					_dig_cmd = true
+				BUTTON_RIGHT:
+					_build_cmd = true
 
 
 func _interact():

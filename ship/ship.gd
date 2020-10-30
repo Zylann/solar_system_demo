@@ -42,7 +42,7 @@ var _move_cmd := Vector3()
 var _turn_cmd := Vector3()
 var _exit_ship_cmd := false
 var _state := STATE_FLYING
-var _planet_damping_amount := 0.0
+var _planet_damping_amount := 0.0 # TODO Doesnt need to be a member var
 var _ref_change_info = null
 
 
@@ -137,7 +137,7 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 	state.apply_torque_impulse(up * _turn_cmd.x * angular_acceleration)
 	state.apply_torque_impulse(right * _turn_cmd.y * angular_acceleration)
 	state.apply_torque_impulse(forward * _turn_cmd.z * angular_acceleration)
-	
+
 	# Angular damping?
 	#state.apply_torque_impulse(-state.angular_velocity * 0.01)
 
