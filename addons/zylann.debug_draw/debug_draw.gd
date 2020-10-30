@@ -140,7 +140,7 @@ func _process_3d_lines_delayed_free(items: Array):
 		if d.frame <= Engine.get_frames_drawn():
 			_recycle_line_material(d.node.material_override)
 			d.node.queue_free()
-			items[i] = items[i - 1]
+			items[i] = items[len(items) - 1]
 			items.pop_back()
 		else:
 			i += 1
@@ -150,7 +150,7 @@ func _process(delta: float):
 	_process_3d_lines_delayed_free(_lines)
 	_process_3d_lines_delayed_free(_boxes)
 
-	# Progressively delete boxes
+	# Progressively delete boxes in pool
 	if len(_box_pool) > 0:
 		var last = _box_pool[-1]
 		_box_pool.pop_back()
