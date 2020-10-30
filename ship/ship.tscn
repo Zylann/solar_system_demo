@@ -17,10 +17,10 @@ height = 10.5521
 radius = 1.52219
 height = 6.94857
 
-[sub_resource type="SphereShape" id=11]
+[sub_resource type="SphereShape" id=3]
 radius = 1.65989
 
-[sub_resource type="Animation" id=10]
+[sub_resource type="Animation" id=4]
 resource_name = "hatch_open"
 length = 2.0
 tracks/0/type = "value"
@@ -48,30 +48,30 @@ tracks/1/keys = {
 "values": [ Vector3( -19.01, 0, 0 ), Vector3( 87.938, 0, 0 ) ]
 }
 
-[sub_resource type="BoxShape" id=9]
+[sub_resource type="BoxShape" id=5]
 extents = Vector3( 1, 1.66367, 0.115274 )
 
-[sub_resource type="ShaderMaterial" id=12]
+[sub_resource type="ShaderMaterial" id=6]
 shader = ExtResource( 4 )
 shader_param/u_position = Vector3( 0, 0, 0 )
 shader_param/u_velocity = Vector3( 0, 0, -20 )
 shader_param/u_texture = ExtResource( 6 )
 
-[sub_resource type="Gradient" id=13]
+[sub_resource type="Gradient" id=7]
 offsets = PoolRealArray( 0, 0.389241, 0.515823, 0.64557, 1 )
 colors = PoolColorArray( 1, 1, 1, 0, 1, 1, 1, 0.92638, 1, 1, 1, 1, 1, 1, 1, 0.909849, 1, 1, 1, 0 )
 
-[sub_resource type="GradientTexture" id=14]
-gradient = SubResource( 13 )
+[sub_resource type="GradientTexture" id=8]
+gradient = SubResource( 7 )
 width = 16
 
-[sub_resource type="ParticlesMaterial" id=15]
+[sub_resource type="ParticlesMaterial" id=9]
 emission_shape = 2
 emission_box_extents = Vector3( 100, 100, 100 )
 gravity = Vector3( 0, 0, 0 )
-color_ramp = SubResource( 14 )
+color_ramp = SubResource( 8 )
 
-[sub_resource type="SpatialMaterial" id=7]
+[sub_resource type="SpatialMaterial" id=10]
 flags_unshaded = true
 params_billboard_mode = 3
 particles_anim_h_frames = 1
@@ -79,8 +79,8 @@ particles_anim_v_frames = 1
 particles_anim_loop = false
 albedo_color = Color( 0.498039, 0.498039, 0.498039, 1 )
 
-[sub_resource type="QuadMesh" id=8]
-material = SubResource( 7 )
+[sub_resource type="QuadMesh" id=11]
+material = SubResource( 10 )
 size = Vector2( 0.3, 0.3 )
 
 [node name="Ship" type="RigidBody"]
@@ -114,17 +114,16 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.71605, 0.65127 )
 [node name="Controller" type="Node" parent="."]
 script = ExtResource( 3 )
 keyboard_turn_sensitivity = 1.0
-mouse_turn_sensitivity = 0.1
 
 [node name="CommandPanel" type="Area" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74615, -2.57037 )
 
 [node name="CollisionShape" type="CollisionShape" parent="CommandPanel"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.141755, 0 )
-shape = SubResource( 11 )
+shape = SubResource( 3 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/hatch_open = SubResource( 10 )
+anims/hatch_open = SubResource( 4 )
 
 [node name="Visual" type="Node" parent="."]
 
@@ -140,17 +139,17 @@ transform = Transform( 1, 0, 0, 0, -0.241922, -0.970295, 0, 0.970295, -0.241922,
 
 [node name="CollisionShape" type="CollisionShape" parent="Visual/VisualRoot/ship/HatchDown/KinematicBody"]
 transform = Transform( 1, -1.7053e-13, 4.26326e-14, 0, 1, 0, 0, 0, 1, 5.68434e-13, -1.61023, 0.0508492 )
-shape = SubResource( 9 )
+shape = SubResource( 5 )
 
 [node name="MotionParticles" type="Particles" parent="Visual/VisualRoot"]
-material_override = SubResource( 12 )
+material_override = SubResource( 6 )
 cast_shadow = 0
 amount = 200
 lifetime = 0.5
 visibility_aabb = AABB( -100, -100, -100, 200, 200, 200 )
 local_coords = false
-process_material = SubResource( 15 )
-draw_pass_1 = SubResource( 8 )
+process_material = SubResource( 9 )
+draw_pass_1 = SubResource( 11 )
 script = ExtResource( 5 )
 
 [node name="CameraHints" type="Node" parent="Visual/VisualRoot"]
