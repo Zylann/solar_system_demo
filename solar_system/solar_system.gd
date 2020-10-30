@@ -111,7 +111,7 @@ func _ready():
 	
 	_directional_light = DirectionalLight.new()
 	_directional_light.shadow_enabled = true
-	_directional_light.shadow_color = Color(0.1, 0.1, 0.1)
+	_directional_light.shadow_color = Color(0.2, 0.2, 0.2)
 	_directional_light.directional_shadow_normal_bias = 0.2
 	_directional_light.directional_shadow_split_1 = 0.06
 	_directional_light.directional_shadow_split_2 = 0.2
@@ -321,6 +321,11 @@ func set_reference_body(ref_id: int):
 	for sb in body.static_bodies:
 		body.node.add_child(sb)
 	body.static_bodies_are_in_tree = true
+
+	_directional_light.shadow_color = body.atmosphere_color.darkened(0.8)
+	var environment = get_viewport().world.environment
+	environment.ambient_light_color = body.atmosphere_color
+	environment.ambient_light_energy = 50
 	
 	emit_signal("reference_body_changed", info)
 

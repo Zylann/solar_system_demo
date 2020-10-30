@@ -18,7 +18,8 @@ panorama = ExtResource( 1 )
 [sub_resource type="Environment" id=2]
 background_mode = 2
 background_sky = SubResource( 1 )
-ambient_light_color = Color( 0.0470588, 0.0470588, 0.0470588, 1 )
+ambient_light_color = Color( 1, 1, 1, 1 )
+ambient_light_energy = 18.0
 glow_enabled = true
 glow_levels/5 = false
 glow_levels/6 = true
@@ -119,9 +120,9 @@ __meta__ = {
 }
 
 [node name="PC" type="PanelContainer" parent="LoadingScreen/CC"]
-margin_left = 104.0
+margin_left = 105.0
 margin_top = 277.0
-margin_right = 918.0
+margin_right = 919.0
 margin_bottom = 323.0
 
 [node name="VB" type="VBoxContainer" parent="LoadingScreen/CC/PC"]
