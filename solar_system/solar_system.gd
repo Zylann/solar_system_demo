@@ -5,7 +5,7 @@ const StellarBody = preload("./stellar_body.gd")
 const PlanetGenerator = preload("./planet_generator.gd")
 
 const SunMaterial = preload("./materials/sun_yellow.tres")
-const PlanetRockMaterial = preload("materials/planet_surface_rocks.tres")
+const PlanetRockMaterial = preload("planet_material.tres")
 const VolumetricAtmosphereScene = preload("../atmosphere/volumetric_atmosphere.tscn")
 const CameraScene = preload("../camera/camera.tscn")
 const ShipScene = preload("../ship/ship.tscn")
@@ -119,7 +119,6 @@ func _ready():
 	_directional_light.directional_shadow_blend_splits = true
 	_directional_light.directional_shadow_max_distance = 200.0
 	
-	#var generator = PlanetGenerator.new()
 	var progress_info = LoadingProgress.new()
 	
 	for i in len(_bodies):
@@ -146,7 +145,8 @@ func _ready():
 			root.add_child(mi)
 			
 		elif body.type == StellarBody.TYPE_ROCKY:
-			var mat : SpatialMaterial = PlanetRockMaterial
+			var mat : ShaderMaterial = PlanetRockMaterial.duplicate()
+			mat.set_shader_param("u_mountain_height", body.radius)
 			
 			var generator : VoxelGeneratorGraph = BasePlanetVoxelGraph.duplicate(true)
 			var sphere_node_id := 9
@@ -156,29 +156,12 @@ func _ready():
 			volume.lod_count = 6
 			volume.lod_split_scale = 3
 			volume.stream = generator
-			# TODO Need to uncap this value in the module
 			volume.view_distance = 100000
 			volume.voxel_bounds = AABB(Vector3(-1024, -1024, -1024), Vector3(2048, 2048, 2048))
-			volume.material = PlanetRockMaterial
+			volume.material = mat
 			#volume.set_process_mode(VoxelLodTerrain.PROCESS_MODE_PHYSICS)
 			body.volume = volume
 			root.add_child(volume)
-			
-#			generator.set_radius(body.radius)
-#			generator.set_quad_count(int(body.radius) / 4)
-#			var parts = generator.generate(true)
-#
-#			for part in parts:
-#				var mi = MeshInstance.new()
-#				mi.mesh = part.mesh
-#				mi.material_override = mat
-#				root.add_child(mi)
-#
-#				var cs = CollisionShape.new()
-#				cs.shape = part.shape
-#				var sb = StaticBody.new()
-#				sb.add_child(cs)
-#				body.static_bodies.append(sb)
 		
 		var atmo = VolumetricAtmosphereScene.instance()
 		#atmo.scale = Vector3(1, 1, 1) * (0.99 * body.radius)
@@ -312,7 +295,8 @@ func set_reference_body(ref_id: int):
 	print("Setting reference to ", ref_id, " (", body.name, ")")
 	var trans = body.node.transform
 	body.node.transform = Transform()
-	var info = ReferenceChangeInfo.new()
+	
+	var info := ReferenceChangeInfo.new()
 	# TODO Also have relative velocity of the body,
 	# so the ship can integrate it so it looks seamless
 	info.inverse_transform = trans.affine_inverse() * body.node.transform
