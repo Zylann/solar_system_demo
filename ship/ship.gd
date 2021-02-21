@@ -170,7 +170,6 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 	var main_jet_power = _move_cmd.z
 	for jet in _main_jets:
 		jet.set_power(main_jet_power)
-	DDD.set_text("turn_cmd", _turn_cmd)
 	var left_roll_jet_power = max(_turn_cmd.z, 0.0)
 	var right_roll_jet_power = max(-_turn_cmd.z, 0.0)
 	for jet in _left_roll_jets:
@@ -184,4 +183,3 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 	DDD.set_text("Z", gtrans.origin.z)
 	
 	_visual_root.global_transform = gtrans
-	#print("SHIP: ", gtrans.origin)

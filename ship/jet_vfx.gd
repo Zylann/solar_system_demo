@@ -22,4 +22,3 @@ func _process(delta: float):
 	_mesh_instance.material_override.set_shader_param("u_power", p)
 	_mesh_instance.scale = Vector3(1, 1, 0.1 + p * 15.0 * _mesh_instance.scale.x)
 	_light.light_energy = p * 2.0
-	DDD.set_text(name, p)
