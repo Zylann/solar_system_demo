@@ -309,7 +309,7 @@ func set_reference_body(ref_id: int):
 	_directional_light.shadow_color = body.atmosphere_color.darkened(0.8)
 	var environment = get_viewport().world.environment
 	environment.ambient_light_color = body.atmosphere_color
-	environment.ambient_light_energy = 50
+	environment.ambient_light_energy = 20
 	
 	emit_signal("reference_body_changed", info)
 
