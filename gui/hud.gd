@@ -6,8 +6,13 @@ const Util = preload("../util/util.gd")
 onready var _solar_system = get_parent()
 onready var _target_planet_label = $TargetPlanetLabel
 onready var _target_label_rect = $TargetPlanetRect
+onready var _waypoint_hud = $WaypointHUD
 
 var _target_planet_screen_pos := Vector2()
+
+
+func _ready():
+	_waypoint_hud.set_solar_system(_solar_system)
 
 
 func _process(_delta: float):

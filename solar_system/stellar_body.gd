@@ -23,6 +23,8 @@ var day_count := 0
 var year_count := 0
 var static_bodies_are_in_tree := false
 
+var waypoints = []
+
 # Godot stuff
 var node : Spatial
 var volume : VoxelLodTerrain

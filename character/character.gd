@@ -5,6 +5,7 @@ const SolarSystem = preload("../solar_system/solar_system.gd")
 const Ship = preload("../ship/ship.gd")
 const Util = preload("../util/util.gd")
 const CollisionLayers = preload("../collision_layers.gd")
+const Waypoint = preload("../waypoints/waypoint.tscn")
 
 const VERTICAL_CORRECTION_SPEED = PI
 const MOVE_ACCELERATION = 40.0
@@ -23,6 +24,7 @@ var _jump_cooldown := 0.0
 var _dig_cmd := false
 var _interact_cmd := false
 var _build_cmd := false
+var _waypoint_cmd := false
 
 
 func _physics_process(delta: float):
@@ -107,6 +109,7 @@ func _process_actions():
 	if not hit.empty():
 		if hit.collider is VoxelLodTerrain:
 			var volume : VoxelLodTerrain = hit.collider
+
 			if _dig_cmd:
 				_dig_cmd = false
 				var vt : VoxelTool = volume.get_voxel_tool()
@@ -121,6 +124,14 @@ func _process_actions():
 				vt.channel = VoxelBuffer.CHANNEL_SDF
 				vt.mode = VoxelTool.MODE_ADD
 				vt.do_sphere(pos, 3.5)
+			
+			if _waypoint_cmd:
+				_waypoint_cmd = false
+				var planet = _get_solar_system().get_reference_stellar_body()
+				var waypoint = Waypoint.instance()
+				waypoint.transform = Transform(transform.basis, hit.position)
+				planet.node.add_child(waypoint)
+				planet.waypoints.append(waypoint)
 
 
 func _input(event):
@@ -133,6 +144,8 @@ func _input(event):
 					_interact_cmd = true
 				KEY_F:
 					_flashlight.visible = not _flashlight.visible
+				KEY_T:
+					_waypoint_cmd = true
 					
 	elif event is InputEventMouseButton:
 		if event.pressed:
