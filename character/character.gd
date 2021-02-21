@@ -90,10 +90,10 @@ func _physics_process(delta: float):
 		_interact()
 		_interact_cmd = false
 
-	_process_dig_actions()
+	_process_actions()
 
 
-func _process_dig_actions():
+func _process_actions():
 	var camera := get_viewport().get_camera()
 	var front := -camera.global_transform.basis.z
 	var cam_pos = camera.global_transform.origin
@@ -101,7 +101,7 @@ func _process_dig_actions():
 	var hit = space_state.intersect_ray(cam_pos, cam_pos + front * 50.0, [self])
 	if not hit.empty():
 		if hit.collider is VoxelLodTerrain:
-			DDD.draw_box(hit.position, Vector3(0.5,0.5,0.5))
+			DDD.draw_box(hit.position, Vector3(0.5,0.5,0.5), Color(1,1,0))
 			DDD.draw_ray_3d(hit.position, hit.normal, 1.0, Color(1,1,0))
 	
 	if not hit.empty():
