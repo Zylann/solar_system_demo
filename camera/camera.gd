@@ -91,6 +91,8 @@ func set_target(target: Spatial):
 	# when the node is not in the tree, but the meaning is global here
 	transform = _get_ideal_transform(tt)
 
+	near = distance_to_target * 0.1
+
 
 func _get_ideal_transform(target_transform: Transform) -> Transform:
 	var ct = target_transform
