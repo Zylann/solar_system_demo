@@ -50,7 +50,7 @@ func draw_box(position: Vector3, size: Vector3, color: Color = Color(1,1,1)):
 	var mat := _get_line_material()
 	mat.albedo_color = color
 	mi.material_override = mat
-	mi.translation = position
+	mi.translation = position - size * 0.5
 	mi.scale = size
 	_boxes.append({
 		"node": mi,
@@ -65,6 +65,7 @@ func draw_box(position: Vector3, size: Vector3, color: Color = Color(1,1,1)):
 func draw_line_3d(a: Vector3, b: Vector3, color: Color):
 	var g = ImmediateGeometry.new()
 	g.material_override = _get_line_material()
+	g.material_override.albedo_color = Color(1, 1, 1)
 	g.begin(Mesh.PRIMITIVE_LINES)
 	g.set_color(color)
 	g.add_vertex(a)
