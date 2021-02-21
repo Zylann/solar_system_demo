@@ -14,6 +14,7 @@ var self_revolution_time := 0.0
 var orbit_tilt := 0.0
 var self_tilt := 0.0
 var atmosphere_color := Color(0.5, 0.7, 1.0)
+var sea := false
 
 # State values
 var orbit_revolution_progress := 0.0
@@ -25,6 +26,7 @@ var static_bodies_are_in_tree := false
 # Godot stuff
 var node : Spatial
 var volume : VoxelLodTerrain
+var instancer : VoxelInstancer
 var static_bodies := []
 
 

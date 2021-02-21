@@ -1,7 +1,8 @@
 [gd_resource type="VoxelGeneratorGraph" load_steps=2 format=2]
 
 [sub_resource type="OpenSimplexNoise" id=1]
-octaves = 5
+octaves = 6
+period = 256.0
 persistence = 0.4
 
 [resource]
@@ -17,7 +18,7 @@ graph_data = {
 "type": "Add"
 },
 "11": {
-"b": 40.0,
+"b": 80.0,
 "gui_position": Vector2( 700, 40 ),
 "name": "height_multiplier",
 "type": "Multiply"

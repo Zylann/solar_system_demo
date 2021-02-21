@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/zylann.atmosphere/planet_atmosphere.gd" type="Script" id=2]
+
+[node name="PlanetAthmosphere" type="Spatial"]
+script = ExtResource( 2 )
