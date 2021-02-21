@@ -1,1 +1,3 @@
 .import/
+debug_data/*.png
+debug_data/*.sqlite
