@@ -6,7 +6,7 @@
 [ext_resource path="res://gui/hud.gd" type="Script" id=4]
 [ext_resource path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" type="Script" id=5]
 [ext_resource path="res://gui/fonts/hack_regular_16_dynamic_font.tres" type="DynamicFont" id=6]
-[ext_resource path="res://mouse_capture.tscn" type="PackedScene" id=7]
+[ext_resource path="res://gui/mouse_capture.tscn" type="PackedScene" id=7]
 [ext_resource path="res://voxel_debug_info.gd" type="Script" id=8]
 [ext_resource path="res://addons/SIsilicon.vfx.lens flare/lens-dirt-default.jpeg" type="Texture" id=9]
 [ext_resource path="res://gui/crosshair.png" type="Texture" id=10]
