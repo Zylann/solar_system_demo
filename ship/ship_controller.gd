@@ -62,6 +62,9 @@ func _physics_process(_delta: float):
 	if _exit_ship_cmd:
 		_exit_ship_cmd = false
 		_try_exit_ship()
+	
+	if is_processing():
+		_process_dig_actions()
 		
 
 func _try_exit_ship():
@@ -125,4 +128,27 @@ func _input(event):
 			match event.scancode:
 				KEY_E:
 					_exit_ship_cmd = true
+
+
+# TODO Temporary, need to replace this with a rocket launcher
+func _process_dig_actions():
+	var camera := get_viewport().get_camera()
+	var front := -camera.global_transform.basis.z
+	var cam_pos = camera.global_transform.origin
+	var space_state := camera.get_world().direct_space_state
+	var hit = space_state.intersect_ray(cam_pos, cam_pos + front * 50.0, [self])
+	
+	var dig_cmd = Input.is_mouse_button_pressed(BUTTON_LEFT)
+	
+	if not hit.empty():
+		if hit.collider is VoxelLodTerrain:
+			var volume : VoxelLodTerrain = hit.collider
+			if dig_cmd:
+				var vt : VoxelTool = volume.get_voxel_tool()
+				var pos = volume.get_global_transform().affine_inverse() * hit.position
+				var sphere_size = 15.0
+				pos -= front * (sphere_size * 0.7)
+				vt.channel = VoxelBuffer.CHANNEL_SDF
+				vt.mode = VoxelTool.MODE_REMOVE
+				vt.do_sphere(pos, sphere_size)
 
