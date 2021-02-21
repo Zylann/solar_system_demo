@@ -20,7 +20,7 @@ DDD="*res://addons/zylann.debug_draw/debug_draw.gd"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "SIsilicon.vfx.lens flare" )
+enabled=PoolStringArray(  )
 
 [rendering]
 
