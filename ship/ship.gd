@@ -126,8 +126,17 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 	var forward := -gtrans.basis.z
 	var right := gtrans.basis.x
 	var up := gtrans.basis.y
+
+	var stellar_body : StellarBody = get_solar_system().get_reference_stellar_body()
+	var linear_acceleration_mod := linear_acceleration
+	var speed_cap_in_space_mod := speed_cap_in_space
+	if Input.is_key_pressed(KEY_SPACE) and stellar_body.type == StellarBody.TYPE_SUN:
+		speed_cap_in_space_mod *= 10.0
+		linear_acceleration_mod *= 15.0
+
+	var speed_cap := speed_cap_in_space_mod
 	
-	var motor = _move_cmd.z * forward * linear_acceleration
+	var motor = _move_cmd.z * forward * linear_acceleration_mod
 	state.add_force(motor, Vector3())
 
 	_turn_cmd.x = clamp(_turn_cmd.x, -1, 1)
@@ -141,26 +150,27 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 	# Angular damping?
 	#state.apply_torque_impulse(-state.angular_velocity * 0.01)
 
-	# Gravity
-	var speed_cap := speed_cap_in_space
-	var stellar_body : StellarBody = get_solar_system().get_reference_stellar_body()
+	# Planet influence
 	if stellar_body.type != StellarBody.TYPE_SUN:
 		var pull_center := stellar_body.node.global_transform.origin
-		var gravity_dir := (pull_center - gtrans.origin).normalized()
-		var d := pull_center.distance_to(gtrans.origin)
+		var distance_to_core := pull_center.distance_to(gtrans.origin)
+
+		# Gravity
+		# TODO Need a No-Man-Sky-esque mechanic to land without gravity
 		# In case you dive into a stellar body, gravity actually reduces as you get closer to
 		# the core, because some mass is now behind you
-		d = abs(d - stellar_body.radius) + stellar_body.radius
+		var gd := abs(distance_to_core - stellar_body.radius) + stellar_body.radius
+		var gravity_dir := (pull_center - gtrans.origin).normalized()
 		var stellar_mass := Util.get_sphere_volume(stellar_body.radius)
-		var f := 0.01 * stellar_mass / (d * d)
+		var f := 0.005 * stellar_mass / (gd * gd)
 		state.add_force(gravity_dir * f, Vector3())
 		
 		# Near-planet damping
-		var distance_to_surface := d - stellar_body.radius
+		var distance_to_surface := distance_to_core - stellar_body.radius
 		_planet_damping_amount = \
 			1.0 - clamp((distance_to_surface - 50.0) / stellar_body.radius, 0.0, 1.0)
 		DDD.set_text("Atmosphere damping amount", _planet_damping_amount)
-		speed_cap = lerp(speed_cap_in_space, speed_cap_on_planet, _planet_damping_amount)
+		speed_cap = lerp(speed_cap_in_space_mod, speed_cap_on_planet, _planet_damping_amount)
 	
 	var speed := state.linear_velocity.length()
 	if speed > speed_cap:
