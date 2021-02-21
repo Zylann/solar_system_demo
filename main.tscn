@@ -37,7 +37,7 @@ script = ExtResource( 2 )
 environment = SubResource( 2 )
 
 [node name="SpawnPoint" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12000, 0, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8000, 0, 0 )
 
 [node name="HUD" type="Control" parent="."]
 anchor_right = 1.0
