@@ -94,9 +94,9 @@ height = 400.0
 generator = ExtResource( 4 )
 mesher = SubResource( 1 )
 view_distance = 2048
+voxel_bounds = AABB( -2048, -2048, -2048, 4096, 4096, 4096 )
 lod_count = 7
 material = ExtResource( 1 )
-voxel_bounds = AABB( -2048, -2048, -2048, 4096, 4096, 4096 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.719679, 0.694307, 0, -0.694307, 0.719679, 0, 538.943, 0 )
