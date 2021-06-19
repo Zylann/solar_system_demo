@@ -1,11 +1,17 @@
-# Debug stuff.
+# Debug stuff. A bunch of hotkeys that do things.
 
 extends Node
 
 const CollisionScannerScene = \
 	preload("res://addons/zylann.collision_scanner/collision_overlay.tscn")
 
+export(bool) var enable_hotkeys = false
+
 onready var _solar_system = get_parent()
+
+
+func _ready():
+	set_process_unhandled_input(enable_hotkeys)
 
 
 func _unhandled_input(event):
@@ -17,6 +23,81 @@ func _unhandled_input(event):
 
 				KEY_KP_2:
 					_debug_voxel_raycast_sweep()
+
+				KEY_O:
+					var vp = get_viewport()
+					if vp.debug_draw == Viewport.DEBUG_DRAW_OVERDRAW:
+						vp.debug_draw = Viewport.DEBUG_DRAW_DISABLED
+					else:
+						vp.debug_draw = Viewport.DEBUG_DRAW_OVERDRAW
+
+				KEY_P:
+					_dump_octree()
+
+				KEY_U:
+					print("PINNING VIEWER")
+					var cam = get_viewport().get_camera()
+					var viewer = cam.get_node("VoxelViewer")
+					cam.remove_child(viewer)
+					add_child(viewer)
+					viewer.global_transform = cam.global_transform
+
+				KEY_M:
+					_log_pointed_mesh_block_info()
+
+
+func _log_pointed_mesh_block_info():
+	var current_planet = _solar_system.get_reference_stellar_body()
+	if current_planet == null or current_planet.volume == null:
+		print("No volume")
+		return
+
+	var volume = current_planet.volume
+
+	var vt = volume.get_voxel_tool()
+	vt.set_raycast_binary_search_iterations(4)
+	var vtrans = volume.get_global_transform()
+	var vtrans_inv = vtrans.affine_inverse()
+	var cam = get_viewport().get_camera()
+	var vp_size = get_viewport().size
+	var vp_center = vp_size / 2
+	var ray_pos_local = vtrans_inv * cam.project_ray_origin(vp_center)
+	var ray_dir_local = vtrans_inv.basis * cam.project_ray_normal(vp_center)
+	var hit = vt.raycast(ray_pos_local, ray_dir_local, 20)
+	if hit == null:
+		print("No hit")
+		return
+
+	var lod_index = 0
+	var bpos = volume.voxel_to_mesh_block_position(hit.position, lod_index)
+	var info = volume.debug_get_mesh_block_info(bpos, lod_index)
+	print("Info about mesh block ", bpos, " at lod ", lod_index, ":")
+	for key in info:
+		print("- ", key, ": ", info[key])
+
+	var render_to_data_factor = volume.get_mesh_block_size() / volume.get_data_block_size()
+	for lz in render_to_data_factor:
+		for ly in render_to_data_factor:
+			for lx in render_to_data_factor:
+				var lp = Vector3(lx, ly, lz)
+				var dbpos = bpos * render_to_data_factor + lp
+				var data_info = volume.debug_get_data_block_info(dbpos, lod_index)
+				print("- data_block ", lp, ": ", data_info)
+
+
+func _dump_octree():
+	var current_planet = _solar_system.get_reference_stellar_body()
+	var volume = current_planet.volume
+	if volume == null:
+		return
+	var data = volume.debug_get_octrees_detailed()
+	var f = ConfigFile.new()
+	var cam = get_viewport().get_camera()
+	f.set_value("debug", "octree", data)
+	f.set_value("debug", "lod_count", volume.get_lod_count())
+	f.set_value("debug", "block_size", volume.get_mesh_block_size())
+	f.set_value("debug", "camera_transform", cam.global_transform)
+	f.save("debug_data/octree.dat")
 
 
 func _debug_voxel_raycast_sweep():
@@ -91,6 +172,14 @@ func _process(delta):
 			volume_stats.remaining_main_thread_blocks)
 		DDD.set_text(str("[", current_planet.name, "] Blocked lods: "), volume_stats.blocked_lods)
 		_debug_voxel_raycast(current_planet.volume)
+
+		if current_planet.instancer != null:
+			var instance_counts = current_planet.instancer.debug_get_instance_counts()
+			var lib = current_planet.instancer.library
+			for item_id in instance_counts:
+				var item = lib.get_item(item_id)
+				var count = instance_counts[item_id]
+				DDD.set_text(str("Instances of ", item.name), count)
 
 
 func _debug_voxel_raycast(volume):
