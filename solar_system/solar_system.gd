@@ -175,6 +175,12 @@ func _ready():
 			# generator.set_node_default_input(cave_height_multiplier_node_id, 1, 0.015)
 			generator.compile()
 
+			generator.use_subdivision = true
+			generator.subdivision_size = 8
+
+#			ResourceSaver.save(str("debug_data/generator_", body.name, ".tres"), generator, 
+#				ResourceSaver.FLAG_BUNDLE_RESOURCES)
+
 			var sphere_normalmap = Image.new()
 			sphere_normalmap.create(512, 256, false, Image.FORMAT_RGB8)
 			generator.bake_sphere_normalmap(sphere_normalmap, body.radius * 0.95, 200.0 / body.radius)
@@ -200,6 +206,8 @@ func _ready():
 			volume.lod_fade_duration = 0.3
 			print("DDD ", body.name, " has bounds ", volume.voxel_bounds, " for radius ", body.radius)
 			volume.material = mat
+			# TODO Set before setting voxel bounds?
+			volume.mesh_block_size = 32
 			#volume.set_process_mode(VoxelLodTerrain.PROCESS_MODE_PHYSICS)
 			body.volume = volume
 			root.add_child(volume)
