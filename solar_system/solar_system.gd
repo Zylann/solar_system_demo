@@ -457,10 +457,12 @@ func _physics_process(delta: float):
 		var body : StellarBody = _bodies[i]
 		if body.volume == null:
 			continue
-		var s = str("G: ", body.volume.debug_get_block_count())
+		var s = str(
+			"D: ", body.volume.debug_get_data_block_count(), ", ", 
+			"M: ", body.volume.debug_get_mesh_block_count())
 		if body.instancer != null:
 			s += str("| I: ", body.instancer.debug_get_block_count())
-		DDD.set_text(str("Block count in ", body.name), s)
+		DDD.set_text(str("Blocks in ", body.name), s)
 		#var stats = body.volume.get_statistics()
 		#for k in stats:
 		#	if k.begins_with("time_"):
@@ -537,6 +539,7 @@ func get_reference_stellar_body() -> StellarBody:
 func _notification(what: int):
 	match what:
 		NOTIFICATION_WM_QUIT_REQUEST:
+			# Save game when the user closes the window
 			_save_world()
 
 
