@@ -64,6 +64,7 @@ func _ready():
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 50.0 * 60.0
 	planet.atmosphere_color = Color(1.0, 0.4, 0.1)
+	planet.orbit_revolution_progress = -0.1
 	_bodies.append(planet)
 
 	planet = StellarBody.new()
@@ -75,6 +76,7 @@ func _ready():
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 150.0 * 60.0
 	planet.atmosphere_color = Color(0.3, 0.5, 1.0)
+	planet.orbit_revolution_progress = 0.0
 	planet.sea = true
 	var earth_id = len(_bodies)
 	_bodies.append(planet)
@@ -88,6 +90,7 @@ func _ready():
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 10.0 * 60.0
 	planet.atmosphere_color = Color(0.2, 0.2, 0.2)
+	planet.orbit_revolution_progress = 0.25
 	_bodies.append(planet)
 
 	planet = StellarBody.new()
@@ -99,6 +102,7 @@ func _ready():
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 100.0 * 60.0
 	planet.atmosphere_color = Color(1.2, 0.8, 0.5)
+	planet.orbit_revolution_progress = 0.1
 	_bodies.append(planet)
 
 	planet = StellarBody.new()
