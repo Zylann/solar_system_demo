@@ -132,7 +132,12 @@ func _physics_process(delta: float):
 		
 		body.node.transform = trans
 	
-	# Update directional light. Smoke and mirrors here
+	# Update directional light. Smoke and mirrors here:
+	# We use a DirectionalLight because it has better quality than an OmniLight,
+	# but that means planets are not accurately lit. This is not much of an issue though because
+	# discrepancies will occur only when planets are very far away, or even behind the sun.
+	# If we still want accurate lighting, we could maybe modify their shader far away to simulate
+	# them being lit in a simplified manner?
 	var camera : Camera = get_viewport().get_camera()
 	if camera != null:
 		var pos = camera.global_transform.origin
@@ -140,8 +145,10 @@ func _physics_process(delta: float):
 		if pos != _directional_light.global_transform.origin:
 			_directional_light.look_at(pos, Vector3(0, 1, 0))
 	
-	# Update sky rotation
+	# Update sky rotation.
 	if _reference_body_id != 0:
+		# When we are on a planet, the sky is no longer in world space,
+		# so we must simulate its motion relative to us
 		_environment.background_sky_orientation = ref_trans_inverse.basis
 	else:
 		_environment.background_sky_orientation = Basis()
