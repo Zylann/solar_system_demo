@@ -191,12 +191,13 @@ func _ready():
 				pot *= 2
 			var volume := VoxelLodTerrain.new()
 			volume.lod_count = 7
-			volume.lod_split_scale = 3
+			volume.lod_distance = 60.0
 			volume.collision_lod_count = 2
 			volume.generator = generator
 			volume.stream = stream
 			volume.view_distance = 100000
 			volume.voxel_bounds = AABB(Vector3(-pot, -pot, -pot), Vector3(2 * pot, 2 * pot, 2 * pot))
+			volume.lod_fade_duration = 0.3
 			print("DDD ", body.name, " has bounds ", volume.voxel_bounds, " for radius ", body.radius)
 			volume.material = mat
 			#volume.set_process_mode(VoxelLodTerrain.PROCESS_MODE_PHYSICS)

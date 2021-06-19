@@ -6,8 +6,10 @@ uniform sampler2D u_side_albedo_texture : hint_albedo;
 uniform sampler2D u_side_normal_texture;
 uniform sampler2D u_global_normalmap;
 uniform float u_mountain_height;
+
 // From Voxel Tools API
 uniform mat4 u_block_local_transform;
+uniform vec2 u_lod_fade;
 
 varying vec3 v_planet_up;
 varying vec3 v_planet_normal;
@@ -17,6 +19,10 @@ varying vec3 v_triplanar_power_normal;
 varying float v_camera_distance;
 
 const float TAU = 6.28318530717958647;
+
+float get_hash(vec2 c) {
+	return fract(sin(dot(c.xy, vec2(12.9898,78.233))) * 43758.5453);
+}
 
 vec4 triplanar_texture(sampler2D p_sampler, vec3 p_weights, vec3 p_triplanar_pos) {
 	vec4 samp = vec4(0.0);
@@ -52,7 +58,7 @@ void vertex() {
 	v_planet_height = length(local_pos);
 	
 	v_triplanar_uv = local_pos * 0.05;
-	float triplanar_blend_sharpness = 4.0;
+	float triplanar_blend_sharpness = 8.0;
 	v_triplanar_power_normal = pow(abs(v_planet_normal), vec3(triplanar_blend_sharpness));
 	v_triplanar_power_normal /= dot(v_triplanar_power_normal, vec3(1.0));
 
@@ -61,12 +67,12 @@ void vertex() {
 	v_camera_distance = distance(wpos, cam_pos);
 	
 	TANGENT = vec3(0.0, 0.0, -1.0) * abs(v_planet_normal.x);
-	TANGENT+= vec3(1.0, 0.0, 0.0) * abs(v_planet_normal.y);
-	TANGENT+= vec3(1.0, 0.0, 0.0) * abs(v_planet_normal.z);
+	TANGENT += vec3(1.0, 0.0, 0.0) * abs(v_planet_normal.y);
+	TANGENT += vec3(1.0, 0.0, 0.0) * abs(v_planet_normal.z);
 	TANGENT = normalize(TANGENT);
 	BINORMAL = vec3(0.0, -1.0, 0.0) * abs(v_planet_normal.x);
-	BINORMAL+= vec3(0.0, 0.0, 1.0) * abs(v_planet_normal.y);
-	BINORMAL+= vec3(0.0, -1.0, 0.0) * abs(v_planet_normal.z);
+	BINORMAL += vec3(0.0, 0.0, 1.0) * abs(v_planet_normal.y);
+	BINORMAL += vec3(0.0, -1.0, 0.0) * abs(v_planet_normal.z);
 	BINORMAL = normalize(BINORMAL);
 }
 
@@ -83,18 +89,32 @@ void fragment() {
 	topness = mix(topness, 0.0, mountain_factor);
 
 	vec3 top_col = triplanar_texture(
-		u_top_albedo_texture, v_triplanar_power_normal, v_triplanar_uv).rgb;
+		u_top_albedo_texture, v_triplanar_power_normal, v_triplanar_uv * 2.0).rgb;
 	vec3 top_norm = triplanar_texture(
-		u_top_normal_texture, v_triplanar_power_normal, v_triplanar_uv).rgb;
+		u_top_normal_texture, v_triplanar_power_normal, v_triplanar_uv * 2.0).rgb;
 
 	vec3 side_col = triplanar_texture(
 		u_side_albedo_texture, v_triplanar_power_normal, v_triplanar_uv).rgb;
 	vec3 side_norm = triplanar_texture(
 		u_side_normal_texture, v_triplanar_power_normal, v_triplanar_uv).rgb;
+
+	// Far texturing
+	float far_min_distance = 100.0;
+	float far_max_distance = 200.0;
+	float far_uv_multiplier = 0.25;
+	float far_factor = 
+		clamp((v_camera_distance - far_min_distance) / (far_max_distance - far_min_distance), 0.0, 1.0);
+	vec3 far_side_col = triplanar_texture(
+		u_side_albedo_texture, v_triplanar_power_normal, v_triplanar_uv * far_uv_multiplier).rgb;
+	vec3 far_side_norm = triplanar_texture(
+		u_side_normal_texture, v_triplanar_power_normal, v_triplanar_uv * far_uv_multiplier).rgb;
+	side_col = mix(side_col, far_side_col, far_factor);
+	side_norm = mix(side_norm, far_side_norm, far_factor);
 	
 	ALBEDO = mix(side_col, top_col, topness);
-	//NORMALMAP = mix(side_norm, top_norm, topness);
+	NORMALMAP = mix(side_norm, top_norm, topness);
 
+	// Far normalmapping
 	vec2 sphere_uv = get_sphere_uv(v_planet_up);
 	vec3 global_nm = texture(u_global_normalmap, sphere_uv).rgb;
 	global_nm.r = 1.0 - global_nm.r;
@@ -111,4 +131,41 @@ void fragment() {
 	//ALBEDO = vec3(normal);
 	//ALBEDO = vec3(steepness);
 	//ALBEDO = v_up * 0.5 + vec3(0.5);
+
+	// Hack to affect the shadow pass.
+	// Will only work if your game uses perspective projection.
+	// We'll use it to prevent fading-out meshes from projecting a shadow,
+	// and to force the fading-in meshes to project a full shadow.
+	// You may want to disable projecting shadow from the fading-out meshes to optimize a little.
+	//float is_ortho = PROJECTION_MATRIX[3][3];
+	//float is_shadow_pass = is_ortho;
+	// TODO Shadows can still cause trouble despite this workaround.
+	// The fading-in mesh can project a shadow on the fading-out mesh...
+	// And we can't turn off shadows from the fading-out mesh because 
+	// we still want OTHER meshes to project a shadow on it...
+	// See https://github.com/godotengine/godot-proposals/issues/692#issuecomment-782331429
+
+	//ALBEDO = vec3(u_lod_fade.x, u_lod_fade.y, 0.0);
+
+	// Color chunks
+	//vec3 blpos = (u_block_local_transform * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+	//ALBEDO += 0.15 * vec3(get_hash(blpos.xy), get_hash(blpos.xz), get_hash(blpos.yz));
+
+	// Discard has to be last to workaround https://github.com/godotengine/godot/issues/34966
+	
+	// Terrible impl but can surely be optimized
+	float h = get_hash(SCREEN_UV);
+	if (u_lod_fade.y > 0.5) {
+		// Fade in
+		if (u_lod_fade.x < h) {
+			discard;
+		}
+	} else {
+		// Fade out
+		if (u_lod_fade.x > h) {
+			discard;
+		}
+	}
+
+	//ALBEDO = NORMAL;
 }
