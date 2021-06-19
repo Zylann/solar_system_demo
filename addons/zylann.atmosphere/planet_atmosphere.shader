@@ -16,56 +16,7 @@ uniform float u_density = 0.2;
 uniform float u_attenuation_distance = 0.0;
 
 varying vec3 v_planet_center_viewspace;
-varying vec3 v_sun_center_local;
-varying mat4 v_world_to_local_matrix;
-
-
-vec3 mod289_3(vec3 x) {
-    return x - floor(x * (1.0 / 289.0)) * 289.0;
-}
-
-vec4 mod289_4(vec4 x) {
-    return x - floor(x * (1.0 / 289.0)) * 289.0;
-}
-
-vec4 permute(vec4 x) {
-    return mod289_4(((x * 34.0) + 1.0) * x);
-}
-
-float noise(vec3 p){
-    vec3 a = floor(p);
-    vec3 d = p - a;
-    d = d * d * (3.0 - 2.0 * d);
-
-    vec4 b = a.xxyy + vec4(0.0, 1.0, 0.0, 1.0);
-    vec4 k1 = permute(b.xyxy);
-    vec4 k2 = permute(k1.xyxy + b.zzww);
-
-    vec4 c = k2 + a.zzzz;
-    vec4 k3 = permute(c);
-    vec4 k4 = permute(c + 1.0);
-
-    vec4 o1 = fract(k3 * (1.0 / 41.0));
-    vec4 o2 = fract(k4 * (1.0 / 41.0));
-
-    vec4 o3 = o2 * d.z + o1 * (1.0 - d.z);
-    vec2 o4 = o3.yw * d.x + o3.xz * (1.0 - d.x);
-
-    float result = o4.y * d.y + o4.x * (1.0 - d.y);
-	return 2.0 * result - 1.0;
-}
-
-float noise_fbm(vec3 p) {
-	float v = 0.0;
-	float a = 0.5;
-	vec3 shift = vec3(100);
-	for (int i = 0; i < 3; ++i) {
-		v += a * noise(p);
-		p = p * 3.0 + shift;
-		a *= 0.5;
-	}
-	return v;
-}
+varying vec3 v_sun_center_viewspace;
 
 // x = first hit, y = second hit. Equal if not hit.
 vec2 ray_sphere(vec3 center, float radius, vec3 ray_origin, vec3 ray_dir) {
@@ -83,12 +34,8 @@ float ray_plane(vec3 plane_pos, vec3 plane_dir, vec3 ray_origin, vec3 ray_dir) {
 	return dot(plane_pos - ray_origin, plane_dir) / (dp + 0.0001);
 }
 
-float cloud_curve(float x) {
-	return clamp(1.0 - abs((x - 0.3) * 8.0), 0.0, 1.0);
-}
-
 float get_atmo_factor(vec3 ray_origin, vec3 ray_dir, vec3 planet_center,
-	float t_begin, float t_end, vec3 sun_dir, out float light_factor, float time) {
+	float t_begin, float t_end, vec3 sun_dir, out float light_factor) {
 
 	int steps = 16;
 	float inv_steps = 1.0 / float(steps);
@@ -100,7 +47,6 @@ float get_atmo_factor(vec3 ray_origin, vec3 ray_dir, vec3 planet_center,
 
 	float factor = 1.0;
 	float light_sum = 0.0;
-	float cloud_anim = 10.0*time;
 
 	// TODO Some stuff can be optimized
 	for (int i = 0; i < steps; ++i) {
@@ -110,12 +56,7 @@ float get_atmo_factor(vec3 ray_origin, vec3 ray_dir, vec3 planet_center,
 		float h = clamp(sd / u_atmosphere_height, 0.0, 1.0);
 		float y = 1.0 - h;
 		
-		float density = pow(y, 3.0) * u_density;
-		
-		// Clouds
-		// TODO Separate clouds?
-		density = density + cloud_curve(h) * (0.02 * max(noise_fbm(vec3(pos.x, pos.y, pos.z + cloud_anim) * 0.004), 0.0));
-		//density = clamp(density, 0.0, 5.0);
+		float density = y * y * y * u_density;
 		
 		density *= min(1.0, attenuation_distance_inv * distance_from_ray_origin);
 		distance_from_ray_origin += step_len;
@@ -152,9 +93,7 @@ void vertex() {
 	
 	vec4 world_pos = WORLD_MATRIX * vec4(0, 0, 0, 1);
 	v_planet_center_viewspace = (INV_CAMERA_MATRIX * world_pos).xyz;
-	mat4 inv_world_matrix = inverse(WORLD_MATRIX);
-	v_world_to_local_matrix = inv_world_matrix;
-	v_sun_center_local = (inv_world_matrix * vec4(u_sun_position, 1.0)).xyz;
+	v_sun_center_viewspace = (INV_CAMERA_MATRIX * vec4(u_sun_position, 1.0)).xyz;
 }
 
 void fragment() {
@@ -171,30 +110,24 @@ void fragment() {
 	float linear_depth = distance(cam_pos_world, pos_world);
 	
 	// We'll evaluate the atmosphere in view space
-	//vec3 ray_origin = vec3(0.0, 0.0, 0.0);
-	//vec3 ray_dir = normalize(view_coords.xyz - ray_origin);
-	
-	// Convert to planet space
-	vec3 ray_origin_local = (v_world_to_local_matrix * vec4(cam_pos_world, 1.0)).xyz;
-	vec3 pos_local = (v_world_to_local_matrix * vec4(pos_world, 1.0)).xyz;
-	vec3 ray_dir_local = normalize(pos_local - ray_origin_local);
+	vec3 ray_origin = vec3(0.0, 0.0, 0.0);
+	vec3 ray_dir = normalize(view_coords.xyz - ray_origin);
 	
 	float atmosphere_radius = u_planet_radius + u_atmosphere_height;
-	vec2 rs_atmo = ray_sphere(vec3(0.0), atmosphere_radius, ray_origin_local, ray_dir_local);
+	vec2 rs_atmo = ray_sphere(v_planet_center_viewspace, atmosphere_radius, ray_origin, ray_dir);
 	
 	// TODO if we run this shader in a double-clip scenario,
 	// we have to account for the near and far clips properly, so they can be composed seamlessly
 	
-	// If we hit the outer sphere
 	if (rs_atmo.x != rs_atmo.y) {
 		float t_begin = max(rs_atmo.x, 0.0);
 		float t_end = max(rs_atmo.y, 0.0);
 		t_end = min(t_end, linear_depth);
 
-		vec3 sun_dir = normalize(v_sun_center_local);
+		vec3 sun_dir = normalize(v_sun_center_viewspace - v_planet_center_viewspace);
 		float light_factor;
 		float atmo_factor = get_atmo_factor(
-			ray_origin_local, ray_dir_local, vec3(0.0), t_begin, t_end, sun_dir, light_factor, TIME);
+			ray_origin, ray_dir, v_planet_center_viewspace, t_begin, t_end, sun_dir, light_factor);
 			
 		vec3 night_col = mix(u_night_color0.rgb, u_night_color1.rgb, atmo_factor);
 		vec3 day_col = mix(u_day_color0.rgb, u_day_color1.rgb, atmo_factor);
@@ -209,7 +142,5 @@ void fragment() {
 		//ALPHA = 0.2;
 		discard;
 	}
-	//ALPHA = 1.0;
-	//ALBEDO = clamp(ray_dir_local, vec3(0.0), vec3(1.0));
 }
 
