@@ -1,0 +1,267 @@
+[gd_scene load_steps=21 format=2]
+
+[ext_resource path="res://addons/zylann.3d_basics/testbed/grid10_material.tres" type="Material" id=1]
+[ext_resource path="res://addons/zylann.3d_basics/testbed/axes.tscn" type="PackedScene" id=2]
+
+
+[sub_resource type="BoxShape" id=1]
+extents = Vector3( 50, 1, 50 )
+
+[sub_resource type="CubeMesh" id=2]
+size = Vector3( 100, 2, 100 )
+
+[sub_resource type="BoxShape" id=4]
+extents = Vector3( 0.5, 1, 0.5 )
+
+[sub_resource type="CubeMesh" id=5]
+size = Vector3( 1, 2, 1 )
+
+[sub_resource type="ConvexPolygonShape" id=6]
+points = PoolVector3Array( 5, 1, 1, 5, 1, -1, 5, 1, 1, 5, 1, -1, -5, -1, 1, 5, -1, -1, 5, -1, 1, -5, -1, -1, 5, 1, 1, 5, 1, -1, 5, 1, -1, 5, 1, 1, 5, -1, 1, -5, -1, -1, 5, -1, -1, -5, -1, 1, -5, -1, 1, 5, -1, 1, -5, -1, -1, 5, -1, -1 )
+
+[sub_resource type="PrismMesh" id=7]
+material = ExtResource( 1 )
+left_to_right = 1.0
+size = Vector3( 10, 2, 2 )
+
+[sub_resource type="PrismMesh" id=8]
+left_to_right = 1.0
+size = Vector3( 5, 2, 2 )
+
+[sub_resource type="ConvexPolygonShape" id=9]
+points = PoolVector3Array( 2.5, 1, 1, 2.5, 1, -1, 2.5, 1, 1, 2.5, 1, -1, -2.5, -1, 1, 2.5, -1, -1, 2.5, -1, 1, -2.5, -1, -1, 2.5, 1, 1, 2.5, 1, -1, 2.5, 1, -1, 2.5, 1, 1, 2.5, -1, 1, -2.5, -1, -1, 2.5, -1, -1, -2.5, -1, 1, -2.5, -1, 1, 2.5, -1, 1, -2.5, -1, -1, 2.5, -1, -1 )
+
+[sub_resource type="PrismMesh" id=10]
+left_to_right = 1.0
+
+[sub_resource type="ConvexPolygonShape" id=11]
+points = PoolVector3Array( 1, 1, 1, 1, 1, -1, 1, 1, 1, 1, 1, -1, -1, -1, 1, 1, -1, -1, 1, -1, 1, -1, -1, -1, 1, 1, 1, 1, 1, -1, 1, 1, -1, 1, 1, 1, 1, -1, 1, -1, -1, -1, 1, -1, -1, -1, -1, 1, -1, -1, 1, 1, -1, 1, -1, -1, -1, 1, -1, -1 )
+
+[sub_resource type="PrismMesh" id=16]
+left_to_right = 1.0
+size = Vector3( 2, 4, 2 )
+
+[sub_resource type="ConvexPolygonShape" id=17]
+points = PoolVector3Array( 1, 2, 1, 1, 2, -1, 1, 2, 1, 1, 2, -1, -1, -2, 1, 1, -2, -1, 1, -2, 1, -1, -2, -1, 1, 2, 1, 1, 2, -1, 1, 2, -1, 1, 2, 1, 1, -2, 1, -1, -2, -1, 1, -2, -1, -1, -2, 1, -1, -2, 1, 1, -2, 1, -1, -2, -1, 1, -2, -1 )
+
+[sub_resource type="CubeMesh" id=12]
+size = Vector3( 4, 2, 6 )
+
+[sub_resource type="BoxShape" id=13]
+extents = Vector3( 2, 1, 3 )
+
+[sub_resource type="CubeMesh" id=18]
+size = Vector3( 3, 4, 2 )
+
+[sub_resource type="BoxShape" id=19]
+extents = Vector3( 1.5, 2, 1 )
+
+[sub_resource type="CubeMesh" id=14]
+size = Vector3( 1, 1, 1 )
+
+[sub_resource type="BoxShape" id=15]
+extents = Vector3( 0.5, 0.5, 0.5 )
+
+[node name="TestbedTerrain" type="Spatial"]
+
+[node name="Axes" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+
+[node name="Ground" type="StaticBody" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="Ground"]
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Ground"]
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="Box" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 2, 1.5 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Box"]
+shape = SubResource( 4 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Box"]
+mesh = SubResource( 5 )
+material/0 = ExtResource( 1 )
+
+[node name="Slope10" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, -9 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Slope10"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+shape = SubResource( 6 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Slope10"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+mesh = SubResource( 7 )
+material/0 = null
+
+[node name="Slope5" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 2, -7 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Slope5"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 8 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Slope5"]
+shape = SubResource( 9 )
+
+[node name="Slope2" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 2, -5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Slope2"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 10 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Slope2"]
+shape = SubResource( 11 )
+
+[node name="Slope1" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 3, -3 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Slope1"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 16 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Slope1"]
+shape = SubResource( 17 )
+
+[node name="Box2" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2, -7 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Box2"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 12 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Box2"]
+shape = SubResource( 13 )
+
+[node name="Box3" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12.5, 3, -3 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Box3"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 18 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="Box3"]
+shape = SubResource( 19 )
+
+[node name="AlignedBoxes" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1, 10 )
+
+[node name="Box3" type="StaticBody" parent="AlignedBoxes"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.500001, 0.5, 2.5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="AlignedBoxes/Box3"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 14 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="AlignedBoxes/Box3"]
+shape = SubResource( 15 )
+
+[node name="Box9" type="StaticBody" parent="AlignedBoxes"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.500001, 0.5, 1.5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="AlignedBoxes/Box9"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 14 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="AlignedBoxes/Box9"]
+shape = SubResource( 15 )
+
+[node name="Box10" type="StaticBody" parent="AlignedBoxes"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.500001, 0.5, 0.5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="AlignedBoxes/Box10"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 14 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="AlignedBoxes/Box10"]
+shape = SubResource( 15 )
+
+[node name="Box11" type="StaticBody" parent="AlignedBoxes"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.500001, 0.5, 8.5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="AlignedBoxes/Box11"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 14 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="AlignedBoxes/Box11"]
+shape = SubResource( 15 )
+
+[node name="Box12" type="StaticBody" parent="AlignedBoxes"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.500001, 0.5, 9.5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="AlignedBoxes/Box12"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 14 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="AlignedBoxes/Box12"]
+shape = SubResource( 15 )
+
+[node name="Box4" type="StaticBody" parent="AlignedBoxes"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.500001, 0.5, 3.5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="AlignedBoxes/Box4"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 14 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="AlignedBoxes/Box4"]
+shape = SubResource( 15 )
+
+[node name="Box5" type="StaticBody" parent="AlignedBoxes"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.500001, 0.5, 4.5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="AlignedBoxes/Box5"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 14 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="AlignedBoxes/Box5"]
+shape = SubResource( 15 )
+
+[node name="Box6" type="StaticBody" parent="AlignedBoxes"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.500001, 0.5, 5.5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="AlignedBoxes/Box6"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 14 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="AlignedBoxes/Box6"]
+shape = SubResource( 15 )
+
+[node name="Box7" type="StaticBody" parent="AlignedBoxes"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.500001, 0.5, 6.5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="AlignedBoxes/Box7"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 14 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="AlignedBoxes/Box7"]
+shape = SubResource( 15 )
+
+[node name="Box8" type="StaticBody" parent="AlignedBoxes"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.500001, 0.5, 7.5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="AlignedBoxes/Box8"]
+material_override = ExtResource( 1 )
+mesh = SubResource( 14 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="AlignedBoxes/Box8"]
+shape = SubResource( 15 )
