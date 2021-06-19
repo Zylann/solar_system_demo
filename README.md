@@ -10,9 +10,11 @@ Features
 - Deterministic, non-realistic celestial motion at all times
 - Simple atmospheres
 - Fully editable terrain using voxels
+- Persistent changes with save files per planet
 - Cave systems
 - Ravines
 - Spaceship flight from ground to space
+- Motion trails
 - Origin shifting allowing the whole system to be around 50Km in size (takes place only once when close enough to a planet)
 - Third-person character
 - Simple environment props such as rocks and grass
