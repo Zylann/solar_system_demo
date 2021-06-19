@@ -216,122 +216,7 @@ func _ready():
 			body.volume = volume
 			root.add_child(volume)
 
-			# Configure instancing
-			if true:
-				var pebble1 = load("res://props/pebbles/pebble1.obj")
-				var rock1 = load("res://props/rocks/rock1.obj")
-				var big_rock1 = load("res://props/big_rocks/big_rock1.obj")
-
-				for mesh in [pebble1, rock1, big_rock1]:
-					mesh.surface_set_material(0, load("res://props/rocks/rock_material.tres"))
-
-				var instancer = VoxelInstancer.new()
-				instancer.set_up_mode(VoxelInstancer.UP_MODE_SPHERE)
-
-				var library = VoxelInstanceLibrary.new()
-
-				var instance_generator = VoxelInstanceGenerator.new()
-				instance_generator.density = 0.15
-				instance_generator.min_scale = 0.2
-				instance_generator.max_scale = 0.4
-				instance_generator.min_slope_degrees = 0
-				instance_generator.max_slope_degrees = 40
-				#instance_generator.set_layer_min_height(layer_index, body.radius * 0.95)
-				instance_generator.random_vertical_flip = true
-				instance_generator.vertical_alignment = 0.0
-				instance_generator.emit_mode = VoxelInstanceGenerator.EMIT_FROM_FACES
-				instance_generator.noise = FastNoiseLite.new()
-				instance_generator.noise.period = 16
-				instance_generator.noise.fractal_octaves = 2
-				instance_generator.noise_on_scale = 1
-				#instance_generator.noise.noise_type = FastNoiseLite.TYPE_PERLIN
-				var item = VoxelInstanceLibraryItem.new()
-				
-				if body.name == "Earth":
-					var grass_mesh = preload("res://props/grass/grass.tscn").instance()
-					item.setup_from_template(grass_mesh)
-					grass_mesh.free()
-
-					instance_generator.density = 0.32
-					instance_generator.min_scale = 0.8
-					instance_generator.max_scale = 1.6
-					instance_generator.random_vertical_flip = false
-
-					item.name = "grass"
-					
-				else:
-					item.set_mesh(pebble1, 0)
-					item.name = "pebbles"
-
-				item.generator = instance_generator
-				item.persistent = false
-				item.lod_index = 0
-				library.add_item(2, item)
-
-				instance_generator = VoxelInstanceGenerator.new()
-				instance_generator.density = 0.08
-				instance_generator.min_scale = 0.5
-				instance_generator.max_scale = 0.8
-				instance_generator.min_slope_degrees = 0
-				instance_generator.max_slope_degrees = 12
-				instance_generator.vertical_alignment = 0.0
-				item = VoxelInstanceLibraryItem.new()
-				var rock1_template = Rock1Scene.instance()
-				item.setup_from_template(rock1_template)
-				rock1_template.free()
-				item.generator = instance_generator
-				item.persistent = true
-				item.lod_index = 2
-				item.name = "rock"
-				library.add_item(0, item)
-
-				instance_generator = VoxelInstanceGenerator.new()
-				instance_generator.density = 0.03
-				instance_generator.min_scale = 0.6
-				instance_generator.max_scale = 1.2
-				instance_generator.min_slope_degrees = 0
-				instance_generator.max_slope_degrees = 10
-				instance_generator.vertical_alignment = 0.0
-				item = VoxelInstanceLibraryItem.new()
-				item.set_mesh(big_rock1, 0)
-				item.generator = instance_generator
-				item.persistent = true
-				item.lod_index = 3
-				item.name = "big_rock"
-				library.add_item(1, item)
-
-				instance_generator = VoxelInstanceGenerator.new()
-				instance_generator.noise = FastNoiseLite.new()
-				instance_generator.noise.period = 16
-				instance_generator.noise.fractal_octaves = 2
-				instance_generator.noise_on_scale = 1
-				instance_generator.density = 0.06
-				instance_generator.min_scale = 0.6
-				instance_generator.max_scale = 3.0
-				instance_generator.scale_distribution = VoxelInstanceGenerator.DISTRIBUTION_CUBIC
-				instance_generator.min_slope_degrees = 140
-				instance_generator.max_slope_degrees = 180
-				instance_generator.vertical_alignment = 1.0
-				instance_generator.offset_along_normal = -0.5
-				item = VoxelInstanceLibraryItem.new()
-				var cone = CylinderMesh.new()
-				cone.radial_segments = 8
-				cone.rings = 0
-				cone.top_radius = 0.5
-				cone.bottom_radius = 0.1
-				cone.height = 2.5
-				cone.material = load("res://props/rocks/rock_material.tres")
-				item.set_mesh(cone, 0)
-				item.generator = instance_generator
-				item.persistent = true
-				item.lod_index = 0
-				item.name = "stalactite"
-				library.add_item(3, item)
-
-				instancer.library = library
-
-				volume.add_child(instancer)
-				body.instancer = instancer
+			_configure_instancing_for_planet(body, volume)
 
 		if body.sea:
 			var sea_mesh := SphereMesh.new()
@@ -378,6 +263,125 @@ func _ready():
 
 	progress_info.finished = true
 	emit_signal("loading_progressed", progress_info)
+
+
+func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLodTerrain):
+	var pebble1 = load("res://props/pebbles/pebble1.obj")
+	var rock1 = load("res://props/rocks/rock1.obj")
+	var big_rock1 = load("res://props/big_rocks/big_rock1.obj")
+
+	for mesh in [pebble1, rock1, big_rock1]:
+		mesh.surface_set_material(0, load("res://props/rocks/rock_material.tres"))
+
+	var instancer = VoxelInstancer.new()
+	instancer.set_up_mode(VoxelInstancer.UP_MODE_SPHERE)
+
+	var library = VoxelInstanceLibrary.new()
+	# Usually most of this is done in editor, but some features can only be setup by code atm.
+	# Also if we want to procedurally-generate some of this, we may need code anyways.
+
+	var instance_generator = VoxelInstanceGenerator.new()
+	instance_generator.density = 0.15
+	instance_generator.min_scale = 0.2
+	instance_generator.max_scale = 0.4
+	instance_generator.min_slope_degrees = 0
+	instance_generator.max_slope_degrees = 40
+	#instance_generator.set_layer_min_height(layer_index, body.radius * 0.95)
+	instance_generator.random_vertical_flip = true
+	instance_generator.vertical_alignment = 0.0
+	instance_generator.emit_mode = VoxelInstanceGenerator.EMIT_FROM_FACES
+	instance_generator.noise = FastNoiseLite.new()
+	instance_generator.noise.period = 16
+	instance_generator.noise.fractal_octaves = 2
+	instance_generator.noise_on_scale = 1
+	#instance_generator.noise.noise_type = FastNoiseLite.TYPE_PERLIN
+	var item = VoxelInstanceLibraryItem.new()
+	
+	if body.name == "Earth":
+		var grass_mesh = preload("res://props/grass/grass.tscn").instance()
+		item.setup_from_template(grass_mesh)
+		grass_mesh.free()
+
+		instance_generator.density = 0.32
+		instance_generator.min_scale = 0.8
+		instance_generator.max_scale = 1.6
+		instance_generator.random_vertical_flip = false
+
+		item.name = "grass"
+		
+	else:
+		item.set_mesh(pebble1, 0)
+		item.name = "pebbles"
+
+	item.generator = instance_generator
+	item.persistent = false
+	item.lod_index = 0
+	library.add_item(2, item)
+
+	instance_generator = VoxelInstanceGenerator.new()
+	instance_generator.density = 0.08
+	instance_generator.min_scale = 0.5
+	instance_generator.max_scale = 0.8
+	instance_generator.min_slope_degrees = 0
+	instance_generator.max_slope_degrees = 12
+	instance_generator.vertical_alignment = 0.0
+	item = VoxelInstanceLibraryItem.new()
+	var rock1_template = Rock1Scene.instance()
+	item.setup_from_template(rock1_template)
+	rock1_template.free()
+	item.generator = instance_generator
+	item.persistent = true
+	item.lod_index = 2
+	item.name = "rock"
+	library.add_item(0, item)
+
+	instance_generator = VoxelInstanceGenerator.new()
+	instance_generator.density = 0.03
+	instance_generator.min_scale = 0.6
+	instance_generator.max_scale = 1.2
+	instance_generator.min_slope_degrees = 0
+	instance_generator.max_slope_degrees = 10
+	instance_generator.vertical_alignment = 0.0
+	item = VoxelInstanceLibraryItem.new()
+	item.set_mesh(big_rock1, 0)
+	item.generator = instance_generator
+	item.persistent = true
+	item.lod_index = 3
+	item.name = "big_rock"
+	library.add_item(1, item)
+
+	instance_generator = VoxelInstanceGenerator.new()
+	instance_generator.noise = FastNoiseLite.new()
+	instance_generator.noise.period = 16
+	instance_generator.noise.fractal_octaves = 2
+	instance_generator.noise_on_scale = 1
+	instance_generator.density = 0.06
+	instance_generator.min_scale = 0.6
+	instance_generator.max_scale = 3.0
+	instance_generator.scale_distribution = VoxelInstanceGenerator.DISTRIBUTION_CUBIC
+	instance_generator.min_slope_degrees = 140
+	instance_generator.max_slope_degrees = 180
+	instance_generator.vertical_alignment = 1.0
+	instance_generator.offset_along_normal = -0.5
+	item = VoxelInstanceLibraryItem.new()
+	var cone = CylinderMesh.new()
+	cone.radial_segments = 8
+	cone.rings = 0
+	cone.top_radius = 0.5
+	cone.bottom_radius = 0.1
+	cone.height = 2.5
+	cone.material = load("res://props/rocks/rock_material.tres")
+	item.set_mesh(cone, 0)
+	item.generator = instance_generator
+	item.persistent = true
+	item.lod_index = 0
+	item.name = "stalactite"
+	library.add_item(3, item)
+
+	instancer.library = library
+
+	volume.add_child(instancer)
+	body.instancer = instancer
 
 
 func _physics_process(delta: float):
