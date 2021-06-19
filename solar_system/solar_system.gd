@@ -61,8 +61,8 @@ func _ready():
 	planet.radius = 900.0
 	planet.parent_id = 0
 	planet.distance_to_parent = 14400.0
-	planet.self_revolution_time = 0.0*10.0 * 60.0
-	planet.orbit_revolution_time = 0.0*50.0 * 60.0
+	planet.self_revolution_time = 10.0 * 60.0
+	planet.orbit_revolution_time = 50.0 * 60.0
 	planet.atmosphere_color = Color(1.0, 0.4, 0.1)
 	_bodies.append(planet)
 
