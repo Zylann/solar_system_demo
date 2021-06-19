@@ -252,9 +252,12 @@ func _ready():
 					instance_generator.min_scale = 0.8
 					instance_generator.max_scale = 1.6
 					instance_generator.random_vertical_flip = false
+
+					item.name = "grass"
 					
 				else:
 					item.set_mesh(pebble1, 0)
+					item.name = "pebbles"
 
 				item.generator = instance_generator
 				item.persistent = false
@@ -275,6 +278,7 @@ func _ready():
 				item.generator = instance_generator
 				item.persistent = true
 				item.lod_index = 2
+				item.name = "rock"
 				library.add_item(0, item)
 
 				instance_generator = VoxelInstanceGenerator.new()
@@ -289,6 +293,7 @@ func _ready():
 				item.generator = instance_generator
 				item.persistent = true
 				item.lod_index = 3
+				item.name = "big_rock"
 				library.add_item(1, item)
 
 				instance_generator = VoxelInstanceGenerator.new()
@@ -316,6 +321,7 @@ func _ready():
 				item.generator = instance_generator
 				item.persistent = true
 				item.lod_index = 0
+				item.name = "stalactite"
 				library.add_item(3, item)
 
 				instancer.library = library
