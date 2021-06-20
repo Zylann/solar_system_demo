@@ -28,6 +28,7 @@ onready var _superspeed_stop_player = $SuperSpeedOff
 onready var _superspeed_loop_player = $SuperSpeedLoop
 onready var _ambient_sounds = get_node("/root/GameWorld/AmbientSounds")
 onready var _air_friction_player = $AirFriction
+onready var _scrape_player = $Scrape
 
 var _smooth_main_jet_power := 0.0
 var _target_main_jet_power := 0.0
@@ -94,16 +95,17 @@ func _process(delta):
 	var speed = get_parent().linear_velocity.length()
 	var air_factor = clamp(speed / get_parent().speed_cap_on_planet, 0.0, 1.0)
 	var planet_factor = _ambient_sounds.get_planet_factor()
-	_air_friction_player.volume_db = linear2db((air_factor * 0.8 + 0.2) * planet_factor)
+	_air_friction_player.volume_db = linear2db((air_factor * 0.9 + 0.1) * planet_factor)
 	DDD.set_text("SFX air factor", air_factor)
 	
 	var contacts = get_parent().get_last_contacts_count()
-	if contacts > 0:
-		# TODO Play and modulate scrape sound volume
-		pass
+	if contacts > 0 and get_parent().mode == RigidBody.MODE_RIGID:
+		if not _scrape_player.playing:
+			_scrape_player.play()
+		_scrape_player.unit_db = linear2db(clamp(air_factor * 5.0, 0.0, 1.0))
 	else:
-		# TODO Stop scrape sound
-		pass
+		if _scrape_player.playing:
+			_scrape_player.stop()
 
 
 func _on_Ship_body_entered(body):

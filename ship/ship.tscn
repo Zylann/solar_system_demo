@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=2]
+[gd_scene load_steps=30 format=2]
 
 [ext_resource path="res://ship/ship.gd" type="Script" id=1]
 [ext_resource path="res://camera/camera_hints.gd" type="Script" id=2]
@@ -17,6 +17,7 @@
 [ext_resource path="res://sounds/superspeed.wav" type="AudioStream" id=15]
 [ext_resource path="res://sounds/superspeed_stop.wav" type="AudioStream" id=16]
 [ext_resource path="res://sounds/flying_in_atmosphere.wav" type="AudioStream" id=17]
+[ext_resource path="res://sounds/ship_scrape.wav" type="AudioStream" id=18]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 3.03344
@@ -217,12 +218,15 @@ autoplay = true
 unit_size = 10.0
 
 [node name="Hit01" type="AudioStreamPlayer3D" parent="ShipAudio"]
+unit_db = 2.0
 unit_size = 10.0
 
 [node name="Hit02" type="AudioStreamPlayer3D" parent="ShipAudio"]
+unit_db = 2.0
 unit_size = 10.0
 
 [node name="Hit03" type="AudioStreamPlayer3D" parent="ShipAudio"]
+unit_db = 2.0
 unit_size = 10.0
 
 [node name="On" type="AudioStreamPlayer" parent="ShipAudio"]
@@ -243,6 +247,11 @@ stream = ExtResource( 15 )
 [node name="AirFriction" type="AudioStreamPlayer" parent="ShipAudio"]
 stream = ExtResource( 17 )
 autoplay = true
+
+[node name="Scrape" type="AudioStreamPlayer3D" parent="ShipAudio"]
+stream = ExtResource( 18 )
+unit_db = 3.0
+unit_size = 10.0
 
 [connection signal="body_entered" from="." to="ShipAudio" method="_on_Ship_body_entered"]
 
