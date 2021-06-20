@@ -29,7 +29,7 @@ This is a demo project, so any lack of gameplay, placeholders or absence of road
 
 You need a computer with a powerful CPU to run this. It may run on low-end/mobile supporting GLES3 but it might have slow loading issues.
 
-Textures are from https://ambientcg.com/
+Textures are from https://ambientcg.com/  
 Sound effects are partly from https://sonniss.com/gameaudiogdc
 
 
