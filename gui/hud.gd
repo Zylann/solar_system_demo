@@ -7,8 +7,10 @@ onready var _solar_system = get_parent()
 onready var _target_planet_label = $TargetPlanetLabel
 onready var _target_label_rect = $TargetPlanetRect
 onready var _waypoint_hud = $WaypointHUD
+onready var _planet_hover_audio_player = $PlanetHoverSound
 
 var _target_planet_screen_pos := Vector2()
+var _pointed_body = null
 
 
 func _ready():
@@ -56,6 +58,11 @@ func _process(_delta: float):
 			
 			_target_label_rect.rect_position = screen_top_left_pos
 			_target_label_rect.rect_size = 2.0 * screen_radius_v
+	
+	if pointed_body != _pointed_body:
+		_pointed_body = pointed_body
+		if _pointed_body != null and _pointed_body != _solar_system.get_reference_stellar_body():
+			_planet_hover_audio_player.play()
 
 
 func _get_stellar_body_type_name(body: StellarBody) -> String:

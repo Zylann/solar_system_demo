@@ -44,6 +44,8 @@ func _process(delta: float):
 	if Input.is_key_pressed(KEY_D):
 		_turn_cmd.z += keyboard_turn_sensitivity
 	
+	_ship.set_superspeed_cmd(Input.is_key_pressed(KEY_SPACE))
+	
 	_turn_cmd.x = clamp(_turn_cmd.x, -1.0, 1.0)
 	_turn_cmd.y = clamp(_turn_cmd.y, -1.0, 1.0)
 	_turn_cmd.z = clamp(_turn_cmd.z, -1.0, 1.0)

@@ -37,13 +37,17 @@ onready var _right_roll_jets = [
 	$Visual/VisualRoot/JetVFXRightWing1,
 	$Visual/VisualRoot/JetVFXRightWing2
 ]
+onready var _audio = $ShipAudio
 
 var _move_cmd := Vector3()
 var _turn_cmd := Vector3()
+var _superspeed_cmd := false
 var _exit_ship_cmd := false
 var _state := STATE_FLYING
 var _planet_damping_amount := 0.0 # TODO Doesnt need to be a member var
 var _ref_change_info = null
+var _was_superspeed := false
+var _last_contacts_count := 0
 
 
 func _ready():
@@ -66,6 +70,7 @@ func enable_controller():
 	mode = RigidBody.MODE_RIGID
 	_close_hatch()
 	_state = STATE_FLYING
+	_audio.play_enabled()
 
 
 func disable_controller():
@@ -77,6 +82,7 @@ func disable_controller():
 	mode = RigidBody.MODE_STATIC
 	_open_hatch()
 	_state = STATE_LANDED
+	_audio.play_disabled()
 
 
 func _notification(what: int):
@@ -115,6 +121,10 @@ func set_turn_cmd(vec: Vector3):
 	_turn_cmd = vec
 
 
+func set_superspeed_cmd(cmd: bool):
+	_superspeed_cmd = cmd
+
+
 func _integrate_forces(state: PhysicsDirectBodyState):
 	if _ref_change_info != null:
 		# Teleport
@@ -130,9 +140,19 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 	var stellar_body : StellarBody = get_solar_system().get_reference_stellar_body()
 	var linear_acceleration_mod := linear_acceleration
 	var speed_cap_in_space_mod := speed_cap_in_space
-	if Input.is_key_pressed(KEY_SPACE) and stellar_body.type == StellarBody.TYPE_SUN:
+	
+	var superspeed = false
+	if _superspeed_cmd and stellar_body.type == StellarBody.TYPE_SUN:
 		speed_cap_in_space_mod *= 10.0
 		linear_acceleration_mod *= 15.0
+		superspeed = true
+	
+	if superspeed != _was_superspeed:
+		if superspeed:
+			_audio.play_start_superspeed()
+		else:
+			_audio.play_stop_superspeed()
+		_was_superspeed = superspeed
 
 	var speed_cap := speed_cap_in_space_mod
 	
@@ -186,6 +206,8 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 		jet.set_power(left_roll_jet_power)
 	for jet in _right_roll_jets:
 		jet.set_power(right_roll_jet_power)
+	_audio.set_main_jet_power(abs(_move_cmd.z))
+	_audio.set_secondary_jet_power(clamp(left_roll_jet_power + right_roll_jet_power, 0.0, 1.0))
 
 	DDD.set_text("Speed", state.linear_velocity.length())
 	DDD.set_text("X", gtrans.origin.x)
@@ -193,3 +215,10 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 	DDD.set_text("Z", gtrans.origin.z)
 	
 	_visual_root.global_transform = gtrans
+	
+	_last_contacts_count = state.get_contact_count()
+
+
+func get_last_contacts_count() -> int:
+	return _last_contacts_count
+

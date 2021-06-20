@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://solar_system/space_background.png" type="Texture" id=1]
 [ext_resource path="res://solar_system/solar_system.gd" type="Script" id=2]
@@ -8,9 +8,12 @@
 [ext_resource path="res://gui/fonts/hack_regular_16_dynamic_font.tres" type="DynamicFont" id=6]
 [ext_resource path="res://gui/mouse_capture.tscn" type="PackedScene" id=7]
 [ext_resource path="res://voxel_debug_info.gd" type="Script" id=8]
+[ext_resource path="res://sounds/ambient_sounds.gd" type="Script" id=9]
 [ext_resource path="res://gui/crosshair.png" type="Texture" id=10]
 [ext_resource path="res://gui/select_rect.png" type="Texture" id=11]
 [ext_resource path="res://waypoints/waypoint_hud.tscn" type="PackedScene" id=12]
+[ext_resource path="res://sounds/deep_space.ogg" type="AudioStream" id=13]
+[ext_resource path="res://sounds/ui_planet_hover.wav" type="AudioStream" id=14]
 
 [sub_resource type="PanoramaSky" id=1]
 panorama = ExtResource( 1 )
@@ -90,6 +93,9 @@ stretch_mode = 4
 
 [node name="WaypointHUD" parent="HUD" instance=ExtResource( 12 )]
 
+[node name="PlanetHoverSound" type="AudioStreamPlayer" parent="HUD"]
+stream = ExtResource( 14 )
+
 [node name="LensFlare" type="Node" parent="."]
 script = ExtResource( 5 )
 flareStrength = 4.0
@@ -148,4 +154,17 @@ max_value = 1.0
 [node name="VoxelDebugInfo" type="Node" parent="."]
 script = ExtResource( 8 )
 
+[node name="AmbientSounds" type="Node" parent="."]
+script = ExtResource( 9 )
+
+[node name="DeepSpace" type="AudioStreamPlayer" parent="AmbientSounds"]
+stream = ExtResource( 13 )
+autoplay = true
+bus = "SFX"
+
+[node name="PlanetDay" type="AudioStreamPlayer" parent="AmbientSounds"]
+
+[node name="PlanetNight" type="AudioStreamPlayer" parent="AmbientSounds"]
+
 [connection signal="loading_progressed" from="." to="LoadingScreen" method="_on_GameWorld_loading_progressed"]
+[connection signal="reference_body_changed" from="." to="AmbientSounds" method="_on_GameWorld_reference_body_changed"]

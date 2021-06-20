@@ -18,6 +18,10 @@ const BigRock1Mesh = preload("res://props/big_rocks/big_rock1.obj")
 
 const BasePlanetVoxelGraph = preload("./voxel_graph_planet_v4.tres")
 
+const EarthDaySound = preload("res://sounds/earth_surface_day.ogg")
+const EarthNightSound = preload("res://sounds/earth_surface_night.ogg")
+const WindSound = preload("res://sounds/wind.ogg")
+
 const SAVE_FOLDER_PATH = "debug_data"
 
 
@@ -42,6 +46,7 @@ static func create_solar_system_data() -> Array:
 	planet.orbit_revolution_time = 50.0 * 60.0
 	planet.atmosphere_color = Color(1.0, 0.4, 0.1)
 	planet.orbit_revolution_progress = -0.1
+	planet.day_ambient_sound = WindSound
 	bodies.append(planet)
 
 	planet = StellarBody.new()
@@ -54,6 +59,8 @@ static func create_solar_system_data() -> Array:
 	planet.orbit_revolution_time = 150.0 * 60.0
 	planet.atmosphere_color = Color(0.3, 0.5, 1.0)
 	planet.orbit_revolution_progress = 0.0
+	planet.day_ambient_sound = EarthDaySound
+	planet.night_ambient_sound = EarthNightSound
 	planet.sea = true
 	var earth_id = len(bodies)
 	bodies.append(planet)
@@ -68,6 +75,7 @@ static func create_solar_system_data() -> Array:
 	planet.orbit_revolution_time = 10.0 * 60.0
 	planet.atmosphere_color = Color(0.2, 0.2, 0.2)
 	planet.orbit_revolution_progress = 0.25
+	planet.day_ambient_sound = WindSound
 	bodies.append(planet)
 
 	planet = StellarBody.new()
@@ -80,6 +88,7 @@ static func create_solar_system_data() -> Array:
 	planet.orbit_revolution_time = 100.0 * 60.0
 	planet.atmosphere_color = Color(1.2, 0.8, 0.5)
 	planet.orbit_revolution_progress = 0.1
+	planet.day_ambient_sound = WindSound
 	bodies.append(planet)
 
 	planet = StellarBody.new()
@@ -91,6 +100,7 @@ static func create_solar_system_data() -> Array:
 	planet.self_revolution_time = 8.0 * 60.0
 	planet.orbit_revolution_time = 300.0 * 60.0
 	planet.atmosphere_color = Color(0.8, 0.6, 0.4)
+	planet.day_ambient_sound = WindSound
 	bodies.append(planet)
 	
 	return bodies

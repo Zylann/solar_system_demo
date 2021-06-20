@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/step_dirt_01.wav-a7f684214715ef0e485941e5a58fa642.sample"
+
+[deps]
+
+source_file="res://sounds/step_dirt_01.wav"
+dest_files=[ "res://.import/step_dirt_01.wav-a7f684214715ef0e485941e5a58fa642.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

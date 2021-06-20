@@ -5,17 +5,19 @@
 
 extends KinematicBody
 
-# In this system, the mouse does not control the camera directly,
-# but a Spatial under the character, named "Head", representing the head.
-# The camera may then use the transform of the Head to orient itself.
-onready var _head : Spatial = $Head
-
 const VERTICAL_CORRECTION_SPEED = PI
 const MOVE_ACCELERATION = 75.0
 const MOVE_DAMP_FACTOR = 0.2
 const JUMP_COOLDOWN_TIME = 0.3
 const JUMP_SPEED = 10.0
 const GRAVITY = 25.0
+
+signal jumped
+
+# In this system, the mouse does not control the camera directly,
+# but a Spatial under the character, named "Head", representing the head.
+# The camera may then use the transform of the Head to orient itself.
+onready var _head : Spatial = $Head
 
 var _velocity := Vector3()
 var _jump_cooldown := 0.0
@@ -114,6 +116,7 @@ func _physics_process(delta : float):
 			_velocity += planet_up * JUMP_SPEED
 			_jump_cooldown = JUMP_COOLDOWN_TIME
 			_jump_cmd = 0
+			emit_signal("jumped")
 
 	# is_on_floor() is SO UNBELIEVABLY UNRELIABLE it harms jump responsivity
 	# so we spread it over several frames

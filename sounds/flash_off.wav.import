@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/flash_off.wav-22d9941ce0b4e36da698de7cb7004006.sample"
+
+[deps]
+
+source_file="res://sounds/flash_off.wav"
+dest_files=[ "res://.import/flash_off.wav-22d9941ce0b4e36da698de7cb7004006.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

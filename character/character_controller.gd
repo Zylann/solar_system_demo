@@ -19,6 +19,7 @@ onready var _head : Spatial = get_node("../Head")
 onready var _visual_root : Spatial = get_node("../Visual")
 onready var _visual_head : Spatial = get_node("../Visual/Head")
 onready var _flashlight : SpotLight = get_node("../Visual/Body/FlashLight")
+onready var _audio = get_node("../Audio")
 
 var _velocity := Vector3()
 var _dig_cmd := false
@@ -80,6 +81,7 @@ func _process_actions():
 				vt.channel = VoxelBuffer.CHANNEL_SDF
 				vt.mode = VoxelTool.MODE_REMOVE
 				vt.do_sphere(pos, sphere_size)
+				_audio.play_dig(pos)
 
 			if _build_cmd:
 				_build_cmd = false
@@ -88,6 +90,7 @@ func _process_actions():
 				vt.channel = VoxelBuffer.CHANNEL_SDF
 				vt.mode = VoxelTool.MODE_ADD
 				vt.do_sphere(pos, 3.5)
+				_audio.play_dig(pos)
 			
 			if _waypoint_cmd:
 				_waypoint_cmd = false
@@ -96,6 +99,7 @@ func _process_actions():
 				waypoint.transform = Transform(character_body.transform.basis, hit.position)
 				planet.node.add_child(waypoint)
 				planet.waypoints.append(waypoint)
+				_audio.play_waypoint()
 
 
 func _unhandled_input(event):
@@ -109,6 +113,10 @@ func _unhandled_input(event):
 					_interact_cmd = true
 				KEY_F:
 					_flashlight.visible = not _flashlight.visible
+					if _flashlight.visible:
+						_audio.play_light_on()
+					else:
+						_audio.play_light_off()
 				KEY_T:
 					_waypoint_cmd = true
 					

@@ -15,6 +15,8 @@ var orbit_tilt := 0.0
 var self_tilt := 0.0
 var atmosphere_color := Color(0.5, 0.7, 1.0)
 var sea := false
+var day_ambient_sound : AudioStream
+var night_ambient_sound : AudioStream
 
 # State values
 var orbit_revolution_progress := 0.0

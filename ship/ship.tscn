@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://ship/ship.gd" type="Script" id=1]
 [ext_resource path="res://camera/camera_hints.gd" type="Script" id=2]
@@ -8,6 +8,15 @@
 [ext_resource path="res://ship/speed_particle.png" type="Texture" id=6]
 [ext_resource path="res://ship/model/ship.gltf" type="PackedScene" id=7]
 [ext_resource path="res://ship/jet_vfx.tscn" type="PackedScene" id=8]
+[ext_resource path="res://sounds/jet.wav" type="AudioStream" id=9]
+[ext_resource path="res://ship/ship_audio.gd" type="Script" id=10]
+[ext_resource path="res://sounds/jet2.wav" type="AudioStream" id=11]
+[ext_resource path="res://sounds/ship_stop.wav" type="AudioStream" id=12]
+[ext_resource path="res://sounds/ship_start.wav" type="AudioStream" id=13]
+[ext_resource path="res://sounds/superspeed_start.wav" type="AudioStream" id=14]
+[ext_resource path="res://sounds/superspeed.wav" type="AudioStream" id=15]
+[ext_resource path="res://sounds/superspeed_stop.wav" type="AudioStream" id=16]
+[ext_resource path="res://sounds/flying_in_atmosphere.wav" type="AudioStream" id=17]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 3.03344
@@ -85,6 +94,8 @@ size = Vector2( 0.3, 0.3 )
 
 [node name="Ship" type="RigidBody"]
 gravity_scale = 0.0
+contacts_reported = 3
+contact_monitor = true
 can_sleep = false
 linear_damp = 0.5
 angular_damp = 1.0
@@ -188,5 +199,51 @@ transform = Transform( 0.215075, 1.86069e-08, 0.106502, -0.106502, -4.27436e-08,
 [node name="DirectionalLight" type="DirectionalLight" parent="Visual"]
 transform = Transform( 0.939214, -0.216764, -0.266253, -6.7796e-08, -0.775496, 0.631352, -0.343332, -0.592975, -0.728357, 0.241943, 15.964, -0.240347 )
 editor_only = true
+
+[node name="ShipAudio" type="Spatial" parent="."]
+script = ExtResource( 10 )
+
+[node name="MainJets" type="AudioStreamPlayer3D" parent="ShipAudio"]
+stream = ExtResource( 9 )
+attenuation_model = 3
+autoplay = true
+
+[node name="SecondaryJets" type="AudioStreamPlayer3D" parent="ShipAudio"]
+stream = ExtResource( 11 )
+attenuation_model = 3
+autoplay = true
+
+[node name="ShipIdle" type="AudioStreamPlayer3D" parent="ShipAudio"]
+unit_size = 10.0
+
+[node name="Hit01" type="AudioStreamPlayer3D" parent="ShipAudio"]
+unit_size = 10.0
+
+[node name="Hit02" type="AudioStreamPlayer3D" parent="ShipAudio"]
+unit_size = 10.0
+
+[node name="Hit03" type="AudioStreamPlayer3D" parent="ShipAudio"]
+unit_size = 10.0
+
+[node name="On" type="AudioStreamPlayer" parent="ShipAudio"]
+stream = ExtResource( 13 )
+
+[node name="Off" type="AudioStreamPlayer" parent="ShipAudio"]
+stream = ExtResource( 12 )
+
+[node name="SuperSpeedOn" type="AudioStreamPlayer" parent="ShipAudio"]
+stream = ExtResource( 14 )
+
+[node name="SuperSpeedOff" type="AudioStreamPlayer" parent="ShipAudio"]
+stream = ExtResource( 16 )
+
+[node name="SuperSpeedLoop" type="AudioStreamPlayer" parent="ShipAudio"]
+stream = ExtResource( 15 )
+
+[node name="AirFriction" type="AudioStreamPlayer" parent="ShipAudio"]
+stream = ExtResource( 17 )
+autoplay = true
+
+[connection signal="body_entered" from="." to="ShipAudio" method="_on_Ship_body_entered"]
 
 [editable path="Visual/VisualRoot/ship"]

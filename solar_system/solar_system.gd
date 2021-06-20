@@ -241,6 +241,10 @@ func get_reference_stellar_body() -> StellarBody:
 	return _bodies[_reference_body_id]
 
 
+func get_sun_position() -> Vector3:
+	return _directional_light.global_transform.origin
+
+
 func _notification(what: int):
 	match what:
 		NOTIFICATION_WM_QUIT_REQUEST:

@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/earth_surface_night.ogg-a988842725dd86138adeb91b606013be.oggstr"
+
+[deps]
+
+source_file="res://sounds/earth_surface_night.ogg"
+dest_files=[ "res://.import/earth_surface_night.ogg-a988842725dd86138adeb91b606013be.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

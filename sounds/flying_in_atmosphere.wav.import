@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/flying_in_atmosphere.wav-816bd36e4a8a7cb485fca24a91e47af5.sample"
+
+[deps]
+
+source_file="res://sounds/flying_in_atmosphere.wav"
+dest_files=[ "res://.import/flying_in_atmosphere.wav-816bd36e4a8a7cb485fca24a91e47af5.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=true
+compress/mode=0

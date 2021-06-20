@@ -1,9 +1,13 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://addons/zylann.3d_basics/character/character.gd" type="Script" id=1]
 [ext_resource path="res://character/mouse_look.gd" type="Script" id=2]
 [ext_resource path="res://camera/camera_hints.gd" type="Script" id=3]
 [ext_resource path="res://character/character_controller.gd" type="Script" id=4]
+[ext_resource path="res://character/character_audio.gd" type="Script" id=5]
+[ext_resource path="res://sounds/place_waypoint.wav" type="AudioStream" id=6]
+[ext_resource path="res://sounds/flash_on.wav" type="AudioStream" id=7]
+[ext_resource path="res://sounds/flash_off.wav" type="AudioStream" id=8]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.4
@@ -64,3 +68,38 @@ material/0 = null
 transform = Transform( 0.237608, 0, 0, 0, 0.237608, 0, 0, 0, 0.237608, 0, 0.226605, 0.0591713 )
 mesh = SubResource( 4 )
 material/0 = null
+
+[node name="Audio" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.86435, -0.796673, 0 )
+script = ExtResource( 5 )
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Audio"]
+volume_db = -4.0
+
+[node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="Audio"]
+volume_db = -4.0
+
+[node name="Digs" type="Node" parent="Audio"]
+
+[node name="AudioStreamPlayer3" type="AudioStreamPlayer3D" parent="Audio/Digs"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.86435, -0.796673, 0 )
+unit_size = 5.0
+
+[node name="AudioStreamPlayer4" type="AudioStreamPlayer3D" parent="Audio/Digs"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.86435, -0.796673, 0 )
+unit_size = 5.0
+
+[node name="AudioStreamPlayer5" type="AudioStreamPlayer3D" parent="Audio/Digs"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.86435, -0.796673, 0 )
+unit_size = 5.0
+
+[node name="Waypoint" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource( 6 )
+
+[node name="FlashLightOn" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource( 7 )
+
+[node name="FlashLightOff" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource( 8 )
+
+[connection signal="jumped" from="." to="Audio" method="_on_Character_jumped"]

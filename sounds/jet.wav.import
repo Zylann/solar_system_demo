@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/jet.wav-af2b930d834326052bb7bd10195c1d39.sample"
+
+[deps]
+
+source_file="res://sounds/jet.wav"
+dest_files=[ "res://.import/jet.wav-af2b930d834326052bb7bd10195c1d39.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=true
+compress/mode=0
