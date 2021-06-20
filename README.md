@@ -5,7 +5,6 @@ This is a 3D space game demo taking, with procedurally-generated planets. It is 
 
 [![Video](https://img.youtube.com/vi/8OrZX347MoE/0.jpg)](https://www.youtube.com/watch?v=8OrZX347MoE)
 
-
 Features
 -----------
 
@@ -29,6 +28,9 @@ Note:
 This is a demo project, so any lack of gameplay, placeholders or absence of roadmap is intentional. It is meant to showcase an example of how to start making a game like this. There is no plan to make it a fully-fledged space game, but bug-fixes or small improvements may be welcome.
 
 You need a computer with a powerful CPU to run this. It may run on low-end/mobile supporting GLES3 but it might have slow loading issues.
+
+Textures are from https://ambientcg.com/
+Sound effects are partly from https://sonniss.com/gameaudiogdc
 
 
 Controls
