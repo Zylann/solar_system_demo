@@ -1,7 +1,7 @@
 Solar System Game Demo
 =======================
 
-This is a 3D game taking place in space, with procedurally-generated planets. It is a technical demo for one use of the [Voxel Tools module](https://github.com/Zylann/godot_voxel).
+This is a 3D space game demo taking, with procedurally-generated planets. It is a technical demo for one use of the [Voxel Tools module](https://github.com/Zylann/godot_voxel).
 
 Features
 -----------
@@ -11,14 +11,15 @@ Features
 - Simple atmospheres
 - Fully editable terrain using voxels
 - Persistent changes with save files per planet
-- Cave systems
 - Ravines
+- Cave systems deep underground (not easy to reach, most entries are in ravines)
 - Spaceship flight from ground to space
 - Motion trails
+- Sound effects and ambiances
 - Origin shifting allowing the whole system to be around 50Km in size (takes place only once when close enough to a planet)
 - Third-person character
 - Simple environment props such as rocks and grass
-- Basic waypoint system (use the T key)
+- Basic waypoint system to pin locations
 - Lens flares from [SIsilicon](https://github.com/SIsilicon/Godot-Lens-Flare-Plugin)
 
 Note:
