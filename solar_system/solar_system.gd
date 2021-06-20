@@ -7,7 +7,7 @@ const CameraScene = preload("../camera/camera.tscn")
 const ShipScene = preload("../ship/ship.tscn")
 
 const BODY_REFERENCE_ENTRY_RADIUS_FACTOR = 3.0
-const BODY_REFERENCE_EXIT_RADIUS_FACTOR = 3.25 # Must be higher for hysteresis
+const BODY_REFERENCE_EXIT_RADIUS_FACTOR = 3.1 # Must be higher for hysteresis
 
 class ReferenceChangeInfo:
 	var inverse_transform : Transform

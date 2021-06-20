@@ -70,7 +70,11 @@ static func create_solar_system_data() -> Array:
 	planet.type = StellarBody.TYPE_ROCKY
 	planet.radius = 600.0
 	planet.parent_id = earth_id
-	planet.distance_to_parent = 5000.0
+	# The moon should not be too close, otherwise referential change
+	# will overlap and physics will break. Every planet is a static body
+	# and only the reference one is not moving, so it's a problem is the
+	# moon is still moving while we reach it.
+	planet.distance_to_parent = 7500.0
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 10.0 * 60.0
 	planet.atmosphere_color = Color(0.2, 0.2, 0.2)
