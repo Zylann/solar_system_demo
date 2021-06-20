@@ -3,6 +3,9 @@ Solar System Game Demo
 
 This is a 3D space game demo taking, with procedurally-generated planets. It is a technical demo for one use of the [Voxel Tools module](https://github.com/Zylann/godot_voxel).
 
+[![Video](https://img.youtube.com/vi/8OrZX347MoE/0.jpg)](https://www.youtube.com/watch?v=8OrZX347MoE)
+
+
 Features
 -----------
 
