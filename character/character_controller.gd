@@ -140,7 +140,7 @@ func _enter_ship(ship: Ship):
 	var camera = get_viewport().get_camera()
 	camera.set_target(ship)
 	ship.enable_controller()
-	queue_free()
+	_get_body().queue_free()
 
 
 func _process(delta: float):
@@ -163,7 +163,7 @@ func _process(delta: float):
 
 
 func _get_solar_system() -> SolarSystem:
-	return get_parent() as SolarSystem
+	return get_parent().get_parent() as SolarSystem
 
 
 func _get_body() -> CharacterBody:
