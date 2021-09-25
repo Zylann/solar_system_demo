@@ -8,6 +8,52 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Spatial",
+"class": "CameraRig",
+"language": "GDScript",
+"path": "res://addons/gdquest.mannequin/src/Player/Camera/CameraRig.gd"
+}, {
+"base": "State",
+"class": "CameraState",
+"language": "GDScript",
+"path": "res://addons/gdquest.mannequin/src/Player/Camera/CameraState.gd"
+}, {
+"base": "Spatial",
+"class": "Mannequiny",
+"language": "GDScript",
+"path": "res://addons/gdquest.mannequin/src/Player/Mannequiny.gd"
+}, {
+"base": "KinematicBody",
+"class": "Player",
+"language": "GDScript",
+"path": "res://addons/gdquest.mannequin/src/Player/Player.gd"
+}, {
+"base": "State",
+"class": "PlayerState",
+"language": "GDScript",
+"path": "res://addons/gdquest.mannequin/src/Player/PlayerState.gd"
+}, {
+"base": "Node",
+"class": "State",
+"language": "GDScript",
+"path": "res://addons/gdquest.mannequin/src/Main/StateMachine/State.gd"
+}, {
+"base": "Node",
+"class": "StateMachine",
+"language": "GDScript",
+"path": "res://addons/gdquest.mannequin/src/Main/StateMachine/StateMachine.gd"
+} ]
+_global_script_class_icons={
+"CameraRig": "",
+"CameraState": "",
+"Mannequiny": "",
+"Player": "",
+"PlayerState": "",
+"State": "",
+"StateMachine": ""
+}
+
 [application]
 
 config/name="Solar System"

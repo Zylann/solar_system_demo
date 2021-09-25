@@ -1,0 +1,81 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://addons/gdquest.mannequin/src/Player/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://addons/gdquest.mannequin/assets/3d/materials/floor.tres" type="Material" id=2]
+[ext_resource path="res://addons/gdquest.mannequin/src/Main/Game.gd" type="Script" id=3]
+[ext_resource path="res://addons/gdquest.mannequin/assets/3d/level/level_environment.tres" type="Environment" id=4]
+[ext_resource path="res://addons/gdquest.mannequin/src/Level/Playground.tscn" type="PackedScene" id=5]
+[ext_resource path="res://addons/gdquest.mannequin/src/Debug/DebugPanel.tscn" type="PackedScene" id=6]
+[ext_resource path="res://addons/gdquest.mannequin/assets/theme/gdquest.theme" type="Theme" id=7]
+[ext_resource path="res://addons/gdquest.mannequin/src/Debug/DebugDock.gd" type="Script" id=8]
+
+[sub_resource type="AnimationNodeStateMachinePlayback" id=1]
+
+[sub_resource type="PlaneMesh" id=2]
+size = Vector2( 100, 100 )
+
+[sub_resource type="BoxShape" id=3]
+margin = 0.001
+extents = Vector3( 50, 1, 50 )
+
+[node name="Game" type="Node"]
+script = ExtResource( 3 )
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.58673, -0.0176746, -5.36121 )
+collision_mask = 2
+
+[node name="AnimationTree" parent="Player/Mannequiny" index="2"]
+parameters/playback = SubResource( 1 )
+
+[node name="Playground" parent="." instance=ExtResource( 5 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, -16 )
+
+[node name="TestMap" type="Spatial" parent="."]
+
+[node name="Ground" type="MeshInstance" parent="TestMap"]
+mesh = SubResource( 2 )
+material/0 = ExtResource( 2 )
+
+[node name="StaticBody" type="StaticBody" parent="TestMap/Ground"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape" type="CollisionShape" parent="TestMap/Ground/StaticBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
+shape = SubResource( 3 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 0.766044, 0.166366, -0.620885, 0.271654, 0.791635, 0.547283, 0.582563, -0.587909, 0.561233, -3.00978, 2.72808, 0 )
+light_energy = 0.8
+shadow_enabled = true
+directional_shadow_blend_splits = true
+directional_shadow_normal_bias = 0.2
+directional_shadow_bias_split_scale = 0.75
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 4 )
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_bottom = 1.0
+margin_right = 461.0
+theme = ExtResource( 7 )
+script = ExtResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DebugPanel" parent="MarginContainer" instance=ExtResource( 6 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 16.0
+margin_top = 16.0
+margin_right = 445.0
+margin_bottom = 1064.0
+reference_path = NodePath("../../Player/CameraRig/InterpolatedCamera")
+properties = PoolStringArray( "transform", "fov" )
+round_decimals = 3
+
+[editable path="Player"]
+[editable path="Player/Mannequiny"]
+[editable path="Player/CameraRig"]

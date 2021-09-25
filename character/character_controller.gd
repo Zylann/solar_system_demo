@@ -18,8 +18,9 @@ const JUMP_SPEED = 8.0
 
 onready var _head : Spatial = get_node("../Head")
 onready var _visual_root : Spatial = get_node("../Visual")
+onready var _visual_animated : Mannequiny = get_node("../Visual/Mannequiny")
 onready var _visual_head : Spatial = get_node("../Visual/Head")
-onready var _flashlight : SpotLight = get_node("../Visual/Body/FlashLight")
+onready var _flashlight : SpotLight = get_node("../Visual/FlashLight")
 onready var _audio = get_node("../Audio")
 
 var _velocity := Vector3()
@@ -27,6 +28,8 @@ var _dig_cmd := false
 var _interact_cmd := false
 var _build_cmd := false
 var _waypoint_cmd := false
+var _visual_state = Mannequiny.States.IDLE
+var _last_motor := Vector3()
 
 
 func _physics_process(delta):
@@ -52,6 +55,8 @@ func _physics_process(delta):
 	_process_actions()
 	_process_undig()
 	
+	_last_motor = motor
+
 
 func _process_undig():
 	var solar_system = _get_solar_system()
@@ -190,6 +195,12 @@ func _enter_ship(ship: Ship):
 	_get_body().queue_free()
 
 
+func _set_visual_state(state: int):
+	if _visual_state != state:
+		_visual_state = state
+		_visual_animated.transition_to(_visual_state)
+
+
 func _process(delta: float):
 	var character_body := _get_body()
 	var gtrans := character_body.global_transform
@@ -202,14 +213,32 @@ func _process(delta: float):
 		forward = Vector3(0, 1, 0)
 	var up := gtrans.basis.y
 	
+	# Visual can be offset.
+	# We need global transfotm tho cuz look_at wants a global position
+	gtrans.origin = _visual_root.global_transform.origin
+	
 	var old_root_basis = _visual_root.transform.basis.orthonormalized()
 	_visual_root.look_at(gtrans.origin + forward, up)
 	_visual_root.transform.basis = old_root_basis.slerp(_visual_root.transform.basis, delta * 8.0)
+
+	_visual_animated.set_move_direction(forward)
+	
+	var state = Mannequiny.States.RUN
+	if _last_motor.length_squared() > 0.0:
+		_visual_animated.set_is_moving(true)
+		state = Mannequiny.States.RUN
+	else:
+		_visual_animated.set_is_moving(false)
+		state = Mannequiny.States.IDLE
+	if not character_body.is_landed():
+		state = Mannequiny.States.AIR
+	_set_visual_state(state)
 	
 	_visual_head.global_transform.basis = head_basis
 
 
 func _get_solar_system() -> SolarSystem:
+	# TODO That looks really bad. Probably need to use injection some day
 	return get_parent().get_parent() as SolarSystem
 
 

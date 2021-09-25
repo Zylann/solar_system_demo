@@ -24,7 +24,7 @@ var _jump_cooldown := 0.0
 var _jump_cmd := 0
 var _motor := Vector3()
 var _planet_up := Vector3(0, 1, 0)
-var _floor_counter = 0
+var _landed := false
 
 
 func jump():
@@ -87,14 +87,16 @@ func _physics_process(delta : float):
 	else:
 		# Apply gravity
 		_velocity -= planet_up * GRAVITY * delta
+
+	var space_state = get_world().direct_space_state
+	var ground_hit = space_state.intersect_ray(
+		gtrans.origin + 0.1 * planet_up, gtrans.origin - 0.1 * planet_up, [self])
+	_landed = not ground_hit.empty()
 	
 	if _velocity == Vector3() and is_on_floor():
 		# BUT! If we remove the floor, by digging or other, our character will remain in the air,
 		# because the only way to stop being on floor is to call that bad boy `move_and_slide`.
 		# So we'll check ourselves if there is something under our feet, and add gravity back.
-		var space_state = get_world().direct_space_state
-		var ground_hit = space_state.intersect_ray(
-			gtrans.origin + 0.1 * planet_up, gtrans.origin - 0.1 * planet_up, [self])
 		if ground_hit.empty():
 			_velocity -= planet_up * 0.01
 	
@@ -121,3 +123,7 @@ func _physics_process(delta : float):
 	# is_on_floor() is SO UNBELIEVABLY UNRELIABLE it harms jump responsivity
 	# so we spread it over several frames
 	_jump_cmd -= 1
+
+
+func is_landed() -> bool:
+	return _landed

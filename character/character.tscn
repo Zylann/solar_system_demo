@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://addons/zylann.3d_basics/character/character.gd" type="Script" id=1]
 [ext_resource path="res://character/mouse_look.gd" type="Script" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://sounds/place_waypoint.wav" type="AudioStream" id=6]
 [ext_resource path="res://sounds/flash_on.wav" type="AudioStream" id=7]
 [ext_resource path="res://sounds/flash_off.wav" type="AudioStream" id=8]
+[ext_resource path="res://addons/gdquest.mannequin/src/Player/Mannequiny.tscn" type="PackedScene" id=9]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.4
@@ -26,7 +27,7 @@ size = Vector3( 8, 0.5, 0.5 )
 script = ExtResource( 1 )
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0, 0 )
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0.875292, 0 )
 shape = SubResource( 1 )
 
 [node name="Controller" type="Node" parent="."]
@@ -36,7 +37,7 @@ script = ExtResource( 4 )
 script = ExtResource( 2 )
 
 [node name="Head" type="Spatial" parent="."]
-transform = Transform( 0.999725, 0.0234551, 0, -0.0234551, 0.999725, 0, 0, 0, 1, 0, 0.647863, 0 )
+transform = Transform( 0.999725, 0.0234551, 0, -0.0234551, 0.999725, 0, 0, 0, 1, 0, 1.5976, 0 )
 
 [node name="CameraHints" type="Node" parent="Head"]
 script = ExtResource( 3 )
@@ -46,26 +47,34 @@ target_height_modifier = 0.2
 side_offset = 1.0
 
 [node name="Visual" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.876689, 0 )
 
-[node name="Body" type="MeshInstance" parent="Visual"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.272492, 0 )
-mesh = SubResource( 2 )
-material/0 = null
+[node name="Mannequiny" parent="Visual" instance=ExtResource( 9 )]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -0.891963, 0 )
 
-[node name="FlashLight" type="SpotLight" parent="Visual/Body"]
+[node name="FlashLight" type="SpotLight" parent="Visual"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34576, 0 )
 visible = false
 light_energy = 2.0
 spot_range = 60.0
 spot_attenuation = 1.93187
 spot_angle_attenuation = 0.732043
 
+[node name="Body" type="MeshInstance" parent="Visual"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.272492, 0 )
+visible = false
+mesh = SubResource( 2 )
+material/0 = null
+
 [node name="Head" type="MeshInstance" parent="Visual"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.676365, 0 )
+visible = false
 mesh = SubResource( 3 )
 material/0 = null
 
 [node name="Arms" type="MeshInstance" parent="Visual"]
 transform = Transform( 0.237608, 0, 0, 0, 0.237608, 0, 0, 0, 0.237608, 0, 0.226605, 0.0591713 )
+visible = false
 mesh = SubResource( 4 )
 material/0 = null
 

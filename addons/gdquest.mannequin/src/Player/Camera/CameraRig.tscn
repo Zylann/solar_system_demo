@@ -1,0 +1,61 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://addons/gdquest.mannequin/src/Player/Camera/CameraRig.gd" type="Script" id=1]
+[ext_resource path="res://addons/gdquest.mannequin/src/Player/Camera/AimTarget.gd" type="Script" id=2]
+[ext_resource path="res://addons/gdquest.mannequin/src/Player/Camera/States/Default.gd" type="Script" id=3]
+[ext_resource path="res://addons/gdquest.mannequin/src/Main/StateMachine/StateMachine.gd" type="Script" id=4]
+[ext_resource path="res://addons/gdquest.mannequin/assets/2d/reticle.png" type="Texture" id=5]
+[ext_resource path="res://addons/gdquest.mannequin/src/Player/Camera/States/Camera.gd" type="Script" id=6]
+[ext_resource path="res://addons/gdquest.mannequin/src/Player/Camera/States/Aim.gd" type="Script" id=7]
+[ext_resource path="res://addons/gdquest.mannequin/src/Player/Camera/SpringArm.gd" type="Script" id=8]
+
+[sub_resource type="CapsuleShape" id=1]
+height = 0.5
+
+[node name="CameraRig" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="InterpolatedCamera" type="InterpolatedCamera" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.87462, 0.48481, 0, -0.48481, 0.87462, 0, 0.5, 0.5 )
+current = true
+target = NodePath("../SpringArm/CameraTarget")
+speed = 7.0
+enabled = true
+
+[node name="AimRay" type="RayCast" parent="InterpolatedCamera"]
+transform = Transform( 1, 0, 0, 0, 0.999847, 0.0174524, 0, -0.0174524, 0.999847, 0, -0.194905, -0.679715 )
+cast_to = Vector3( 0, 0, -20 )
+collision_mask = 2
+
+[node name="SpringArm" type="SpringArm" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.87462, 0.48481, 0, -0.48481, 0.87462, 0, 0.5, 0.5 )
+collision_mask = 2
+shape = SubResource( 1 )
+spring_length = 4.5
+margin = 0.5
+script = ExtResource( 8 )
+
+[node name="CameraTarget" type="Position3D" parent="SpringArm"]
+transform = Transform( 1, 0, 0, 0, 1, 2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0 )
+
+[node name="AimTarget" type="Sprite3D" parent="."]
+visible = false
+pixel_size = 0.001
+texture = ExtResource( 5 )
+script = ExtResource( 2 )
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource( 4 )
+initial_state = NodePath("../../CameraRig/StateMachine/Camera/Default")
+
+[node name="Camera" type="Node" parent="StateMachine"]
+script = ExtResource( 6 )
+
+[node name="Default" type="Node" parent="StateMachine/Camera"]
+script = ExtResource( 3 )
+
+[node name="Aim" type="Node" parent="StateMachine/Camera"]
+script = ExtResource( 7 )
+offset_camera = Vector3( 0.75, -1, 0 )
+
+[node name="Tween" type="Tween" parent="StateMachine/Camera/Aim"]
