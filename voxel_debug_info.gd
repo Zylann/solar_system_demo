@@ -152,24 +152,14 @@ func _process(delta):
 	DDD.set_text("Dynamic memory", _format_memory(OS.get_dynamic_memory_usage()))
 
 	var global_stats = VoxelServer.get_stats()
-
-	var tasks_groups = [
-		[global_stats.streaming, "streaming_"], 
-		[global_stats.generation, "generation_"],
-		[global_stats.meshing, "meshing_"], 
-	]
-
-	for p in tasks_groups:
-		var pool_stats = p[0]
-		var prefix = p[1]
-		for k in pool_stats:
-			DDD.set_text(str(prefix, k), pool_stats[k])
+	for stat_group_key in global_stats:
+		var stat_group = global_stats[stat_group_key]
+		for stat_key in stat_group:
+			DDD.set_text(str(stat_group_key, "_", stat_key), stat_group[stat_key])
 
 	var current_planet = _solar_system.get_reference_stellar_body()
 	if current_planet != null and current_planet.volume != null:
 		var volume_stats = current_planet.volume.get_statistics()
-		DDD.set_text(str("[", current_planet.name, "] Main thread tasks: "), 
-			volume_stats.remaining_main_thread_blocks)
 		DDD.set_text(str("[", current_planet.name, "] Blocked lods: "), volume_stats.blocked_lods)
 		_debug_voxel_raycast(current_planet.volume)
 
