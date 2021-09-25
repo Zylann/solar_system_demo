@@ -45,7 +45,8 @@ func _ready():
 ## @param position: world-space position of the center of the box
 ## @param size: size of the box in world units
 ## @param color
-func draw_box(position: Vector3, size: Vector3, color: Color = Color(1,1,1)):
+## @param linger_frames: optionally makes the box remain drawn for longer
+func draw_box(position: Vector3, size: Vector3, color: Color = Color(1,1,1), linger_frames = 0):
 	var mi := _get_box()
 	var mat := _get_line_material()
 	mat.albedo_color = color
@@ -54,7 +55,20 @@ func draw_box(position: Vector3, size: Vector3, color: Color = Color(1,1,1)):
 	mi.scale = size
 	_boxes.append({
 		"node": mi,
-		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES
+		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES + linger_frames
+	})
+
+
+func draw_box_aabb(aabb: AABB, color = Color(1,1,1), linger_frames = 0):
+	var mi := _get_box()
+	var mat := _get_line_material()
+	mat.albedo_color = color
+	mi.material_override = mat
+	mi.translation = aabb.position
+	mi.scale = aabb.size
+	_boxes.append({
+		"node": mi,
+		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES + linger_frames
 	})
 
 
