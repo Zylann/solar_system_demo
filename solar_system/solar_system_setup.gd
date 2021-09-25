@@ -224,6 +224,8 @@ static func _setup_rocky_planet(body: StellarBody, root: Spatial):
 	volume.material = mat
 	# TODO Set before setting voxel bounds?
 	volume.mesh_block_size = 32
+	volume.mesher.mesh_optimization_enabled = true
+	volume.mesher.mesh_optimization_error_threshold = 0.0025
 	#volume.set_process_mode(VoxelLodTerrain.PROCESS_MODE_PHYSICS)
 	body.volume = volume
 	root.add_child(volume)
@@ -264,10 +266,12 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 		item.setup_from_template(grass_mesh)
 		grass_mesh.free()
 
-		instance_generator.density = 0.32
+		#instance_generator.density = 0.32
+		instance_generator.density = 2.0
 		instance_generator.min_scale = 0.8
 		instance_generator.max_scale = 1.6
 		instance_generator.random_vertical_flip = false
+		instance_generator.max_slope_degrees = 30
 
 		item.name = "grass"
 		
