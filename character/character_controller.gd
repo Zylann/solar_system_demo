@@ -77,7 +77,7 @@ func _process_actions():
 				var vt : VoxelTool = volume.get_voxel_tool()
 				var pos = volume.get_global_transform().affine_inverse() * hit.position
 				var sphere_size = 3.5
-				pos -= front * (sphere_size * 0.9)
+				#pos -= front * (sphere_size * 0.9)
 				vt.channel = VoxelBuffer.CHANNEL_SDF
 				vt.mode = VoxelTool.MODE_REMOVE
 				vt.do_sphere(pos, sphere_size)
