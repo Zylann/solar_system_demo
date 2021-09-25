@@ -27,7 +27,7 @@ func play(pos := Vector3()):
 	if randf() > 0.5:
 		_next_sound()
 	player.stream = sound
-	print("Playing ", sound.resource_path)
+	#print("Playing ", sound.resource_path)
 	player.play()
 
 
