@@ -50,6 +50,36 @@ func _physics_process(delta):
 	character_body.set_planet_up(planet_up)
 	
 	_process_actions()
+	_process_undig()
+	
+
+func _process_undig():
+	var solar_system = _get_solar_system()
+	if solar_system == null:
+		# In testing scene?
+		return
+	var volume = solar_system.get_reference_stellar_body().volume
+	var vt = volume.get_voxel_tool()
+	var to_local = volume.global_transform.affine_inverse()
+	var character_body = _get_body()
+	var local_pos = to_local * character_body.global_transform.origin
+	vt.channel = VoxelBuffer.CHANNEL_SDF
+	var sdf = vt.get_voxel_f_interpolated(local_pos)
+	DDD.set_text("SDF at feet", sdf)
+	if sdf < -0.001:
+		# We got buried, teleport at nearest safe location
+		print("Character is buried, teleporting back to air")
+		var up = local_pos.normalized()
+		var offset_local_pos = local_pos
+		for i in 10:
+			print("Undig attempt ", i)
+			offset_local_pos += 0.2 * up
+			sdf = vt.get_voxel_f_interpolated(offset_local_pos)
+			if sdf > 0.0005:
+				break
+		var gtrans = character_body.global_transform
+		gtrans.origin = volume.get_global_transform() * offset_local_pos
+		character_body.global_transform = gtrans
 
 
 func _process_actions():
