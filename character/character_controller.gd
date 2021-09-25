@@ -6,6 +6,7 @@ const Ship = preload("../ship/ship.gd")
 const Util = preload("../util/util.gd")
 const CollisionLayers = preload("../collision_layers.gd")
 const CharacterBody = preload("res://addons/zylann.3d_basics/character/character.gd")
+const SplitChunkRigidBodyComponent = preload("../solar_system/split_chunk_rigidbody_component.gd")
 
 const WaypointScene = preload("../waypoints/waypoint.tscn")
 
@@ -82,6 +83,14 @@ func _process_actions():
 				vt.mode = VoxelTool.MODE_REMOVE
 				vt.do_sphere(pos, sphere_size)
 				_audio.play_dig(pos)
+
+				var splitter_aabb = AABB(pos, Vector3()).grow(16.0)
+				var bodies = vt.separate_floating_chunks(splitter_aabb, camera.get_parent())
+				print("Created ", len(bodies), " bodies")
+				for body in bodies:
+					var cmp = SplitChunkRigidBodyComponent.new()
+					body.add_child(cmp)
+				DDD.draw_box_aabb(splitter_aabb, Color(0,1,0), 60)
 
 			if _build_cmd:
 				_build_cmd = false
