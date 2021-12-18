@@ -24,7 +24,7 @@ func _unhandled_input(event):
 	
 	if event is InputEventKey:
 		if event.pressed and not event.is_echo():
-			match event.scancode:
+			match event.keycode:
 				KEY_SPACE:
 					character.jump()
 

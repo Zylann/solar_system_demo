@@ -8,6 +8,6 @@ var skin: Mannequiny
 
 
 func _ready() -> void:
-	yield(owner, "ready")
+	await owner.ready
 	player = owner
 	skin = owner.skin

@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/jet2.wav-1c8c326f94d2589dece40c3638db9fc7.sample"
+uid="uid://3x3m42oacvc2"
+path="res://.godot/imported/jet2.wav-1c8c326f94d2589dece40c3638db9fc7.sample"
 
 [deps]
 
 source_file="res://sounds/jet2.wav"
-dest_files=[ "res://.import/jet2.wav-1c8c326f94d2589dece40c3638db9fc7.sample" ]
+dest_files=["res://.godot/imported/jet2.wav-1c8c326f94d2589dece40c3638db9fc7.sample"]
 
 [params]
 

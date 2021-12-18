@@ -1,19 +1,21 @@
 [remap]
 
 importer="wavefront_obj"
+importer_version=1
 type="Mesh"
-path="res://.import/pebble2.obj-403633068bf5fbd60e2c6b7edfda8943.mesh"
+uid="uid://bw3nl4nn6x7rl"
+path="res://.godot/imported/pebble2.obj-403633068bf5fbd60e2c6b7edfda8943.mesh"
 
 [deps]
 
-files=[ "res://.import/pebble2.obj-403633068bf5fbd60e2c6b7edfda8943.mesh" ]
+files=["res://.godot/imported/pebble2.obj-403633068bf5fbd60e2c6b7edfda8943.mesh"]
 
 source_file="res://props/pebbles/pebble2.obj"
-dest_files=[ "res://.import/pebble2.obj-403633068bf5fbd60e2c6b7edfda8943.mesh", "res://.import/pebble2.obj-403633068bf5fbd60e2c6b7edfda8943.mesh" ]
+dest_files=["res://.godot/imported/pebble2.obj-403633068bf5fbd60e2c6b7edfda8943.mesh", "res://.godot/imported/pebble2.obj-403633068bf5fbd60e2c6b7edfda8943.mesh"]
 
 [params]
 
 generate_tangents=true
-scale_mesh=Vector3( 1, 1, 1 )
-offset_mesh=Vector3( 0, 0, 0 )
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
 optimize_mesh=true

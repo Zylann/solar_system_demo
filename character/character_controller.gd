@@ -16,12 +16,12 @@ const MOVE_DAMP_FACTOR = 0.1
 const JUMP_COOLDOWN_TIME = 0.3
 const JUMP_SPEED = 8.0
 
-onready var _head : Spatial = get_node("../Head")
-onready var _visual_root : Spatial = get_node("../Visual")
-onready var _visual_animated : Mannequiny = get_node("../Visual/Mannequiny")
-onready var _visual_head : Spatial = get_node("../Visual/Head")
-onready var _flashlight : SpotLight = get_node("../Visual/FlashLight")
-onready var _audio = get_node("../Audio")
+@onready var _head : Node3D = get_node("../Head")
+@onready var _visual_root : Node3D = get_node("../Visual")
+@onready var _visual_animated : Mannequiny = get_node("../Visual/Mannequiny")
+@onready var _visual_head : Node3D = get_node("../Visual/Head")
+@onready var _flashlight : SpotLight3D = get_node("../Visual/FlashLight")
+@onready var _audio = get_node("../Audio")
 
 var _velocity := Vector3()
 var _dig_cmd := false
@@ -94,17 +94,23 @@ func _process_actions():
 
 	var character_body := _get_body()
 	
-	var camera := get_viewport().get_camera()
+	var camera := get_viewport().get_camera_3d()
 	var front := -camera.global_transform.basis.z
 	var cam_pos = camera.global_transform.origin
-	var space_state := character_body.get_world().direct_space_state
-	var hit = space_state.intersect_ray(cam_pos, cam_pos + front * 50.0, [self])
-	if not hit.empty():
+	var space_state := character_body.get_world_3d().direct_space_state
+	
+	var ray_query := PhysicsRayQueryParameters3D.new()
+	ray_query.from = cam_pos
+	ray_query.to = cam_pos + front * 50.0
+	ray_query.exclude = [self]
+	var hit = space_state.intersect_ray(ray_query)
+
+	if not hit.is_empty():
 		if hit.collider is VoxelLodTerrain:
 			DDD.draw_box(hit.position, Vector3(0.5,0.5,0.5), Color(1,1,0))
 			DDD.draw_ray_3d(hit.position, hit.normal, 1.0, Color(1,1,0))
 	
-	if not hit.empty():
+	if not hit.is_empty():
 		if hit.collider is VoxelLodTerrain:
 			var volume : VoxelLodTerrain = hit.collider
 
@@ -139,8 +145,8 @@ func _process_actions():
 			if _waypoint_cmd:
 				_waypoint_cmd = false
 				var planet = _get_solar_system().get_reference_stellar_body()
-				var waypoint = WaypointScene.instance()
-				waypoint.transform = Transform(character_body.transform.basis, hit.position)
+				var waypoint = WaypointScene.instantiate()
+				waypoint.transform = Transform3D(character_body.transform.basis, hit.position)
 				planet.node.add_child(waypoint)
 				planet.waypoints.append(waypoint)
 				_audio.play_waypoint()
@@ -149,7 +155,7 @@ func _process_actions():
 func _unhandled_input(event):
 	if event is InputEventKey:
 		if event.pressed and not event.is_echo():
-			match event.scancode:
+			match event.keycode:
 				KEY_SPACE:
 					var body := _get_body()
 					body.jump()
@@ -167,21 +173,28 @@ func _unhandled_input(event):
 	elif event is InputEventMouseButton:
 		if event.pressed:
 			match event.button_index:
-				BUTTON_LEFT:
+				MOUSE_BUTTON_LEFT:
 					_dig_cmd = true
-				BUTTON_RIGHT:
+				MOUSE_BUTTON_RIGHT:
 					_build_cmd = true
 
 
 func _interact():
 	var character_body := _get_body()
-	var space_state := character_body.get_world().direct_space_state
-	var camera := get_viewport().get_camera()
+	var space_state := character_body.get_world_3d().direct_space_state
+	var camera := get_viewport().get_camera_3d()
 	var front := -camera.global_transform.basis.z
 	var pos = camera.global_transform.origin
-	var hit = space_state.intersect_ray(
-		pos, pos + front * 10.0, [], CollisionLayers.DEFAULT, false, true)
-	if not hit.empty():
+
+	var ray_query := PhysicsRayQueryParameters3D.new()
+	ray_query.from = pos
+	ray_query.to = pos + front * 10.0
+	ray_query.collision_mask = CollisionLayers.DEFAULT
+	ray_query.collide_with_bodies = false
+	ray_query.collide_with_areas = true
+	var hit = space_state.intersect_ray(ray_query)
+
+	if not hit.is_empty():
 		if hit.collider.name == "CommandPanel":
 			var ship = Util.find_parent_by_type(hit.collider, Ship)
 			if ship != null:
@@ -189,13 +202,13 @@ func _interact():
 
 
 func _enter_ship(ship: Ship):
-	var camera = get_viewport().get_camera()
+	var camera = get_viewport().get_camera_3d()
 	camera.set_target(ship)
 	ship.enable_controller()
 	_get_body().queue_free()
 
 
-func _set_visual_state(state: int):
+func _set_visual_state(state: Mannequiny.States):
 	if _visual_state != state:
 		_visual_state = state
 		_visual_animated.transition_to(_visual_state)

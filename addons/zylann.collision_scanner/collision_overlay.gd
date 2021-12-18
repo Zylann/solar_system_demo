@@ -1,7 +1,7 @@
-tool
+@tool
 extends Control
 
-onready var _texture_rect := $TextureRect as TextureRect
+@onready var _texture_rect := $TextureRect as TextureRect
 
 const BASE_CELL_SIZE = 8
 const RAY_LENGTH = 4000.0
@@ -13,8 +13,8 @@ var _cell_x := 0
 var _cell_y := 0
 var _cell_size := BASE_CELL_SIZE
 var _done = false
-var _camera : Camera
-var _prev_camera_transform : Transform
+var _camera : Camera3D
+var _prev_camera_transform : Transform3D
 var _restart_when_camera_transform_changes = true
 
 
@@ -27,7 +27,7 @@ func _ready():
 	_restart()
 
 
-func set_camera(camera: Camera):
+func set_camera(camera: Camera3D):
 	assert(camera != null)
 	if camera != _camera:
 		print("Setting new camera")
@@ -57,7 +57,7 @@ func _reset():
 	_image.fill(Color(0, 0, 0))
 	if _texture == null:
 		_texture = ImageTexture.new()
-	_texture.create_from_image(_image, 0)
+	_texture.create_from_image(_image)
 	_texture_rect.texture = _texture
 	_done = false
 
@@ -98,7 +98,7 @@ func _physics_process(delta):
 		set_physics_process(false)
 		return
 	
-	var world := _camera.get_world()
+	var world := _camera.get_world_3d()
 	var space_state = world.direct_space_state
 	
 	var cell_count_x = _image.get_width() / _cell_size
@@ -111,10 +111,14 @@ func _physics_process(delta):
 		var ray_origin = _camera.project_ray_origin(pixel_pos)
 		var ray_dir = _camera.project_ray_normal(pixel_pos)
 
-		var color = Color(0, 0, 0)
+		var color := Color(0, 0, 0)
 		
-		var hit = space_state.intersect_ray(ray_origin, ray_origin + ray_dir * RAY_LENGTH)
-		if not hit.empty():
+		# TODO Optimization: cache that query?
+		var ray_query := PhysicsRayQueryParameters3D.new()
+		ray_query.from = ray_origin
+		ray_query.to = ray_origin + ray_dir * RAY_LENGTH
+		var hit = space_state.intersect_ray(ray_query)
+		if not hit.is_empty():
 			var rect = Rect2(
 				_cell_x * _cell_size, _cell_y * _cell_size, _cell_size, _cell_size)
 			var n = 0.5 * hit.normal + Vector3(0.5, 0.5, 0.5)
@@ -148,7 +152,7 @@ func _physics_process(delta):
 				
 		if done_row:
 			var y = prev_cell_y * prev_cell_size
-			VisualServer.texture_set_data_partial(_texture.get_rid(), 
+			RenderingServer.texture_set_data_partial(_texture.get_rid(), 
 				_image, 0, y, _image.get_width(), prev_cell_size, 0, y, 0, 0)
 		
 	if _done:

@@ -3,7 +3,7 @@
 # This is a simple implementation, enough for testing and simple games.
 # If you need more specialized behavior, feel free to fork it.
 
-extends KinematicBody
+extends CharacterBody3D
 
 const VERTICAL_CORRECTION_SPEED = PI
 const MOVE_ACCELERATION = 75.0
@@ -15,9 +15,9 @@ const GRAVITY = 25.0
 signal jumped
 
 # In this system, the mouse does not control the camera directly,
-# but a Spatial under the character, named "Head", representing the head.
+# but a Node3D under the character, named "Head", representing the head.
 # The camera may then use the transform of the Head to orient itself.
-onready var _head : Spatial = $Head
+@onready var _head : Node3D = $Head
 
 var _velocity := Vector3()
 var _jump_cooldown := 0.0
@@ -41,7 +41,7 @@ func set_planet_up(up: Vector3):
 	_planet_up = up
 
 
-func get_head() -> Spatial:
+func get_head() -> Node3D:
 	return _head
 
 
@@ -88,21 +88,27 @@ func _physics_process(delta : float):
 		# Apply gravity
 		_velocity -= planet_up * GRAVITY * delta
 
-	var space_state = get_world().direct_space_state
-	var ground_hit = space_state.intersect_ray(
-		gtrans.origin + 0.1 * planet_up, gtrans.origin - 0.1 * planet_up, [self])
-	_landed = not ground_hit.empty()
+	var space_state = get_world_3d().direct_space_state
+	var ray_query := PhysicsRayQueryParameters3D.new()
+	ray_query.from = gtrans.origin + 0.1 * planet_up
+	ray_query.to = gtrans.origin - 0.1 * planet_up
+	ray_query.exclude = [self]
+	var ground_hit = space_state.intersect_ray(ray_query)
+	_landed = not ground_hit.is_empty()
 	
 	if _velocity == Vector3() and is_on_floor():
 		# BUT! If we remove the floor, by digging or other, our character will remain in the air,
 		# because the only way to stop being on floor is to call that bad boy `move_and_slide`.
 		# So we'll check ourselves if there is something under our feet, and add gravity back.
-		if ground_hit.empty():
+		if ground_hit.is_empty():
 			_velocity -= planet_up * 0.01
 	
 	if _velocity != Vector3():
 #		var was_on_floor = is_on_floor()
-		_velocity = move_and_slide(_velocity, current_up)
+		up_direction = current_up
+		motion_velocity = _velocity
+		move_and_slide()
+		_velocity = motion_velocity
 #		if is_on_floor() == false and was_on_floor:
 #			print("Stopped being on floor after applying ", _velocity)
 	
@@ -110,11 +116,11 @@ func _physics_process(delta : float):
 	if _jump_cooldown > 0.0:
 		_jump_cooldown -= delta
 	elif _jump_cmd > 0:
-#		var space_state = get_world().direct_space_state
+#		var space_state = get_world_3d().direct_space_state
 #		var ray_origin := global_transform.origin + 0.1 * planet_up
 #		var hit = space_state.intersect_ray(ray_origin, ray_origin - planet_up * 1.1, [self])
 		# Is there ground to jump from?
-		if is_on_floor():#not hit.empty():
+		if is_on_floor():#not hit.is_empty():
 			_velocity += planet_up * JUMP_SPEED
 			_jump_cooldown = JUMP_COOLDOWN_TIME
 			_jump_cmd = 0

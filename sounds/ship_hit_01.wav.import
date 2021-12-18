@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/ship_hit_01.wav-86aef10a5fe8f3e88c5c14c159af2ebe.sample"
+uid="uid://brhomstcwb3ns"
+path="res://.godot/imported/ship_hit_01.wav-86aef10a5fe8f3e88c5c14c159af2ebe.sample"
 
 [deps]
 
 source_file="res://sounds/ship_hit_01.wav"
-dest_files=[ "res://.import/ship_hit_01.wav-86aef10a5fe8f3e88c5c14c159af2ebe.sample" ]
+dest_files=["res://.godot/imported/ship_hit_01.wav-86aef10a5fe8f3e88c5c14c159af2ebe.sample"]
 
 [params]
 

@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/jet.wav-af2b930d834326052bb7bd10195c1d39.sample"
+uid="uid://wpud85h204s3"
+path="res://.godot/imported/jet.wav-af2b930d834326052bb7bd10195c1d39.sample"
 
 [deps]
 
 source_file="res://sounds/jet.wav"
-dest_files=[ "res://.import/jet.wav-af2b930d834326052bb7bd10195c1d39.sample" ]
+dest_files=["res://.godot/imported/jet.wav-af2b930d834326052bb7bd10195c1d39.sample"]
 
 [params]
 

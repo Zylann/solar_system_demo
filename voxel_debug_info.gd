@@ -5,9 +5,9 @@ extends Node
 const CollisionScannerScene = \
 	preload("res://addons/zylann.collision_scanner/collision_overlay.tscn")
 
-export(bool) var enable_hotkeys = false
+@export var enable_hotkeys := false
 
-onready var _solar_system = get_parent()
+@onready var _solar_system = get_parent()
 
 
 func _ready():
@@ -17,7 +17,7 @@ func _ready():
 func _unhandled_input(event):
 	if event is InputEventKey:
 		if event.pressed:
-			match event.scancode:
+			match event.keycode:
 				KEY_C:
 					_toggle_collision_scanner()
 
@@ -36,7 +36,7 @@ func _unhandled_input(event):
 
 				KEY_U:
 					print("PINNING VIEWER")
-					var cam = get_viewport().get_camera()
+					var cam = get_viewport().get_camera_3d()
 					var viewer = cam.get_node("VoxelViewer")
 					cam.remove_child(viewer)
 					add_child(viewer)
@@ -58,7 +58,7 @@ func _log_pointed_mesh_block_info():
 	vt.set_raycast_binary_search_iterations(4)
 	var vtrans = volume.get_global_transform()
 	var vtrans_inv = vtrans.affine_inverse()
-	var cam = get_viewport().get_camera()
+	var cam = get_viewport().get_camera_3d()
 	var vp_size = get_viewport().size
 	var vp_center = vp_size / 2
 	var ray_pos_local = vtrans_inv * cam.project_ray_origin(vp_center)
@@ -92,7 +92,7 @@ func _dump_octree():
 		return
 	var data = volume.debug_get_octrees_detailed()
 	var f = ConfigFile.new()
-	var cam = get_viewport().get_camera()
+	var cam = get_viewport().get_camera_3d()
 	f.set_value("debug", "octree", data)
 	f.set_value("debug", "lod_count", volume.get_lod_count())
 	f.set_value("debug", "block_size", volume.get_mesh_block_size())
@@ -105,7 +105,7 @@ func _debug_voxel_raycast_sweep():
 	for c in old_cubes:
 		c.queue_free()
 	var current_planet = _solar_system.get_reference_stellar_body()
-	var cube_mesh = CubeMesh.new()
+	var cube_mesh = BoxMesh.new()
 	cube_mesh.size = 0.1 * Vector3(1,1,1)
 	var volume = current_planet.volume
 	if volume != null:
@@ -113,7 +113,7 @@ func _debug_voxel_raycast_sweep():
 		vt.set_raycast_binary_search_iterations(4)
 		var vtrans = volume.get_global_transform()
 		var vtrans_inv = vtrans.affine_inverse()
-		var cam = get_viewport().get_camera()
+		var cam = get_viewport().get_camera_3d()
 		var vp_size = get_viewport().size
 		var vp_center = vp_size / 2
 		var vp_r = vp_size.y / 3
@@ -128,9 +128,9 @@ func _debug_voxel_raycast_sweep():
 				var ray_dir_local = vtrans_inv.basis * cam.project_ray_normal(spos)
 				var hit = vt.raycast(ray_pos_local, ray_dir_local, 20)
 				if hit != null:
-					var mi = MeshInstance.new()
+					var mi = MeshInstance3D.new()
 					mi.mesh = cube_mesh
-					mi.translation = vtrans * (ray_pos_local + ray_dir_local * hit.distance)
+					mi.position = vtrans * (ray_pos_local + ray_dir_local * hit.distance)
 					mi.add_to_group("ddd_ray_cubes")
 					add_child(mi)
 
@@ -139,17 +139,16 @@ func _toggle_collision_scanner():
 	if get_parent().has_node("CollisionOverlay"):
 		get_parent().get_node("CollisionOverlay").queue_free()
 	else:
-		var overlay = CollisionScannerScene.instance()
+		var overlay = CollisionScannerScene.instantiate()
 		overlay.name = "CollisionOverlay"
 		overlay.set_restart_when_camera_transform_changes(false)
-		overlay.set_camera(get_viewport().get_camera())
+		overlay.set_camera(get_viewport().get_camera_3d())
 		get_parent().add_child(overlay)
 
 
 func _process(delta):
 	DDD.set_text("FPS", Engine.get_frames_per_second())
 	DDD.set_text("Static memory", _format_memory(OS.get_static_memory_usage()))
-	DDD.set_text("Dynamic memory", _format_memory(OS.get_dynamic_memory_usage()))
 
 	var global_stats = VoxelServer.get_stats()
 	for stat_group_key in global_stats:
@@ -177,7 +176,7 @@ func _debug_voxel_raycast(volume):
 	vt.set_raycast_binary_search_iterations(4)
 	var vtrans = volume.get_global_transform()
 	var vtrans_inv = vtrans.affine_inverse()
-	var cam = get_viewport().get_camera()
+	var cam = get_viewport().get_camera_3d()
 	var vp_size = get_viewport().size
 	var vp_center = vp_size / 2
 	var ray_pos_local = vtrans_inv * cam.project_ray_origin(vp_center)

@@ -20,7 +20,7 @@ func play(pos := Vector3()):
 		_player_round_index = 0
 
 	if player is AudioStreamPlayer3D:
-		player.global_transform = Transform(Basis(), pos)
+		player.global_transform = Transform3D(Basis(), pos)
 
 	var sound = _streams[_stream_round_index]
 	_next_sound()

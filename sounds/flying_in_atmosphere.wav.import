@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/flying_in_atmosphere.wav-816bd36e4a8a7cb485fca24a91e47af5.sample"
+uid="uid://di02v1xesv46s"
+path="res://.godot/imported/flying_in_atmosphere.wav-816bd36e4a8a7cb485fca24a91e47af5.sample"
 
 [deps]
 
 source_file="res://sounds/flying_in_atmosphere.wav"
-dest_files=[ "res://.import/flying_in_atmosphere.wav-816bd36e4a8a7cb485fca24a91e47af5.sample" ]
+dest_files=["res://.godot/imported/flying_in_atmosphere.wav-816bd36e4a8a7cb485fca24a91e47af5.sample"]
 
 [params]
 

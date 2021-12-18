@@ -110,8 +110,8 @@ static func create_solar_system_data() -> Array:
 	return bodies
 
 
-static func _setup_sun(body: StellarBody, root: Spatial) -> DirectionalLight:
-	var mi = MeshInstance.new()
+static func _setup_sun(body: StellarBody, root: Node3D) -> DirectionalLight3D:
+	var mi = MeshInstance3D.new()
 	var mesh = SphereMesh.new()
 	mesh.radius = body.radius
 	mesh.height = 2.0 * mesh.radius
@@ -120,10 +120,10 @@ static func _setup_sun(body: StellarBody, root: Spatial) -> DirectionalLight:
 	mi.cast_shadow = false
 	root.add_child(mi)
 	
-	var directional_light = DirectionalLight.new()
+	var directional_light = DirectionalLight3D.new()
 	directional_light.shadow_enabled = true
 	directional_light.shadow_color = Color(0.2, 0.2, 0.2)
-	directional_light.directional_shadow_normal_bias = 0.2
+	directional_light.shadow_normal_bias = 0.2
 	directional_light.directional_shadow_split_1 = 0.1
 	directional_light.directional_shadow_split_2 = 0.2
 	directional_light.directional_shadow_split_3 = 0.5
@@ -135,8 +135,8 @@ static func _setup_sun(body: StellarBody, root: Spatial) -> DirectionalLight:
 	return directional_light
 
 
-static func _setup_atmosphere(body: StellarBody, root: Spatial):
-	var atmo = VolumetricAtmosphereScene.instance()
+static func _setup_atmosphere(body: StellarBody, root: Node3D):
+	var atmo = VolumetricAtmosphereScene.instantiate()
 	#atmo.scale = Vector3(1, 1, 1) * (0.99 * body.radius)
 	atmo.planet_radius = body.radius * 1.03
 	atmo.atmosphere_height = 175.0#0.12 * body.radius
@@ -148,24 +148,24 @@ static func _setup_atmosphere(body: StellarBody, root: Spatial):
 	atmo.set_shader_param("u_attenuation_distance", 50.0)
 	atmo.set_shader_param("u_day_color0", body.atmosphere_color)
 	atmo.set_shader_param("u_day_color1", 
-		body.atmosphere_color.linear_interpolate(Color(1,1,1), 0.5))
+		body.atmosphere_color.lerp(Color(1,1,1), 0.5))
 	atmo.set_shader_param("u_night_color0", body.atmosphere_color.darkened(0.8))
 	atmo.set_shader_param("u_night_color1", 
-		body.atmosphere_color.darkened(0.8).linear_interpolate(Color(1,1,1), 0.0))
+		body.atmosphere_color.darkened(0.8).lerp(Color(1,1,1), 0.0))
 	root.add_child(atmo)
 
 
-static func _setup_sea(body: StellarBody, root: Spatial):
+static func _setup_sea(body: StellarBody, root: Node3D):
 	var sea_mesh := SphereMesh.new()
 	sea_mesh.radius = body.radius * 0.985
 	sea_mesh.height = 2.0 * sea_mesh.radius
-	var sea_mesh_instance = MeshInstance.new()
+	var sea_mesh_instance = MeshInstance3D.new()
 	sea_mesh_instance.mesh = sea_mesh
 	sea_mesh_instance.material_override = WaterSeaMaterial
 	root.add_child(sea_mesh_instance)
 
 
-static func _setup_rocky_planet(body: StellarBody, root: Spatial):
+static func _setup_rocky_planet(body: StellarBody, root: Node3D):
 	var mat : ShaderMaterial
 	# TODO Dont hardcode this
 	if body.name == "Earth":
@@ -224,6 +224,7 @@ static func _setup_rocky_planet(body: StellarBody, root: Spatial):
 	volume.material = mat
 	# TODO Set before setting voxel bounds?
 	volume.mesh_block_size = 32
+	volume.mesher = VoxelMesherTransvoxel.new()
 	volume.mesher.mesh_optimization_enabled = true
 	volume.mesher.mesh_optimization_error_threshold = 0.0025
 	#volume.set_process_mode(VoxelLodTerrain.PROCESS_MODE_PHYSICS)
@@ -262,7 +263,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	var item = VoxelInstanceLibraryItem.new()
 	
 	if body.name == "Earth":
-		var grass_mesh = GrassScene.instance()
+		var grass_mesh = GrassScene.instantiate()
 		item.setup_from_template(grass_mesh)
 		grass_mesh.free()
 
@@ -292,7 +293,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	instance_generator.max_slope_degrees = 12
 	instance_generator.vertical_alignment = 0.0
 	item = VoxelInstanceLibraryItem.new()
-	var rock1_template = Rock1Scene.instance()
+	var rock1_template = Rock1Scene.instantiate()
 	item.setup_from_template(rock1_template)
 	rock1_template.free()
 	item.generator = instance_generator
@@ -350,13 +351,13 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	body.instancer = instancer
 
 
-static func setup_stellar_body(body: StellarBody, parent: Node) -> DirectionalLight:
-	var root := Spatial.new()
+static func setup_stellar_body(body: StellarBody, parent: Node) -> DirectionalLight3D:
+	var root := Node3D.new()
 	root.name = body.name
 	body.node = root
 	parent.add_child(root)
 	
-	var sun_light : DirectionalLight = null
+	var sun_light : DirectionalLight3D = null
 
 	if body.type == StellarBody.TYPE_SUN:
 		sun_light = _setup_sun(body, root)

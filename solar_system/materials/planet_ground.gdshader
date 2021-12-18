@@ -18,8 +18,6 @@ varying vec3 v_triplanar_uv;
 varying vec3 v_triplanar_power_normal;
 varying float v_camera_distance;
 
-const float TAU = 6.28318530717958647;
-
 float get_hash(vec2 c) {
 	return fract(sin(dot(c.xy, vec2(12.9898,78.233))) * 43758.5453);
 }
@@ -112,7 +110,7 @@ void fragment() {
 	side_norm = mix(side_norm, far_side_norm, far_factor);
 	
 	ALBEDO = mix(side_col, top_col, topness);
-	NORMALMAP = mix(side_norm, top_norm, topness);
+	NORMAL_MAP = mix(side_norm, top_norm, topness);
 
 	// Far normalmapping
 	vec2 sphere_uv = get_sphere_uv(v_planet_up);
@@ -121,7 +119,7 @@ void fragment() {
 	float min_distance = 100.0;
 	float max_distance = 2000.0;
 	float global_nm_factor = (v_camera_distance - min_distance) / (max_distance - min_distance);
-	NORMALMAP = mix(NORMALMAP, global_nm, clamp(global_nm_factor, 0.0, 1.0));
+	NORMAL_MAP = mix(NORMAL_MAP, global_nm, clamp(global_nm_factor, 0.0, 1.0));
 	
 	//ALBEDO = vec3(0.6, 0.4, 0.2);
 	//NORMAL = normalize(cross(dFdx(VERTEX), dFdy(VERTEX)));

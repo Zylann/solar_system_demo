@@ -1,19 +1,21 @@
 [remap]
 
 importer="wavefront_obj"
+importer_version=1
 type="Mesh"
-path="res://.import/rock1.obj-04cff7143c9f96849ce4f73b7006eb8e.mesh"
+uid="uid://uw8acwb0aame"
+path="res://.godot/imported/rock1.obj-04cff7143c9f96849ce4f73b7006eb8e.mesh"
 
 [deps]
 
-files=[ "res://.import/rock1.obj-04cff7143c9f96849ce4f73b7006eb8e.mesh" ]
+files=["res://.godot/imported/rock1.obj-04cff7143c9f96849ce4f73b7006eb8e.mesh"]
 
 source_file="res://props/rocks/rock1.obj"
-dest_files=[ "res://.import/rock1.obj-04cff7143c9f96849ce4f73b7006eb8e.mesh", "res://.import/rock1.obj-04cff7143c9f96849ce4f73b7006eb8e.mesh" ]
+dest_files=["res://.godot/imported/rock1.obj-04cff7143c9f96849ce4f73b7006eb8e.mesh", "res://.godot/imported/rock1.obj-04cff7143c9f96849ce4f73b7006eb8e.mesh"]
 
 [params]
 
 generate_tangents=true
-scale_mesh=Vector3( 1, 1, 1 )
-offset_mesh=Vector3( 0, 0, 0 )
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
 optimize_mesh=true

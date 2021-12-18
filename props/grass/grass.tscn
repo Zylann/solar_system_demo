@@ -2,7 +2,7 @@
 
 [ext_resource path="res://textures/grass_billboard.png" type="Texture" id=1]
 [ext_resource path="res://props/grass/grass_quad_x2.obj" type="ArrayMesh" id=2]
-[ext_resource path="res://props/grass/grass.shader" type="Shader" id=3]
+[ext_resource path="res://props/grass/grass.gdshader" type="Shader" id=3]
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 3 )

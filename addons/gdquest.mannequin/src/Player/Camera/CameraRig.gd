@@ -1,35 +1,37 @@
-tool
-extends Spatial
+@tool
+extends Node3D
 class_name CameraRig
 # Accessor class that gives the nodes in the scene access the player or some
 # frequently used nodes in the scene itself.
 
 signal aim_fired(target_position)
 
-onready var camera: InterpolatedCamera = $InterpolatedCamera
-onready var spring_arm: SpringArm = $SpringArm
-onready var aim_ray: RayCast = $InterpolatedCamera/AimRay
-onready var aim_target: Sprite3D = $AimTarget
+@onready var camera: InterpolatedCamera = $InterpolatedCamera
+@onready var spring_arm: SpringArm = $SpringArm
+@onready var aim_ray: RayCast = $InterpolatedCamera/AimRay
+@onready var aim_target: Sprite3D = $AimTarget
 
-var player: KinematicBody
+var player: CharacterBody3D
 
-var zoom := 0.5 setget set_zoom
 
-onready var _position_start: Vector3 = translation
+var zoom := 0.5:
+	get:
+		return zoom
+	set(value):
+		zoom = clamp(value, 0.0, 1.0)
+		if not spring_arm:
+			await spring_arm.ready
+		spring_arm.zoom = zoom
+
+
+@onready var _position_start: Vector3 = position
 
 
 func _ready() -> void:
 	set_as_toplevel(true)
-	yield(owner, "ready")
+	await owner.ready
 	player = owner
 
 
-func _get_configuration_warning() -> String:
-	return "Missing player node" if not player else ""
-
-
-func set_zoom(value: float) -> void:
-	zoom = clamp(value, 0.0, 1.0)
-	if not spring_arm:
-		yield(spring_arm, "ready")
-	spring_arm.zoom = zoom
+func _get_configuration_warnings() -> PackedStringArray:
+	return PackedStringArray(["Missing player node" if not player else ""])

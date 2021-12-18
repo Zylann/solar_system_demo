@@ -1,16 +1,34 @@
-tool
+@tool
 extends Control
 # Displays the values of properties of a given node
 # You can directly change the `properties` property to display multiple values from the `reference` node
-# E.g. properties = PoolStringArray(['speed', 'position', 'modulate'])
+# E.g. properties = PackedStringArray(['speed', 'position', 'modulate'])
 
-export var reference_path: NodePath
-export var properties: PoolStringArray setget set_properties
-export var round_decimals := 2
+@export var reference_path: NodePath
 
-onready var _container: VBoxContainer = $VBoxContainer/MarginContainer/VBoxContainer
-onready var _title: Label = $VBoxContainer/ReferenceName
-onready var reference: Node = get_node(reference_path) setget set_reference
+@export var properties: PoolStringArray:
+	get:
+		return properties
+	set(value):
+		properties = value
+		if not reference:
+			return
+		_setup()
+
+
+@export var round_decimals := 2
+
+@onready var _container: VBoxContainer = $VBoxContainer/MarginContainer/VBoxContainer
+@onready var _title: Label = $VBoxContainer/ReferenceName
+
+@onready var reference: Node = get_node(reference_path):
+	get:
+		return reference
+	set(value):
+		reference = value
+		if reference:
+			_setup()
+
 
 var _step := 1.0 / pow(10, round_decimals)
 
@@ -32,8 +50,8 @@ func _setup() -> void:
 		track(property)
 
 
-func _get_configuration_warning() -> String:
-	return "" if not reference_path.is_empty() else "Reference Path should not be empty."
+func _get_configuration_warnings() -> PackedStringArray:
+	return PackedStringArray([""]) if not reference_path.is_empty() else PackedStringArray(["Reference Path should not be empty."])
 
 
 func track(property: String) -> void:
@@ -51,7 +69,7 @@ func _clear() -> void:
 
 
 func _update() -> void:
-	if Engine.editor_hint:
+	if Engine.is_editor_hint():
 		return
 	var search_array: Array = properties
 	for property in properties:
@@ -64,8 +82,8 @@ func _update() -> void:
 			text = "(%s %s)" % [stepify(value.x, _step), stepify(value.y, _step)]
 		elif value is Vector3:
 			text = get_vector3_as_string(value)
-		elif value is Transform:
-			var elements: PoolStringArray = [
+		elif value is Transform3D:
+			var elements: PackedStringArray = [
 				get_vector3_as_string(value.basis.x),
 				get_vector3_as_string(value.basis.y),
 				get_vector3_as_string(value.basis.z),
@@ -86,16 +104,3 @@ func get_vector3_as_string(vector: Vector3) -> String:
 		"(%s %s %s)"
 		% [stepify(vector.x, _step), stepify(vector.y, _step), stepify(vector.z, _step)]
 	)
-
-
-func set_properties(value: PoolStringArray) -> void:
-	properties = value
-	if not reference:
-		return
-	_setup()
-
-
-func set_reference(value: Node) -> void:
-	reference = value
-	if reference:
-		_setup()

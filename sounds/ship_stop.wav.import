@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/ship_stop.wav-6f18a0b6ea643911ec2803600b8179d1.sample"
+uid="uid://bb2730roni77v"
+path="res://.godot/imported/ship_stop.wav-6f18a0b6ea643911ec2803600b8179d1.sample"
 
 [deps]
 
 source_file="res://sounds/ship_stop.wav"
-dest_files=[ "res://.import/ship_stop.wav-6f18a0b6ea643911ec2803600b8179d1.sample" ]
+dest_files=["res://.godot/imported/ship_stop.wav-6f18a0b6ea643911ec2803600b8179d1.sample"]
 
 [params]
 

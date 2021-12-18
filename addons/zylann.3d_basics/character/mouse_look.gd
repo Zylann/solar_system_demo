@@ -8,7 +8,7 @@ const MOUSE_TURN_SENSITIVITY = 0.2
 const MAX_ANGLE = 90.0
 const MIN_ANGLE = -90.0
 
-onready var _head : Spatial = get_node("../Head")
+@onready var _head : Node3D = get_node("../Head")
 
 var _pitch := 0.0
 var _yaw := 0.0

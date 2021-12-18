@@ -49,9 +49,9 @@ static func ray_intersects_sphere(
 	return y <= radius
 
 
-# CubeMesh doesn't have a wireframe option
+# BoxMesh doesn't have a wireframe option
 static func create_wirecube_mesh(color = Color(1,1,1)) -> Mesh:
-	var positions := PoolVector3Array([
+	var positions := PackedVector3Array([
 		Vector3(0, 0, 0),
 		Vector3(1, 0, 0),
 		Vector3(1, 0, 1),
@@ -61,11 +61,11 @@ static func create_wirecube_mesh(color = Color(1,1,1)) -> Mesh:
 		Vector3(1, 1, 1),
 		Vector3(0, 1, 1),
 	])
-	var colors := PoolColorArray([
+	var colors := PackedColorArray([
 		color, color, color, color,
 		color, color, color, color,
 	])
-	var indices := PoolIntArray([
+	var indices := PackedInt32Array([
 		0, 1,
 		1, 2,
 		2, 3,

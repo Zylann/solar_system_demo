@@ -17,12 +17,12 @@ func _process(delta):
 
 
 func _draw():
-	var camera := get_viewport().get_camera()
+	var camera := get_viewport().get_camera_3d()
 	if camera == null:
 		return
 
 	var body = _solar_system.get_reference_stellar_body()
-	var font = get_font("font")
+	var font = get_theme_font("font")
 
 	for waypoint in body.waypoints:
 		var pos : Vector3 = waypoint.transform.origin

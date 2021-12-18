@@ -8,11 +8,11 @@ const ZOOM_STEP := 0.1
 const ANGLE_X_MIN := -PI / 4
 const ANGLE_X_MAX := PI / 3
 
-export var is_y_inverted := false
-export var fov_default := 70.0
-export var deadzone := PI / 10
-export var sensitivity_gamepad := Vector2(2.5, 2.5)
-export var sensitivity_mouse := Vector2(0.1, 0.1)
+@export var is_y_inverted := false
+@export var fov_default := 70.0
+@export var deadzone := PI / 10
+@export var sensitivity_gamepad := Vector2(2.5, 2.5)
+@export var sensitivity_mouse := Vector2(0.1, 0.1)
 
 var _input_relative := Vector2.ZERO
 var _is_aiming := false

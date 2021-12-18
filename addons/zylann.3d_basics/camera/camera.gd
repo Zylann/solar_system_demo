@@ -1,9 +1,9 @@
-extends Camera
+extends Camera3D
 
 
-export(NodePath) var _head_path = NodePath()
+@export(NodePath) var _head_path = NodePath()
 
-var _head : Spatial
+var _head : Node3D
 
 
 func _ready():

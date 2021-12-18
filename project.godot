@@ -6,44 +6,44 @@
 ;   [section] ; section goes between []
 ;   param=value ; assign values to parameters
 
-config_version=4
+config_version=5
 
-_global_script_classes=[ {
-"base": "Spatial",
-"class": "CameraRig",
-"language": "GDScript",
+_global_script_classes=[{
+"base": "Node3D",
+"class": &"CameraRig",
+"language": &"GDScript",
 "path": "res://addons/gdquest.mannequin/src/Player/Camera/CameraRig.gd"
 }, {
 "base": "State",
-"class": "CameraState",
-"language": "GDScript",
+"class": &"CameraState",
+"language": &"GDScript",
 "path": "res://addons/gdquest.mannequin/src/Player/Camera/CameraState.gd"
 }, {
-"base": "Spatial",
-"class": "Mannequiny",
-"language": "GDScript",
+"base": "Node3D",
+"class": &"Mannequiny",
+"language": &"GDScript",
 "path": "res://addons/gdquest.mannequin/src/Player/Mannequiny.gd"
 }, {
-"base": "KinematicBody",
-"class": "Player",
-"language": "GDScript",
+"base": "CharacterBody3D",
+"class": &"Player",
+"language": &"GDScript",
 "path": "res://addons/gdquest.mannequin/src/Player/Player.gd"
 }, {
 "base": "State",
-"class": "PlayerState",
-"language": "GDScript",
+"class": &"PlayerState",
+"language": &"GDScript",
 "path": "res://addons/gdquest.mannequin/src/Player/PlayerState.gd"
 }, {
 "base": "Node",
-"class": "State",
-"language": "GDScript",
+"class": &"State",
+"language": &"GDScript",
 "path": "res://addons/gdquest.mannequin/src/Main/StateMachine/State.gd"
 }, {
 "base": "Node",
-"class": "StateMachine",
-"language": "GDScript",
+"class": &"StateMachine",
+"language": &"GDScript",
 "path": "res://addons/gdquest.mannequin/src/Main/StateMachine/StateMachine.gd"
-} ]
+}]
 _global_script_class_icons={
 "CameraRig": "",
 "CameraState": "",
@@ -59,6 +59,7 @@ _global_script_class_icons={
 config/name="Solar System"
 run/main_scene="res://main.tscn"
 config/icon="res://icon.png"
+config/features=PackedStringArray("4.0")
 
 [autoload]
 
@@ -66,5 +67,5 @@ DDD="*res://addons/zylann.debug_draw/debug_draw.gd"
 
 [rendering]
 
-environment/default_clear_color=Color( 0, 0, 0, 1 )
+environment/default_clear_color=Color(0, 0, 0, 1)
 environment/default_environment="res://default_env.tres"

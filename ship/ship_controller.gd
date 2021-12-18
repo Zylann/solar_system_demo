@@ -3,12 +3,12 @@ extends Node
 const StellarBody = preload("../solar_system/stellar_body.gd")
 var CharacterScene = load("res://character/character.tscn")
 
-onready var _ship = get_parent()
-onready var _character_spawn_position_node : Spatial = get_node("../CharacterSpawnPosition")
-onready var _ground_check_position_node : Spatial = get_node("../GroundCheckPosition")
+@onready var _ship = get_parent()
+@onready var _character_spawn_position_node : Node3D = get_node("../CharacterSpawnPosition")
+@onready var _ground_check_position_node : Node3D = get_node("../GroundCheckPosition")
 
-export var keyboard_turn_sensitivity := 0.1
-export var mouse_turn_sensitivity := 0.1
+@export var keyboard_turn_sensitivity := 0.1
+@export var mouse_turn_sensitivity := 0.1
 
 var _turn_cmd := Vector3()
 var _exit_ship_cmd := false
@@ -81,8 +81,8 @@ func _try_exit_ship():
 		print("Can't walk on this")
 		return
 	var planet_center := stellar_body.node.global_transform.origin
-	var space_state : PhysicsDirectSpaceState = ship.get_world().direct_space_state
-	var ship_trans : Transform = ship.global_transform
+	var space_state : PhysicsDirectSpaceState3D = ship.get_world_3d().direct_space_state
+	var ship_trans : Transform3D = ship.global_transform
 	var ship_pos : Vector3 = ship_trans.origin
 	var down := (planet_center - ship_pos).normalized()
 	# Is the ship not upside down?
@@ -91,22 +91,34 @@ func _try_exit_ship():
 		print("Ship not straight")
 		return
 	var ground_check_pos := _ground_check_position_node.global_transform.origin
-	var hit := space_state.intersect_ray(ground_check_pos, ground_check_pos + down * 2.0, [self])
-	if hit.empty():
+
+	var ray_query := PhysicsRayQueryParameters3D.new()
+	ray_query.from = ground_check_pos
+	ray_query.to = ground_check_pos + down * 2.0
+	ray_query.exclude = [self]
+	var hit := space_state.intersect_ray(ray_query)
+
+	if hit.is_empty():
 		# No ground under the ship
 		print("No ground under ship")
 		return
 	var spawn_pos := _character_spawn_position_node.global_transform.origin
-	hit = space_state.intersect_ray(spawn_pos, spawn_pos + down * 5.0)
-	if hit.empty():
+
+	#var ray_query := PhysicsRayQueryParameters3D.new()
+	ray_query.from = spawn_pos
+	ray_query.to = spawn_pos + down * 5.0
+	ray_query.exclude = []
+	hit = space_state.intersect_ray(ray_query)
+
+	if hit.is_empty():
 		# No ground under spawn position
 		print("No ground under spawn position")
 		return
 	# Let's do this
-	var character = CharacterScene.instance()
-	character.translation = spawn_pos
+	var character = CharacterScene.instantiate()
+	character.position = spawn_pos
 	ship.get_parent().add_child(character)
-	var camera = get_viewport().get_camera()
+	var camera = get_viewport().get_camera_3d()
 	camera.set_target(character)
 	ship.disable_controller()
 
@@ -127,22 +139,27 @@ func _input(event):
 	
 	elif event is InputEventKey:
 		if event.pressed:
-			match event.scancode:
+			match event.keycode:
 				KEY_E:
 					_exit_ship_cmd = true
 
 
 # TODO Temporary, need to replace this with a rocket launcher
 func _process_dig_actions():
-	var camera := get_viewport().get_camera()
+	var camera := get_viewport().get_camera_3d()
 	var front := -camera.global_transform.basis.z
 	var cam_pos = camera.global_transform.origin
-	var space_state := camera.get_world().direct_space_state
-	var hit = space_state.intersect_ray(cam_pos, cam_pos + front * 50.0, [self])
+	var space_state := camera.get_world_3d().direct_space_state
+
+	var ray_query := PhysicsRayQueryParameters3D.new()
+	ray_query.from = cam_pos
+	ray_query.to = cam_pos + front * 50.0
+	ray_query.exclude = [self]
+	var hit = space_state.intersect_ray(ray_query)
 	
-	var dig_cmd = Input.is_mouse_button_pressed(BUTTON_LEFT)
+	var dig_cmd = Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
 	
-	if not hit.empty():
+	if not hit.is_empty():
 		if hit.collider is VoxelLodTerrain:
 			var volume : VoxelLodTerrain = hit.collider
 			if dig_cmd:

@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/step_dirt_10.wav-e731b1f55c6fc73c41d76d716f389c7c.sample"
+uid="uid://sus8s25cpy0u"
+path="res://.godot/imported/step_dirt_10.wav-e731b1f55c6fc73c41d76d716f389c7c.sample"
 
 [deps]
 
 source_file="res://sounds/step_dirt_10.wav"
-dest_files=[ "res://.import/step_dirt_10.wav-e731b1f55c6fc73c41d76d716f389c7c.sample" ]
+dest_files=["res://.godot/imported/step_dirt_10.wav-e731b1f55c6fc73c41d76d716f389c7c.sample"]
 
 [params]
 

@@ -28,7 +28,7 @@ var static_bodies_are_in_tree := false
 var waypoints = []
 
 # Godot stuff
-var node : Spatial
+var node : Node3D
 var volume : VoxelLodTerrain
 var instancer : VoxelInstancer
 var static_bodies := []

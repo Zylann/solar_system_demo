@@ -3,11 +3,11 @@ extends Control
 const StellarBody = preload("../solar_system/stellar_body.gd")
 const Util = preload("../util/util.gd")
 
-onready var _solar_system = get_parent()
-onready var _target_planet_label = $TargetPlanetLabel
-onready var _target_label_rect = $TargetPlanetRect
-onready var _waypoint_hud = $WaypointHUD
-onready var _planet_hover_audio_player = $PlanetHoverSound
+@onready var _solar_system = get_parent()
+@onready var _target_planet_label = $TargetPlanetLabel
+@onready var _target_label_rect = $TargetPlanetRect
+@onready var _waypoint_hud = $WaypointHUD
+@onready var _planet_hover_audio_player = $PlanetHoverSound
 
 var _target_planet_screen_pos := Vector2()
 var _pointed_body = null
@@ -18,7 +18,7 @@ func _ready():
 
 
 func _process(_delta: float):
-	var camera := get_viewport().get_camera()
+	var camera := get_viewport().get_camera_3d()
 	if camera == null:
 		return
 	
@@ -33,7 +33,7 @@ func _process(_delta: float):
 		var body_edge_pos := body_pos + right * pointed_body.radius
 		var screen_center := camera.unproject_position(body_pos)
 		var screen_edge_pos := camera.unproject_position(body_edge_pos)
-		var screen_radius := max(16, screen_center.distance_to(screen_edge_pos))
+		var screen_radius : float = max(16.0, screen_center.distance_to(screen_edge_pos))
 		
 		if screen_radius > get_viewport().size.x * 0.5:
 			# Too big to be worth displaying
@@ -74,7 +74,7 @@ func _get_stellar_body_type_name(body: StellarBody) -> String:
 	return "Planet"
 
 
-func _find_pointed_planet(camera: Camera) -> StellarBody:
+func _find_pointed_planet(camera: Camera3D) -> StellarBody:
 	var camera_pos := camera.global_transform.origin
 	var mouse_pos = get_viewport().get_mouse_position()
 	var ray_origin = camera.project_ray_origin(mouse_pos)
@@ -96,7 +96,7 @@ func _find_pointed_planet(camera: Camera) -> StellarBody:
 #	return a if a > b else b
 
 
-#static func try_unproject(camera: Camera, pos: Vector3):
+#static func try_unproject(camera: Camera3D, pos: Vector3):
 #	var cam_trans = camera.global_transform
 #	var forward = -cam_trans.basis.z
 #	var dir = (pos - cam_trans.origin).normalized()

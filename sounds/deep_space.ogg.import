@@ -1,13 +1,14 @@
 [remap]
 
-importer="ogg_vorbis"
+importer="oggvorbisstr"
 type="AudioStreamOGGVorbis"
-path="res://.import/deep_space.ogg-b07902c1265a427214aa2dd6ad4ffa41.oggstr"
+uid="uid://pdsd7xlt73p1"
+path="res://.godot/imported/deep_space.ogg-b07902c1265a427214aa2dd6ad4ffa41.oggvorbisstr"
 
 [deps]
 
 source_file="res://sounds/deep_space.ogg"
-dest_files=[ "res://.import/deep_space.ogg-b07902c1265a427214aa2dd6ad4ffa41.oggstr" ]
+dest_files=["res://.godot/imported/deep_space.ogg-b07902c1265a427214aa2dd6ad4ffa41.oggvorbisstr"]
 
 [params]
 

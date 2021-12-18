@@ -1,13 +1,14 @@
 [remap]
 
-importer="ogg_vorbis"
+importer="oggvorbisstr"
 type="AudioStreamOGGVorbis"
-path="res://.import/wind.ogg-5c63a5e875481a84f404a4b047ee4eb4.oggstr"
+uid="uid://3i1kbpjr4qk"
+path="res://.godot/imported/wind.ogg-5c63a5e875481a84f404a4b047ee4eb4.oggvorbisstr"
 
 [deps]
 
 source_file="res://sounds/wind.ogg"
-dest_files=[ "res://.import/wind.ogg-5c63a5e875481a84f404a4b047ee4eb4.oggstr" ]
+dest_files=["res://.godot/imported/wind.ogg-5c63a5e875481a84f404a4b047ee4eb4.oggvorbisstr"]
 
 [params]
 

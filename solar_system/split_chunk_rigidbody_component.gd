@@ -18,7 +18,7 @@ func _physics_process(delta):
 
 func _process(delta):
 	# Remove when far away
-	var cam = get_viewport().get_camera()
+	var cam = get_viewport().get_camera_3d()
 	var body = get_parent()
 	if cam.global_transform.origin.distance_squared_to(body.global_transform.origin) > REMOVE_DISTANCE_SQ:
 		set_process(false)

@@ -1,8 +1,8 @@
-extends Spatial
+extends Node3D
 
 
-onready var _mesh_instance = $MeshInstance
-onready var _light = $OmniLight
+@onready var _mesh_instance = $MeshInstance
+@onready var _light = $OmniLight
 
 var _power = 0.0
 var _target_power = 0.0

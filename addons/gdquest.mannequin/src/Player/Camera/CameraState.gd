@@ -7,5 +7,5 @@ var camera_rig: CameraRig
 
 
 func _ready() -> void:
-	yield(owner, "ready")
+	await owner.ready
 	camera_rig = owner

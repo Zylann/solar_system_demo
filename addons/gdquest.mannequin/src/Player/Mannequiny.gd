@@ -1,4 +1,4 @@
-extends Spatial
+extends Node3D
 class_name Mannequiny
 # Controls the animation tree's transitions for this animated character.
 
@@ -7,11 +7,23 @@ class_name Mannequiny
 
 enum States { IDLE, RUN, AIR, LAND }
 
-onready var animation_tree: AnimationTree = $AnimationTree
-onready var _playback: AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
+@onready var animation_tree: AnimationTree = $AnimationTree
+@onready var _playback: AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
 
-var move_direction := Vector3.ZERO setget set_move_direction
-var is_moving := false setget set_is_moving
+var _move_direction := Vector3.ZERO
+var move_direction := Vector3.ZERO:
+	get:
+		return _move_direction
+	set(value):
+		set_move_direction(value)
+
+
+var _is_moving := false
+var is_moving := false:
+	get:
+		return _is_moving
+	set(value):
+		set_is_moving(value)
 
 
 func _ready() -> void:
@@ -19,12 +31,12 @@ func _ready() -> void:
 
 
 func set_move_direction(direction: Vector3) -> void:
-	move_direction = direction
+	_move_direction = direction
 	animation_tree["parameters/move_ground/blend_position"] = direction.length()
 
 
 func set_is_moving(value: bool) -> void:
-	is_moving = value
+	_is_moving = value
 	animation_tree["parameters/conditions/is_moving"] = value
 
 

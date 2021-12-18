@@ -3,7 +3,7 @@
 [ext_resource path="res://ship/ship.gd" type="Script" id=1]
 [ext_resource path="res://camera/camera_hints.gd" type="Script" id=2]
 [ext_resource path="res://ship/ship_controller.gd" type="Script" id=3]
-[ext_resource path="res://ship/speed_particles.shader" type="Shader" id=4]
+[ext_resource path="res://ship/speed_particles.gdshader" type="Shader" id=4]
 [ext_resource path="res://ship/motion_particles.gd" type="Script" id=5]
 [ext_resource path="res://ship/speed_particle.png" type="Texture" id=6]
 [ext_resource path="res://ship/model/ship.gltf" type="PackedScene" id=7]
@@ -104,6 +104,7 @@ script = ExtResource( 1 )
 linear_acceleration = 220.0
 angular_acceleration = 3.0
 speed_cap_in_space = 340.0
+freeze_mode = 0
 
 [node name="FlightCollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.297878, -0.538365 )

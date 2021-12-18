@@ -1,13 +1,14 @@
 [remap]
 
-importer="ogg_vorbis"
+importer="oggvorbisstr"
 type="AudioStreamOGGVorbis"
-path="res://.import/earth_surface_day.ogg-862709ebcc0cc6d97e199b95abed0a99.oggstr"
+uid="uid://rqykbiw4hwsx"
+path="res://.godot/imported/earth_surface_day.ogg-862709ebcc0cc6d97e199b95abed0a99.oggvorbisstr"
 
 [deps]
 
 source_file="res://sounds/earth_surface_day.ogg"
-dest_files=[ "res://.import/earth_surface_day.ogg-862709ebcc0cc6d97e199b95abed0a99.oggstr" ]
+dest_files=["res://.godot/imported/earth_surface_day.ogg-862709ebcc0cc6d97e199b95abed0a99.oggvorbisstr"]
 
 [params]
 

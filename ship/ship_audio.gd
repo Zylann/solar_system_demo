@@ -1,4 +1,4 @@
-extends Spatial
+extends Node3D
 
 const MultiSound = preload("res://sounds/multisound.gd")
 
@@ -13,22 +13,22 @@ const ShipHitSounds = [
 	preload("res://sounds/ship_hit_05.wav")
 ]
 
-onready var _main_jets_player = $MainJets
-onready var _secondary_jets_player = $SecondaryJets
-onready var _idle_player = $ShipIdle
-onready var _hit_players = [
+@onready var _main_jets_player = $MainJets
+@onready var _secondary_jets_player = $SecondaryJets
+@onready var _idle_player = $ShipIdle
+@onready var _hit_players = [
 	$Hit01,
 	$Hit02,
 	$Hit03
 ]
-onready var _on_player = $On
-onready var _off_player = $Off
-onready var _superspeed_start_player = $SuperSpeedOn
-onready var _superspeed_stop_player = $SuperSpeedOff
-onready var _superspeed_loop_player = $SuperSpeedLoop
-onready var _ambient_sounds = get_node("/root/GameWorld/AmbientSounds")
-onready var _air_friction_player = $AirFriction
-onready var _scrape_player = $Scrape
+@onready var _on_player = $On
+@onready var _off_player = $Off
+@onready var _superspeed_start_player = $SuperSpeedOn
+@onready var _superspeed_stop_player = $SuperSpeedOff
+@onready var _superspeed_loop_player = $SuperSpeedLoop
+@onready var _ambient_sounds = get_node("/root/GameWorld/AmbientSounds")
+@onready var _air_friction_player = $AirFriction
+@onready var _scrape_player = $Scrape
 
 var _smooth_main_jet_power := 0.0
 var _target_main_jet_power := 0.0
@@ -99,7 +99,7 @@ func _process(delta):
 	DDD.set_text("SFX air factor", air_factor)
 	
 	var contacts = get_parent().get_last_contacts_count()
-	if contacts > 0 and get_parent().mode == RigidBody.MODE_RIGID:
+	if contacts > 0 and not get_parent().freeze:
 		if not _scrape_player.playing:
 			_scrape_player.play()
 		_scrape_player.unit_db = linear2db(clamp(air_factor * 5.0, 0.0, 1.0))

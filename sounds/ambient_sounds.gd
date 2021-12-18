@@ -4,10 +4,10 @@ const StellarBody = preload("res://solar_system/stellar_body.gd")
 
 const WindSound = preload("res://sounds/wind.ogg")
 
-onready var _solar_system = get_parent()
-onready var _deep_space_player = $DeepSpace
-onready var _planet_day_player = $PlanetDay
-onready var _planet_night_player = $PlanetNight
+@onready var _solar_system = get_parent()
+@onready var _deep_space_player = $DeepSpace
+@onready var _planet_day_player = $PlanetDay
+@onready var _planet_night_player = $PlanetNight
 
 var _planet_factor = 0.0
 
@@ -22,7 +22,7 @@ func _process(delta):
 	var planet = _solar_system.get_reference_stellar_body()
 	
 	if planet.type != StellarBody.TYPE_SUN:
-		var camera = get_viewport().get_camera()
+		var camera = get_viewport().get_camera_3d()
 		var planet_core_position = planet.node.global_transform.origin
 		var camera_position = camera.global_transform.origin
 		var distance_to_core = camera_position.distance_to(planet_core_position)

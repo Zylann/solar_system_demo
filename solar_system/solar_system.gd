@@ -10,7 +10,7 @@ const BODY_REFERENCE_ENTRY_RADIUS_FACTOR = 3.0
 const BODY_REFERENCE_EXIT_RADIUS_FACTOR = 3.1 # Must be higher for hysteresis
 
 class ReferenceChangeInfo:
-	var inverse_transform : Transform
+	var inverse_transform : Transform3D
 
 class LoadingProgress:
 	var progress := 0.0
@@ -22,16 +22,16 @@ signal reference_body_changed(info)
 signal loading_progressed(info)
 
 
-onready var _environment = $WorldEnvironment.environment
-onready var _spawn_point = $SpawnPoint
-onready var _mouse_capture = $MouseCapture
-onready var _hud = $HUD
+@onready var _environment = $WorldEnvironment.environment
+@onready var _spawn_point = $SpawnPoint
+@onready var _mouse_capture = $MouseCapture
+@onready var _hud = $HUD
 
 var _ship = null
 
 var _bodies := []
 var _reference_body_id := 0
-var _directional_light : DirectionalLight
+var _directional_light : DirectionalLight3D
 var _physics_count := 0
 var _physics_count_on_last_reference_change = 0
 
@@ -50,7 +50,7 @@ func _ready():
 		progress_info.message = "Generating {0}...".format([body.name])
 		progress_info.progress = float(i) / float(len(_bodies))
 		emit_signal("loading_progressed", progress_info)
-		yield(get_tree(), "idle_frame")
+		await get_tree().process_frame
 
 		var sun_light := SolarSystemSetup.setup_stellar_body(body, self)
 		if sun_light != null:
@@ -59,10 +59,10 @@ func _ready():
 	# Spawn player
 	_mouse_capture.capture()
 	# Camera must process before the ship so we have to spawn it before...
-	var camera = CameraScene.instance()
+	var camera = CameraScene.instantiate()
 	camera.auto_find_camera_anchor = true
 	add_child(camera)
-	_ship = ShipScene.instance()
+	_ship = ShipScene.instantiate()
 	_ship.global_transform = _spawn_point.global_transform
 	add_child(_ship)
 	camera.set_target(_ship)
@@ -99,7 +99,7 @@ func _physics_process(delta: float):
 				set_reference_body(0)
 	
 	# Calculate current referential transform
-	var ref_trans_inverse = Transform()
+	var ref_trans_inverse = Transform3D()
 	if _reference_body_id != 0:
 		var ref_body = _bodies[_reference_body_id]
 		var ref_trans = _compute_absolute_body_transform(ref_body)
@@ -138,7 +138,7 @@ func _physics_process(delta: float):
 	# discrepancies will occur only when planets are very far away, or even behind the sun.
 	# If we still want accurate lighting, we could maybe modify their shader far away to simulate
 	# them being lit in a simplified manner?
-	var camera : Camera = get_viewport().get_camera()
+	var camera : Camera3D = get_viewport().get_camera_3d()
 	if camera != null:
 		var pos = camera.global_transform.origin
 		pos.y = 0.0
@@ -191,7 +191,7 @@ func set_reference_body(ref_id: int):
 	var body = _bodies[_reference_body_id]
 	print("Setting reference to ", ref_id, " (", body.name, ")")
 	var trans = body.node.transform
-	body.node.transform = Transform()
+	body.node.transform = Transform3D()
 	
 	var info := ReferenceChangeInfo.new()
 	# TODO Also have relative velocity of the body,
@@ -211,11 +211,11 @@ func set_reference_body(ref_id: int):
 	emit_signal("reference_body_changed", info)
 
 
-func _compute_absolute_body_transform(body: StellarBody) -> Transform:
+func _compute_absolute_body_transform(body: StellarBody) -> Transform3D:
 	if body.parent_id == -1:
 		# Sun
-		return Transform()
-	var parent_transform := Transform()
+		return Transform3D()
+	var parent_transform := Transform3D()
 	if body.parent_id != -1:
 		var parent_body = _bodies[body.parent_id]
 		parent_transform = _compute_absolute_body_transform(parent_body)
@@ -224,8 +224,8 @@ func _compute_absolute_body_transform(body: StellarBody) -> Transform:
 	var pos := Vector3(cos(orbit_angle), 0, sin(orbit_angle)) * body.distance_to_parent
 	pos = pos.rotated(Vector3(0, 0, 1), body.orbit_tilt)
 	var self_angle := body.self_revolution_progress * TAU
-	var basis := Basis(Vector3(0, self_angle, body.self_tilt))
-	var local_transform := Transform(basis, pos)
+	var basis := Basis.from_euler(Vector3(0, self_angle, body.self_tilt))
+	var local_transform := Transform3D(basis, pos)
 	return parent_transform * local_transform
 
 
@@ -247,7 +247,7 @@ func get_sun_position() -> Vector3:
 
 func _notification(what: int):
 	match what:
-		NOTIFICATION_WM_QUIT_REQUEST:
+		NOTIFICATION_WM_CLOSE_REQUEST:
 			# Save game when the user closes the window
 			_save_world()
 

@@ -1,34 +1,37 @@
 [remap]
 
 importer="texture"
-type="StreamTexture"
-path="res://.import/space_background.png-a7a37d773ce326fe4c7312d938601e7d.stex"
+type="StreamTexture2D"
+uid="uid://b0s3fc7sjnlof"
+path.s3tc="res://.godot/imported/space_background.png-a7a37d773ce326fe4c7312d938601e7d.s3tc.stex"
+path.etc2="res://.godot/imported/space_background.png-a7a37d773ce326fe4c7312d938601e7d.etc2.stex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc", "etc2"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://solar_system/space_background.png"
-dest_files=[ "res://.import/space_background.png-a7a37d773ce326fe4c7312d938601e7d.stex" ]
+dest_files=["res://.godot/imported/space_background.png-a7a37d773ce326fe4c7312d938601e7d.s3tc.stex", "res://.godot/imported/space_background.png-a7a37d773ce326fe4c7312d938601e7d.etc2.stex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/lossy_quality=0.7
-compress/hdr_mode=0
+compress/hdr_compression=1
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=0
-flags/filter=true
-flags/mipmaps=false
-flags/anisotropic=false
-flags/srgb=2
+compress/channel_pack=0
+compress/streamed=false
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
 process/fix_alpha_border=true
 process/premult_alpha=false
+process/normal_map_invert_y=false
 process/HDR_as_SRGB=false
-process/invert_color=false
-stream=false
-size_limit=0
-detect_3d=true
+process/size_limit=0
+detect_3d/compress_to=0
 svg/scale=1.0

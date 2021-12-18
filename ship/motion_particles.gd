@@ -1,6 +1,6 @@
-extends Particles
+extends GPUParticles3D
 
-onready var base_translation = translation
+@onready var base_translation = position
 
 
 func _process(delta):

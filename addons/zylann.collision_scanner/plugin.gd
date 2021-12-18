@@ -1,4 +1,4 @@
-tool
+@tool
 extends EditorPlugin
 
 const CollisionOverlay = preload("./collision_overlay.tscn")
@@ -12,7 +12,7 @@ func _enter_tree():
 	if parent == null:
 		print("Could not find 3D viewport container")
 		return
-	_overlay = CollisionOverlay.instance()
+	_overlay = CollisionOverlay.instantiate()
 	parent.add_child(_overlay)
 	parent.move_child(_overlay, 1)
 	# As per https://github.com/godotengine/godot/issues/6869

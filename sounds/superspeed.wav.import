@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/superspeed.wav-3c442f6f44533cb33280a839aaabbddf.sample"
+uid="uid://dy8qttbhhokt8"
+path="res://.godot/imported/superspeed.wav-3c442f6f44533cb33280a839aaabbddf.sample"
 
 [deps]
 
 source_file="res://sounds/superspeed.wav"
-dest_files=[ "res://.import/superspeed.wav-3c442f6f44533cb33280a839aaabbddf.sample" ]
+dest_files=["res://.godot/imported/superspeed.wav-3c442f6f44533cb33280a839aaabbddf.sample"]
 
 [params]
 

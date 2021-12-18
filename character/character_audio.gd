@@ -1,4 +1,4 @@
-extends Spatial
+extends Node3D
 
 const MultiSound = preload("res://sounds/multisound.gd")
 
@@ -26,20 +26,20 @@ const _dig_sounds = [
 	preload("res://sounds/dig_05.wav")
 ]
 
-onready var _step_players = [
+@onready var _step_players = [
 	$AudioStreamPlayer,
 	$AudioStreamPlayer2
 ]
 
-onready var _dig_players = [
+@onready var _dig_players = [
 	$Digs/AudioStreamPlayer3,
 	$Digs/AudioStreamPlayer4,
 	$Digs/AudioStreamPlayer5
 ]
 
-onready var _waypoint_player = $Waypoint
-onready var _light_on_player = $FlashLightOn
-onready var _light_off_player = $FlashLightOff
+@onready var _waypoint_player = $Waypoint
+@onready var _light_on_player = $FlashLightOn
+@onready var _light_off_player = $FlashLightOff
 
 var _last_step_position := Vector3()
 var _step_distance := 0.0
@@ -85,7 +85,7 @@ func _process(delta):
 
 
 func _next_step_distance():
-	_step_distance = STEP_DISTANCE + rand_range(-0.5, 0.5) * STEP_DISTANCE_RANDOMNESS
+	_step_distance = STEP_DISTANCE + randf_range(-0.5, 0.5) * STEP_DISTANCE_RANDOMNESS
 
 
 func _play_step():

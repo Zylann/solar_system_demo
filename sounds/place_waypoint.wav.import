@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/place_waypoint.wav-bea26d4916f16d999a818d1611349685.sample"
+uid="uid://u3v6wu6o27ys"
+path="res://.godot/imported/place_waypoint.wav-bea26d4916f16d999a818d1611349685.sample"
 
 [deps]
 
 source_file="res://sounds/place_waypoint.wav"
-dest_files=[ "res://.import/place_waypoint.wav-bea26d4916f16d999a818d1611349685.sample" ]
+dest_files=["res://.godot/imported/place_waypoint.wav-bea26d4916f16d999a818d1611349685.sample"]
 
 [params]
 

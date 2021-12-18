@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/ship_idle_on.wav-aef4ec611300cd9345fe5c4454670780.sample"
+uid="uid://v4vxb6jepbyk"
+path="res://.godot/imported/ship_idle_on.wav-aef4ec611300cd9345fe5c4454670780.sample"
 
 [deps]
 
 source_file="res://sounds/ship_idle_on.wav"
-dest_files=[ "res://.import/ship_idle_on.wav-aef4ec611300cd9345fe5c4454670780.sample" ]
+dest_files=["res://.godot/imported/ship_idle_on.wav-aef4ec611300cd9345fe5c4454670780.sample"]
 
 [params]
 

@@ -37,7 +37,7 @@ func _ready():
 	# Meh
 	var c := Control.new()
 	add_child(c)
-	_font = c.get_font("font")
+	_font = c.get_theme_font("font")
 	c.queue_free()
 
 
@@ -51,7 +51,7 @@ func draw_box(position: Vector3, size: Vector3, color: Color = Color(1,1,1), lin
 	var mat := _get_line_material()
 	mat.albedo_color = color
 	mi.material_override = mat
-	mi.translation = position - size * 0.5
+	mi.position = position - size * 0.5
 	mi.scale = size
 	_boxes.append({
 		"node": mi,
@@ -64,7 +64,7 @@ func draw_box_aabb(aabb: AABB, color = Color(1,1,1), linger_frames = 0):
 	var mat := _get_line_material()
 	mat.albedo_color = color
 	mi.material_override = mat
-	mi.translation = aabb.position
+	mi.position = aabb.position
 	mi.scale = aabb.size
 	_boxes.append({
 		"node": mi,
@@ -77,19 +77,21 @@ func draw_box_aabb(aabb: AABB, color = Color(1,1,1), linger_frames = 0):
 ## @param b: end position in world units
 ## @param color
 func draw_line_3d(a: Vector3, b: Vector3, color: Color):
-	var g = ImmediateGeometry.new()
-	g.material_override = _get_line_material()
-	g.material_override.albedo_color = Color(1, 1, 1)
-	g.begin(Mesh.PRIMITIVE_LINES)
-	g.set_color(color)
-	g.add_vertex(a)
-	g.add_vertex(b)
-	g.end()
-	add_child(g)
-	_lines.append({
-		"node": g,
-		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES,
-	})
+	# TODO Port this
+	pass
+#	var g = ImmediateGeometry.new()
+#	g.material_override = _get_line_material()
+#	g.material_override.albedo_color = Color(1, 1, 1)
+#	g.begin(Mesh.PRIMITIVE_LINES)
+#	g.set_color(color)
+#	g.add_vertex(a)
+#	g.add_vertex(b)
+#	g.end()
+#	add_child(g)
+#	_lines.append({
+#		"node": g,
+#		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES,
+#	})
 
 
 ## @brief Draws an unshaded 3D line defined as a ray.
@@ -113,10 +115,10 @@ func set_text(key: String, value = ""):
 	}
 
 
-func _get_box() -> MeshInstance:
-	var mi : MeshInstance
+func _get_box() -> MeshInstance3D:
+	var mi : MeshInstance3D
 	if len(_box_pool) == 0:
-		mi = MeshInstance.new()
+		mi = MeshInstance3D.new()
 		if _box_mesh == null:
 			_box_mesh = _create_wirecube_mesh(Color(1, 1, 1))
 		mi.mesh = _box_mesh
@@ -127,15 +129,15 @@ func _get_box() -> MeshInstance:
 	return mi
 
 
-func _recycle_box(mi: MeshInstance):
+func _recycle_box(mi: MeshInstance3D):
 	mi.hide()
 	_box_pool.append(mi)
 
 
-func _get_line_material() -> SpatialMaterial:
-	var mat : SpatialMaterial
+func _get_line_material() -> StandardMaterial3D:
+	var mat : StandardMaterial3D
 	if len(_line_material_pool) == 0:
-		mat = SpatialMaterial.new()
+		mat = StandardMaterial3D.new()
 		mat.flags_unshaded = true
 		mat.vertex_color_use_as_albedo = true
 	else:
@@ -144,7 +146,7 @@ func _get_line_material() -> SpatialMaterial:
 	return mat
 
 
-func _recycle_line_material(mat: SpatialMaterial):
+func _recycle_line_material(mat: StandardMaterial3D):
 	_line_material_pool.append(mat)
 
 
@@ -181,7 +183,7 @@ func _process(delta: float):
 	if _canvas_item == null:
 		_canvas_item = Node2D.new()
 		_canvas_item.position = Vector2(8, 8)
-		_canvas_item.connect("draw", self, "_on_CanvasItem_draw")
+		_canvas_item.draw.connect(_on_CanvasItem_draw)
 		_canvas_item.z_index = 100
 		add_child(_canvas_item)
 	_canvas_item.update()
@@ -202,12 +204,12 @@ func _on_CanvasItem_draw():
 		var text := str(key, ": ", t.text, "\n")
 		var ss := _font.get_string_size(text)
 		ci.draw_rect(Rect2(pos, Vector2(ss.x + xpad * 2, line_height)), TEXT_BG_COLOR)
-		ci.draw_string(_font, pos + font_offset, text, TEXT_COLOR)
+		ci.draw_string(_font, pos + font_offset, text, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, TEXT_COLOR)
 		pos.y += line_height
 
 
 static func _create_wirecube_mesh(color := Color(1,1,1)) -> ArrayMesh:
-	var positions := PoolVector3Array([
+	var positions := PackedVector3Array([
 		Vector3(0, 0, 0),
 		Vector3(1, 0, 0),
 		Vector3(1, 0, 1),
@@ -217,11 +219,11 @@ static func _create_wirecube_mesh(color := Color(1,1,1)) -> ArrayMesh:
 		Vector3(1, 1, 1),
 		Vector3(0, 1, 1)
 	])
-	var colors := PoolColorArray([
+	var colors := PackedColorArray([
 		color, color, color, color,
 		color, color, color, color,
 	])
-	var indices := PoolIntArray([
+	var indices := PackedInt32Array([
 		0, 1,
 		1, 2,
 		2, 3,

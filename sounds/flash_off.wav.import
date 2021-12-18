@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/flash_off.wav-22d9941ce0b4e36da698de7cb7004006.sample"
+uid="uid://cvilca41rqwpc"
+path="res://.godot/imported/flash_off.wav-22d9941ce0b4e36da698de7cb7004006.sample"
 
 [deps]
 
 source_file="res://sounds/flash_off.wav"
-dest_files=[ "res://.import/flash_off.wav-22d9941ce0b4e36da698de7cb7004006.sample" ]
+dest_files=["res://.godot/imported/flash_off.wav-22d9941ce0b4e36da698de7cb7004006.sample"]
 
 [params]
 

@@ -8,7 +8,7 @@ class_name State
 #
 # Use State as a child of a StateMachine node.
 
-onready var _state_machine := _get_state_machine(self)
+@onready var _state_machine := _get_state_machine(self)
 
 # Using the same class, i.e. State, as a type hint causes a memory leak in Godot
 # 3.2.
@@ -16,7 +16,7 @@ var _parent = null
 
 
 func _ready() -> void:
-	yield(owner, "ready")
+	await owner.ready
 	var parent = get_parent()
 	if not parent.is_in_group("state_machine"):
 		_parent = parent

@@ -1,18 +1,18 @@
 extends Node
 
 
-onready var _world_viewport : Viewport = $WorldViewport
-onready var _output_bg : TextureRect = $WorldOutput/BG
-onready var _output_fg : TextureRect = $WorldOutput/FG
+@onready var _world_viewport : Viewport = $WorldViewport
+@onready var _output_bg : TextureRect = $WorldOutput/BG
+@onready var _output_fg : TextureRect = $WorldOutput/FG
 
 var _far_viewport : Viewport
-var _bg_camera : Camera
+var _bg_camera : Camera3D
 
 
 func _ready():
 	while _get_fg_camera() == null:
 		DDD.set_text("Waiting for FG camera...")
-		yield(get_tree(), "idle_frame")
+		await get_tree().process_frame
 	
 	var fg_camera := _get_fg_camera()
 	_world_viewport.size = get_viewport().size
@@ -27,7 +27,7 @@ func _ready():
 	_far_viewport.render_target_update_mode = Viewport.UPDATE_ALWAYS
 	add_child_below_node(_world_viewport, _far_viewport)
 	
-	_bg_camera = Camera.new()
+	_bg_camera = Camera3D.new()
 	_bg_camera.fov = fg_camera.fov
 	_bg_camera.transform = fg_camera.transform
 	_bg_camera.near = fg_camera.far * 0.998
@@ -40,7 +40,7 @@ func _ready():
 	_output_bg.texture = _far_viewport.get_texture()
 	_output_fg.texture = _world_viewport.get_texture()	
 	
-	_output_bg.connect("resized", self, "_on_output_resized")
+	_output_bg.resized.connect(_on_output_resized)
 
 
 func _process(_delta: float):
@@ -54,7 +54,7 @@ func _input(event):
 	# DEBUG
 	if event is InputEventKey:
 		if event.pressed:
-			match event.scancode:
+			match event.keycode:
 				KEY_0:
 					_output_bg.show()
 					_output_fg.show()
@@ -70,8 +70,8 @@ func _unhandled_input(event):
 	_world_viewport.unhandled_input(event)
 
 
-func _get_fg_camera() -> Camera:
-	return _world_viewport.get_camera()
+func _get_fg_camera() -> Camera3D:
+	return _world_viewport.get_camera_3d()
 
 
 func _on_output_resized():

@@ -3,25 +3,53 @@
 # When the camera is close, it uses a fullscreen quad (does not work in editor).
 # Common parameters are exposed as properties.
 
-tool
-extends Spatial
+@tool
+extends Node3D
 
 const MODE_NEAR = 0
 const MODE_FAR = 1
 const SWITCH_MARGIN_RATIO = 1.1
 
-const AtmosphereShader = preload("./planet_atmosphere.shader")
+const AtmosphereShader = preload("./planet_atmosphere.gdshader")
 const DefaultShader = AtmosphereShader
 
-export var planet_radius := 1.0 setget set_planet_radius
-export var atmosphere_height := 0.1 setget set_atmosphere_height
-export(NodePath) var sun_path : NodePath setget set_sun_path
-export(Shader) var custom_shader setget set_custom_shader
 
-var _far_mesh : CubeMesh
+var _planet_radius := 1.0
+@export var planet_radius := 1.0:
+	get:
+		return _planet_radius
+	set(value):
+		set_planet_radius(value)
+
+
+var _atmosphere_height := 0.1
+@export var atmosphere_height := 0.1:
+	get:
+		return _atmosphere_height
+	set(value):
+		set_atmosphere_height(value)
+
+
+var _sun_path : NodePath
+@export var sun_path : NodePath:
+	get:
+		return _sun_path
+	set(value):
+		set_sun_path(value)
+
+
+var _custom_shader : Shader
+@export var custom_shader : Shader:
+	get:
+		return _custom_shader
+	set(value):
+		set_custom_shader(value)
+
+
+var _far_mesh : BoxMesh
 var _near_mesh : QuadMesh
 var _mode := MODE_FAR
-var _mesh_instance : MeshInstance
+var _mesh_instance : MeshInstance3D
 var _prev_atmo_clip_distance : float = 0.0
 
 # These parameters are assigned internally,
@@ -36,7 +64,7 @@ const _api_shader_params = {
 func _init():
 	var material = ShaderMaterial.new()
 	material.shader = AtmosphereShader
-	_mesh_instance = MeshInstance.new()
+	_mesh_instance = MeshInstance3D.new()
 	_mesh_instance.material_override = material
 	_mesh_instance.cast_shadow = false
 	add_child(_mesh_instance)
@@ -45,7 +73,7 @@ func _init():
 	_near_mesh.size = Vector2(2.0, 2.0)
 	
 	#_far_mesh = _create_far_mesh()
-	_far_mesh = CubeMesh.new()
+	_far_mesh = BoxMesh.new()
 	_far_mesh.size = Vector3(1.0, 1.0, 1.0)
 
 	_mesh_instance.mesh = _far_mesh
@@ -64,20 +92,20 @@ func _init():
 
 func _ready():
 	var mat = _get_material()
-	mat.set_shader_param("u_planet_radius", planet_radius)
-	mat.set_shader_param("u_atmosphere_height", atmosphere_height)
+	mat.set_shader_param("u_planet_radius", _planet_radius)
+	mat.set_shader_param("u_atmosphere_height", _atmosphere_height)
 	mat.set_shader_param("u_clip_mode", false)
 
 
 func set_custom_shader(shader: Shader):
-	custom_shader = shader
+	_custom_shader = shader
 	var mat := _get_material()
-	if custom_shader == null:
+	if _custom_shader == null:
 		mat.shader = DefaultShader
 	else:
 		var previous_shader = mat.shader
 		mat.shader = shader
-		if Engine.editor_hint:
+		if Engine.is_editor_hint():
 			# Fork built-in shader
 			if shader.code == "" and previous_shader == DefaultShader:
 				shader.code = DefaultShader.code
@@ -100,7 +128,7 @@ func get_shader_param(param_name: String):
 func _get_property_list():
 	var props := []
 	var mat := _get_material()
-	var shader_params := VisualServer.shader_get_param_list(mat.shader.get_rid())
+	var shader_params := RenderingServer.shader_get_param_list(mat.shader.get_rid())
 	for p in shader_params:
 		if _api_shader_params.has(p.name):
 			continue
@@ -126,38 +154,38 @@ func _set(key: String, value):
 		mat.set_shader_param(param_name, value)
 
 
-func _get_configuration_warning() -> String:
-	if sun_path == null or sun_path.is_empty():
-		return "The path to the sun is not assigned."
-	var light = get_node(sun_path)
-	if not (light is Spatial):
-		return "The assigned sun node is not a Spatial."
-	return ""
+func _get_configuration_warnings() -> PackedStringArray:
+	if _sun_path == null or _sun_path.is_empty():
+		return PackedStringArray(["The path to the sun is not assigned."])
+	var light = get_node(_sun_path)
+	if not (light is Node3D):
+		return PackedStringArray(["The assigned sun node is not a Node3D."])
+	return PackedStringArray()
 
 
 func set_planet_radius(new_radius: float):
-	if planet_radius == new_radius:
+	if _planet_radius == new_radius:
 		return
-	planet_radius = max(new_radius, 0.0)
-	_mesh_instance.material_override.set_shader_param("u_planet_radius", planet_radius)
+	_planet_radius = max(new_radius, 0.0)
+	_mesh_instance.material_override.set_shader_param("u_planet_radius", _planet_radius)
 	_update_cull_margin()
 
 
 func _update_cull_margin():
-	_mesh_instance.extra_cull_margin = planet_radius + atmosphere_height
+	_mesh_instance.extra_cull_margin = _planet_radius + _atmosphere_height
 
 
 func set_atmosphere_height(new_height: float):
-	if atmosphere_height == new_height:
+	if _atmosphere_height == new_height:
 		return
-	atmosphere_height = max(new_height, 0.0)
-	_mesh_instance.material_override.set_shader_param("u_atmosphere_height", atmosphere_height)
+	_atmosphere_height = max(new_height, 0.0)
+	_mesh_instance.material_override.set_shader_param("u_atmosphere_height", _atmosphere_height)
 	_update_cull_margin()
 
 
 func set_sun_path(new_sun_path: NodePath):
-	sun_path = new_sun_path
-	update_configuration_warning()
+	_sun_path = new_sun_path
+	update_configuration_warnings()
 
 
 func _set_mode(mode: int):
@@ -174,7 +202,7 @@ func _set_mode(mode: int):
 		# otherwise it will pass through the quad
 		mat.set_shader_param("u_clip_mode", true)
 		_mesh_instance.mesh = _near_mesh
-		_mesh_instance.transform = Transform()
+		_mesh_instance.transform = Transform3D()
 		# TODO Sometimes there is a short flicker, figure out why
 
 	else:
@@ -188,21 +216,21 @@ func _process(_delta):
 	var cam_pos := Vector3()
 	var cam_near := 0.1
 	
-	var cam := get_viewport().get_camera()
+	var cam := get_viewport().get_camera_3d()
 
 	if cam != null:
 		cam_pos = cam.global_transform.origin
 		cam_near = cam.near
 		
-	elif Engine.editor_hint:
+	elif Engine.is_editor_hint():
 		# Getting the camera in editor is freaking awkward so let's hardcode it...
 		cam_pos = global_transform.origin \
-			+ Vector3(10.0 * (planet_radius + atmosphere_height + cam_near), 0, 0)
+			+ Vector3(10.0 * (_planet_radius + _atmosphere_height + cam_near), 0, 0)
 
 	# 1.75 is an approximation of sqrt(3), because the far mesh is a cube and we have to take
 	# the largest distance from the center into account
 	var atmo_clip_distance : float = \
-		1.75 * (planet_radius + atmosphere_height + cam_near) * SWITCH_MARGIN_RATIO
+		1.75 * (_planet_radius + _atmosphere_height + cam_near) * SWITCH_MARGIN_RATIO
 	
 	# Detect when to switch modes.
 	# we always switch modes while already being slightly away from the quad, to avoid flickering
@@ -217,7 +245,7 @@ func _process(_delta):
 		if _prev_atmo_clip_distance != atmo_clip_distance:
 			_prev_atmo_clip_distance = atmo_clip_distance
 			# The mesh instance should not be scaled, so we resize the cube instead
-			var cm = CubeMesh.new()
+			var cm = BoxMesh.new()
 			cm.size = Vector3(atmo_clip_distance, atmo_clip_distance, atmo_clip_distance)
 			_mesh_instance.mesh = cm
 			_far_mesh = cm
@@ -225,8 +253,8 @@ func _process(_delta):
 	# Lazily avoiding the node referencing can of worms.
 	# Not very efficient but I assume there won't be many atmospheres in the game.
 	# In Godot 4 it could be replaced by caching the object ID in some way
-	if has_node(sun_path):
-		var sun = get_node(sun_path)
-		if sun is Spatial:
+	if has_node(_sun_path):
+		var sun = get_node(_sun_path)
+		if sun is Node3D:
 			var mat := _get_material()
 			mat.set_shader_param("u_sun_position", sun.global_transform.origin)

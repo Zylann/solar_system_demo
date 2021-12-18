@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/ship_scrape.wav-8394ad622f299719c94b191e123590da.sample"
+uid="uid://bwcnevn0yl66f"
+path="res://.godot/imported/ship_scrape.wav-8394ad622f299719c94b191e123590da.sample"
 
 [deps]
 
 source_file="res://sounds/ship_scrape.wav"
-dest_files=[ "res://.import/ship_scrape.wav-8394ad622f299719c94b191e123590da.sample" ]
+dest_files=["res://.godot/imported/ship_scrape.wav-8394ad622f299719c94b191e123590da.sample"]
 
 [params]
 

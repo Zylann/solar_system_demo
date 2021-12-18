@@ -1,4 +1,4 @@
-extends RigidBody
+extends RigidDynamicBody3D
 
 const StellarBody = preload("../solar_system/stellar_body.gd")
 const Util = preload("../util/util.gd")
@@ -6,38 +6,38 @@ const Util = preload("../util/util.gd")
 const STATE_LANDED = 0
 const STATE_FLYING = 1
 
-export var linear_acceleration := 10.0
-export var angular_acceleration := 1000.0
-export var speed_cap_on_planet := 40.0
-export var speed_cap_in_space := 400.0
+@export var linear_acceleration := 10.0
+@export var angular_acceleration := 1000.0
+@export var speed_cap_on_planet := 40.0
+@export var speed_cap_in_space := 400.0
 
-onready var _visual_root = $Visual/VisualRoot
-onready var _controller = $Controller
-onready var _landed_nodes = [
+@onready var _visual_root = $Visual/VisualRoot
+@onready var _controller = $Controller
+@onready var _landed_nodes = [
 	$Visual/VisualRoot/ship/Interior2,
 	$Visual/VisualRoot/ship/HatchDown/KinematicBody,
 	$CommandPanel
 ]
-onready var _landed_node_parents = []
-onready var _flight_collision_shapes = [
+@onready var _landed_node_parents = []
+@onready var _flight_collision_shapes = [
 	$FlightCollisionShape,
 	#$FlightCollisionShape2,
 	#$FlightCollisionShape3
 ]
-onready var _animation_player = $AnimationPlayer
-onready var _main_jets = [
+@onready var _animation_player = $AnimationPlayer
+@onready var _main_jets = [
 	$Visual/VisualRoot/JetVFXMainLeft,
 	$Visual/VisualRoot/JetVFXMainRight,
 ]
-onready var _left_roll_jets = [
+@onready var _left_roll_jets = [
 	$Visual/VisualRoot/JetVFXLeftWing1,
 	$Visual/VisualRoot/JetVFXLeftWing2
 ]
-onready var _right_roll_jets = [
+@onready var _right_roll_jets = [
 	$Visual/VisualRoot/JetVFXRightWing1,
 	$Visual/VisualRoot/JetVFXRightWing2
 ]
-onready var _audio = $ShipAudio
+@onready var _audio = $ShipAudio
 
 var _move_cmd := Vector3()
 var _turn_cmd := Vector3()
@@ -57,8 +57,7 @@ func _ready():
 	_visual_root.global_transform = global_transform
 	enable_controller()
 	
-	get_solar_system().connect(
-		"reference_body_changed", self, "_on_solar_system_reference_body_changed")
+	get_solar_system().reference_body_changed.connect(_on_solar_system_reference_body_changed)
 
 
 func enable_controller():
@@ -67,7 +66,7 @@ func enable_controller():
 		n.get_parent().remove_child(n)
 	for cs in _flight_collision_shapes:
 		cs.disabled = false
-	mode = RigidBody.MODE_RIGID
+	freeze = false
 	_close_hatch()
 	_state = STATE_FLYING
 	_audio.play_enabled()
@@ -79,7 +78,7 @@ func disable_controller():
 		_landed_node_parents[i].add_child(_landed_nodes[i])
 	for cs in _flight_collision_shapes:
 		cs.disabled = true
-	mode = RigidBody.MODE_STATIC
+	freeze = true
 	_open_hatch()
 	_state = STATE_LANDED
 	_audio.play_disabled()
@@ -125,7 +124,7 @@ func set_superspeed_cmd(cmd: bool):
 	_superspeed_cmd = cmd
 
 
-func _integrate_forces(state: PhysicsDirectBodyState):
+func _integrate_forces(state: PhysicsDirectBodyState3D):
 	if _ref_change_info != null:
 		# Teleport
 		state.transform = _ref_change_info.inverse_transform * state.transform
@@ -179,7 +178,8 @@ func _integrate_forces(state: PhysicsDirectBodyState):
 		# TODO Need a No-Man-Sky-esque mechanic to land without gravity
 		# In case you dive into a stellar body, gravity actually reduces as you get closer to
 		# the core, because some mass is now behind you
-		var gd := abs(distance_to_core - stellar_body.radius) + stellar_body.radius
+		# TODO Explicit typing should not be needed, there is a bug in GDScript2
+		var gd : float = abs(distance_to_core - stellar_body.radius) + stellar_body.radius
 		var gravity_dir := (pull_center - gtrans.origin).normalized()
 		var stellar_mass := Util.get_sphere_volume(stellar_body.radius)
 		var f := 0.005 * stellar_mass / (gd * gd)

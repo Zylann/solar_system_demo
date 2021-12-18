@@ -5,10 +5,16 @@ class_name StateMachine
 
 signal transitioned(state_path)
 
-export var initial_state := NodePath()
+@export var initial_state := NodePath()
 
-onready var state: State = get_node(initial_state) setget set_state
-onready var _state_name := state.name
+@onready var state: State = get_node(initial_state):
+	get:
+		return state
+	set(value):
+		state = value
+		_state_name = state.name
+
+@onready var _state_name := state.name
 
 
 func _init() -> void:
@@ -16,7 +22,7 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	yield(owner, "ready")
+	await owner.ready
 	state.enter()
 
 
@@ -42,8 +48,3 @@ func transition_to(target_state_path: String, msg: Dictionary = {}) -> void:
 	self.state = target_state
 	state.enter(msg)
 	emit_signal("transitioned", target_state_path)
-
-
-func set_state(value: State) -> void:
-	state = value
-	_state_name = state.name

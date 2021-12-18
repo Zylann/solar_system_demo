@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" load_steps=6 format=2]
 
-[ext_resource path="res://solar_system/materials/planet_ground.shader" type="Shader" id=1]
+[ext_resource path="res://solar_system/materials/planet_ground.gdshader" type="Shader" id=1]
 [ext_resource path="res://textures/grass_albedo.png" type="Texture" id=2]
 [ext_resource path="res://textures/Rocks07_col.png" type="Texture" id=3]
 [ext_resource path="res://textures/grass_normal.png" type="Texture" id=4]

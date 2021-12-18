@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/dig_03.wav-86c494ca1d5dbac78eb0409190449097.sample"
+uid="uid://b33vlt3b5dhkc"
+path="res://.godot/imported/dig_03.wav-86c494ca1d5dbac78eb0409190449097.sample"
 
 [deps]
 
 source_file="res://sounds/dig_03.wav"
-dest_files=[ "res://.import/dig_03.wav-86c494ca1d5dbac78eb0409190449097.sample" ]
+dest_files=["res://.godot/imported/dig_03.wav-86c494ca1d5dbac78eb0409190449097.sample"]
 
 [params]
 

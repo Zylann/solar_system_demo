@@ -17,6 +17,6 @@ void fragment() {
 	vec4 albedo_tex = texture(texture_albedo,base_uv);
 	ALBEDO = albedo_tex.rgb * COLOR.rgb;
 	ALPHA = albedo_tex.a;
-	ALPHA_SCISSOR = alpha_scissor_threshold;
+	ALPHA_SCISSOR_THRESHOLD = alpha_scissor_threshold;
 	NORMAL = (INV_CAMERA_MATRIX * (WORLD_MATRIX * vec4(v_normal, 0.0))).xyz;
 }

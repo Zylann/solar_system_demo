@@ -1,19 +1,21 @@
 [remap]
 
 importer="wavefront_obj"
+importer_version=1
 type="Mesh"
-path="res://.import/grass_quad_x2.obj-68d4b37c8757e10aa9cb2102e856189a.mesh"
+uid="uid://cfsbul1larsvw"
+path="res://.godot/imported/grass_quad_x2.obj-68d4b37c8757e10aa9cb2102e856189a.mesh"
 
 [deps]
 
-files=[ "res://.import/grass_quad_x2.obj-68d4b37c8757e10aa9cb2102e856189a.mesh" ]
+files=["res://.godot/imported/grass_quad_x2.obj-68d4b37c8757e10aa9cb2102e856189a.mesh"]
 
 source_file="res://props/grass/grass_quad_x2.obj"
-dest_files=[ "res://.import/grass_quad_x2.obj-68d4b37c8757e10aa9cb2102e856189a.mesh", "res://.import/grass_quad_x2.obj-68d4b37c8757e10aa9cb2102e856189a.mesh" ]
+dest_files=["res://.godot/imported/grass_quad_x2.obj-68d4b37c8757e10aa9cb2102e856189a.mesh", "res://.godot/imported/grass_quad_x2.obj-68d4b37c8757e10aa9cb2102e856189a.mesh"]
 
 [params]
 
 generate_tangents=true
-scale_mesh=Vector3( 1, 1, 1 )
-offset_mesh=Vector3( 0, 0, 0 )
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
 optimize_mesh=true

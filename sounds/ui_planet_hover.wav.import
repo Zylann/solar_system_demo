@@ -2,12 +2,13 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/ui_planet_hover.wav-cd2e2ea760b6af71b1e6d1d09528dd03.sample"
+uid="uid://bpacs3ufj22ps"
+path="res://.godot/imported/ui_planet_hover.wav-cd2e2ea760b6af71b1e6d1d09528dd03.sample"
 
 [deps]
 
 source_file="res://sounds/ui_planet_hover.wav"
-dest_files=[ "res://.import/ui_planet_hover.wav-cd2e2ea760b6af71b1e6d1d09528dd03.sample" ]
+dest_files=["res://.godot/imported/ui_planet_hover.wav-cd2e2ea760b6af71b1e6d1d09528dd03.sample"]
 
 [params]
 

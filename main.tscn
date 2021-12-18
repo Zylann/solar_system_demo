@@ -1,71 +1,67 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=3 uid="uid://q76geh8jqrei"]
 
-[ext_resource path="res://solar_system/space_background.png" type="Texture" id=1]
-[ext_resource path="res://solar_system/solar_system.gd" type="Script" id=2]
-[ext_resource path="res://gui/loading_screen.gd" type="Script" id=3]
-[ext_resource path="res://gui/hud.gd" type="Script" id=4]
-[ext_resource path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" type="Script" id=5]
-[ext_resource path="res://gui/fonts/hack_regular_16_dynamic_font.tres" type="DynamicFont" id=6]
-[ext_resource path="res://gui/mouse_capture.tscn" type="PackedScene" id=7]
-[ext_resource path="res://voxel_debug_info.gd" type="Script" id=8]
-[ext_resource path="res://sounds/ambient_sounds.gd" type="Script" id=9]
-[ext_resource path="res://gui/crosshair.png" type="Texture" id=10]
-[ext_resource path="res://gui/select_rect.png" type="Texture" id=11]
-[ext_resource path="res://waypoints/waypoint_hud.tscn" type="PackedScene" id=12]
-[ext_resource path="res://sounds/deep_space.ogg" type="AudioStream" id=13]
-[ext_resource path="res://sounds/ui_planet_hover.wav" type="AudioStream" id=14]
+[ext_resource type="Texture2D" uid="uid://b0s3fc7sjnlof" path="res://solar_system/space_background.png" id="1"]
+[ext_resource type="Script" path="res://solar_system/solar_system.gd" id="2"]
+[ext_resource type="Script" path="res://gui/loading_screen.gd" id="3"]
+[ext_resource type="Script" path="res://gui/hud.gd" id="4"]
+[ext_resource type="Script" path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" id="5"]
+[ext_resource type="Font" path="res://gui/fonts/hack_regular_16_dynamic_font.tres" id="6"]
+[ext_resource type="PackedScene" path="res://gui/mouse_capture.tscn" id="7"]
+[ext_resource type="Script" path="res://voxel_debug_info.gd" id="8"]
+[ext_resource type="Script" path="res://sounds/ambient_sounds.gd" id="9"]
+[ext_resource type="Texture2D" uid="uid://31ebse57lvhs" path="res://gui/crosshair.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://dnkytmccfss5m" path="res://gui/select_rect.png" id="11"]
+[ext_resource type="PackedScene" path="res://waypoints/waypoint_hud.tscn" id="12"]
+[ext_resource type="AudioStream" uid="uid://pdsd7xlt73p1" path="res://sounds/deep_space.ogg" id="13"]
+[ext_resource type="AudioStream" uid="uid://bpacs3ufj22ps" path="res://sounds/ui_planet_hover.wav" id="14"]
 
-[sub_resource type="PanoramaSky" id=1]
-panorama = ExtResource( 1 )
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_cmlyd"]
+panorama = ExtResource( "1" )
 
-[sub_resource type="Environment" id=2]
+[sub_resource type="Sky" id="1"]
+sky_material = SubResource( "PanoramaSkyMaterial_cmlyd" )
+
+[sub_resource type="Environment" id="2"]
 background_mode = 2
-background_sky = SubResource( 1 )
-ambient_light_color = Color( 1, 1, 1, 1 )
+sky = SubResource( "1" )
+ambient_light_color = Color(1, 1, 1, 1)
 ambient_light_energy = 18.0
 glow_enabled = true
-glow_levels/5 = false
-glow_levels/6 = true
-glow_levels/7 = true
+glow_levels/5 = 0.0
+glow_levels/6 = 1.0
+glow_levels/7 = 1.0
 glow_intensity = 1.0
 glow_blend_mode = 0
 glow_hdr_threshold = 0.8
-glow_bicubic_upscale = true
 
 [node name="GameWorld" type="Node"]
-script = ExtResource( 2 )
+script = ExtResource( "2" )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource( 2 )
+environment = SubResource( "2" )
 
 [node name="SpawnPoint" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8000, 0, 0 )
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8000, 0, 0)
 
 [node name="HUD" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-script = ExtResource( 4 )
+script = ExtResource( "4" )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="TargetPlanetLabel" type="Label" parent="HUD"]
-margin_right = 40.0
-margin_bottom = 40.0
-custom_fonts/font = ExtResource( 6 )
+theme_override_fonts/font = ExtResource( "6" )
 text = "Hello world"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="TargetPlanetRect" type="NinePatchRect" parent="HUD"]
-modulate = Color( 1, 1, 1, 0.784314 )
-margin_left = 309.539
-margin_top = 220.355
-margin_right = 472.539
-margin_bottom = 357.355
-texture = ExtResource( 11 )
+modulate = Color(1, 1, 1, 0.784314)
+texture = ExtResource( "11" )
 patch_margin_left = 15
 patch_margin_top = 15
 patch_margin_right = 16
@@ -83,35 +79,35 @@ __meta__ = {
 }
 
 [node name="TextureRect" type="TextureRect" parent="HUD/Crosshair"]
-margin_left = 496.0
-margin_top = 284.0
-margin_right = 528.0
-margin_bottom = 316.0
+offset_left = 496.0
+offset_top = 284.0
+offset_right = 528.0
+offset_bottom = 316.0
 mouse_filter = 2
-texture = ExtResource( 10 )
+texture = ExtResource( "10" )
 stretch_mode = 4
 
-[node name="WaypointHUD" parent="HUD" instance=ExtResource( 12 )]
+[node name="WaypointHUD" parent="HUD" instance=ExtResource( "12" )]
 
 [node name="PlanetHoverSound" type="AudioStreamPlayer" parent="HUD"]
-stream = ExtResource( 14 )
+stream = ExtResource( "14" )
 
 [node name="LensFlare" type="Node" parent="."]
-script = ExtResource( 5 )
+script = ExtResource( "5" )
 flareStrength = 4.0
 flareBias = 0.95
 flareBlur = 3.0
 distortion = 7.422
 haloWidth = 0.449
 
-[node name="MouseCapture" parent="." instance=ExtResource( 7 )]
+[node name="MouseCapture" parent="." instance=ExtResource( "7" )]
 capture_mouse_in_ready = false
 
 [node name="LoadingScreen" type="ColorRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color( 0, 0, 0, 0.65098 )
-script = ExtResource( 3 )
+color = Color(0, 0, 0, 0.65098)
+script = ExtResource( "3" )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -124,47 +120,43 @@ __meta__ = {
 }
 
 [node name="PC" type="PanelContainer" parent="LoadingScreen/CC"]
-margin_left = 105.0
-margin_top = 277.0
-margin_right = 919.0
-margin_bottom = 323.0
+offset_left = 105.0
+offset_top = 266.0
+offset_right = 919.0
+offset_bottom = 333.0
 
 [node name="VB" type="VBoxContainer" parent="LoadingScreen/CC/PC"]
-margin_left = 7.0
-margin_top = 7.0
-margin_right = 807.0
-margin_bottom = 39.0
-rect_min_size = Vector2( 800, 0 )
+offset_left = 7.0
+offset_top = 7.0
+offset_right = 807.0
+offset_bottom = 60.0
+rect_min_size = Vector2(800, 0)
 
 [node name="Label" type="Label" parent="LoadingScreen/CC/PC/VB"]
-margin_right = 800.0
-margin_bottom = 14.0
+offset_right = 800.0
+offset_bottom = 26.0
 text = "Loading..."
-align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="ProgressBar" type="ProgressBar" parent="LoadingScreen/CC/PC/VB"]
-margin_top = 18.0
-margin_right = 800.0
-margin_bottom = 32.0
+offset_top = 30.0
+offset_right = 800.0
+offset_bottom = 53.0
 max_value = 1.0
 
 [node name="VoxelDebugInfo" type="Node" parent="."]
-script = ExtResource( 8 )
+script = ExtResource( "8" )
 
 [node name="AmbientSounds" type="Node" parent="."]
-script = ExtResource( 9 )
+script = ExtResource( "9" )
 
 [node name="DeepSpace" type="AudioStreamPlayer" parent="AmbientSounds"]
-stream = ExtResource( 13 )
+stream = ExtResource( "13" )
 autoplay = true
-bus = "SFX"
+bus = &"SFX"
 
 [node name="PlanetDay" type="AudioStreamPlayer" parent="AmbientSounds"]
 
 [node name="PlanetNight" type="AudioStreamPlayer" parent="AmbientSounds"]
-
-[connection signal="loading_progressed" from="." to="LoadingScreen" method="_on_GameWorld_loading_progressed"]
-[connection signal="reference_body_changed" from="." to="AmbientSounds" method="_on_GameWorld_reference_body_changed"]
