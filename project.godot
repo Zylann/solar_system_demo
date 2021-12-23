@@ -19,6 +19,11 @@ _global_script_classes=[{
 "language": &"GDScript",
 "path": "res://addons/gdquest.mannequin/src/Player/Camera/CameraState.gd"
 }, {
+"base": "Camera3D",
+"class": &"InterpolatedCamera3D",
+"language": &"GDScript",
+"path": "res://addons/interpolated_camera_3d/interpolated_camera_3d.gd"
+}, {
 "base": "Node3D",
 "class": &"Mannequiny",
 "language": &"GDScript",
@@ -47,6 +52,7 @@ _global_script_classes=[{
 _global_script_class_icons={
 "CameraRig": "",
 "CameraState": "",
+"InterpolatedCamera3D": "res://addons/interpolated_camera_3d/interpolated_camera_3d.svg",
 "Mannequiny": "",
 "Player": "",
 "PlayerState": "",

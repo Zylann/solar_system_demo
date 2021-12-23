@@ -6,7 +6,7 @@ func _ready() -> void:
 	set_as_toplevel(true)
 
 
-func update(ray: RayCast) -> void:
+func update(ray: RayCast3D) -> void:
 	ray.force_raycast_update()
 	var is_colliding := ray.is_colliding()
 	visible = is_colliding

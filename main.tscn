@@ -160,3 +160,5 @@ bus = &"SFX"
 [node name="PlanetDay" type="AudioStreamPlayer" parent="AmbientSounds"]
 
 [node name="PlanetNight" type="AudioStreamPlayer" parent="AmbientSounds"]
+
+[connection signal="loading_progressed" from="." to="LoadingScreen" method="_on_GameWorld_loading_progressed"]

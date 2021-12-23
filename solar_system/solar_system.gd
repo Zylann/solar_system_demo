@@ -49,7 +49,7 @@ func _ready():
 		
 		progress_info.message = "Generating {0}...".format([body.name])
 		progress_info.progress = float(i) / float(len(_bodies))
-		emit_signal("loading_progressed", progress_info)
+		loading_progressed.emit(progress_info)
 		await get_tree().process_frame
 
 		var sun_light := SolarSystemSetup.setup_stellar_body(body, self)
@@ -71,7 +71,7 @@ func _ready():
 	set_physics_process(true)
 
 	progress_info.finished = true
-	emit_signal("loading_progressed", progress_info)
+	loading_progressed.emit(progress_info)
 
 
 func _physics_process(delta: float):
@@ -204,11 +204,11 @@ func set_reference_body(ref_id: int):
 	body.static_bodies_are_in_tree = true
 
 	_directional_light.shadow_color = body.atmosphere_color.darkened(0.8)
-	var environment = get_viewport().world.environment
+	var environment = get_viewport().world_3d.environment
 	environment.ambient_light_color = body.atmosphere_color
 	environment.ambient_light_energy = 20
 	
-	emit_signal("reference_body_changed", info)
+	reference_body_changed.emit(info)
 
 
 func _compute_absolute_body_transform(body: StellarBody) -> Transform3D:

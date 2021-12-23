@@ -1,258 +1,272 @@
-[gd_scene load_steps=30 format=2]
+[gd_scene load_steps=31 format=3 uid="uid://blqdy4acm4wpa"]
 
-[ext_resource path="res://ship/ship.gd" type="Script" id=1]
-[ext_resource path="res://camera/camera_hints.gd" type="Script" id=2]
-[ext_resource path="res://ship/ship_controller.gd" type="Script" id=3]
-[ext_resource path="res://ship/speed_particles.gdshader" type="Shader" id=4]
-[ext_resource path="res://ship/motion_particles.gd" type="Script" id=5]
-[ext_resource path="res://ship/speed_particle.png" type="Texture" id=6]
-[ext_resource path="res://ship/model/ship.gltf" type="PackedScene" id=7]
-[ext_resource path="res://ship/jet_vfx.tscn" type="PackedScene" id=8]
-[ext_resource path="res://sounds/jet.wav" type="AudioStream" id=9]
-[ext_resource path="res://ship/ship_audio.gd" type="Script" id=10]
-[ext_resource path="res://sounds/jet2.wav" type="AudioStream" id=11]
-[ext_resource path="res://sounds/ship_stop.wav" type="AudioStream" id=12]
-[ext_resource path="res://sounds/ship_start.wav" type="AudioStream" id=13]
-[ext_resource path="res://sounds/superspeed_start.wav" type="AudioStream" id=14]
-[ext_resource path="res://sounds/superspeed.wav" type="AudioStream" id=15]
-[ext_resource path="res://sounds/superspeed_stop.wav" type="AudioStream" id=16]
-[ext_resource path="res://sounds/flying_in_atmosphere.wav" type="AudioStream" id=17]
-[ext_resource path="res://sounds/ship_scrape.wav" type="AudioStream" id=18]
+[ext_resource type="Script" path="res://ship/ship.gd" id="1"]
+[ext_resource type="Script" path="res://camera/camera_hints.gd" id="2"]
+[ext_resource type="Script" path="res://ship/ship_controller.gd" id="3"]
+[ext_resource type="Shader" path="res://ship/speed_particles.gdshader" id="4"]
+[ext_resource type="Script" path="res://ship/motion_particles.gd" id="5"]
+[ext_resource type="Texture2D" uid="uid://cb4femk463wd7" path="res://ship/speed_particle.png" id="6"]
+[ext_resource type="PackedScene" uid="uid://2wk63qthu4s2" path="res://ship/model/ship.gltf" id="7"]
+[ext_resource type="PackedScene" path="res://ship/jet_vfx.tscn" id="8"]
+[ext_resource type="AudioStream" uid="uid://wpud85h204s3" path="res://sounds/jet.wav" id="9"]
+[ext_resource type="Script" path="res://ship/ship_audio.gd" id="10"]
+[ext_resource type="AudioStream" uid="uid://3x3m42oacvc2" path="res://sounds/jet2.wav" id="11"]
+[ext_resource type="AudioStream" uid="uid://bb2730roni77v" path="res://sounds/ship_stop.wav" id="12"]
+[ext_resource type="AudioStream" uid="uid://sfb1aa8camsq" path="res://sounds/ship_start.wav" id="13"]
+[ext_resource type="AudioStream" uid="uid://cpnjfrgmky3kn" path="res://sounds/superspeed_start.wav" id="14"]
+[ext_resource type="AudioStream" uid="uid://dy8qttbhhokt8" path="res://sounds/superspeed.wav" id="15"]
+[ext_resource type="AudioStream" uid="uid://d28pixxpehgae" path="res://sounds/superspeed_stop.wav" id="16"]
+[ext_resource type="AudioStream" uid="uid://di02v1xesv46s" path="res://sounds/flying_in_atmosphere.wav" id="17"]
+[ext_resource type="AudioStream" uid="uid://bwcnevn0yl66f" path="res://sounds/ship_scrape.wav" id="18"]
 
-[sub_resource type="CapsuleShape" id=1]
+[sub_resource type="CapsuleShape3D" id="1"]
 radius = 3.03344
 height = 10.5521
 
-[sub_resource type="CapsuleShape" id=2]
+[sub_resource type="CapsuleShape3D" id="2"]
 radius = 1.52219
 height = 6.94857
 
-[sub_resource type="SphereShape" id=3]
+[sub_resource type="SphereShape3D" id="3"]
 radius = 1.65989
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id="Animation_ecnp7"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visual/VisualRoot/ship/HatchDown:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1.35534, 3.14159, 3.14159)]
+}
+
+[sub_resource type="Animation" id="4"]
 resource_name = "hatch_open"
 length = 2.0
 tracks/0/type = "value"
-tracks/0/path = NodePath("Visual/VisualRoot/ship/HatchDown:rotation_degrees")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
+tracks/0/path = NodePath("Visual/VisualRoot/ship/HatchDown:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PoolRealArray( 1.23307e-06, 1.99996 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ Vector3( 104, 0, 0 ), Vector3( 47.86, 0, 0 ) ]
+"values": [Vector3(1.79769, 0, 0), Vector3(0.907571, 0, 0)]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("Visual/VisualRoot/ship/HatchUp:rotation_degrees")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
+tracks/1/path = NodePath("Visual/VisualRoot/ship/HatchUp:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 2 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ Vector3( -19.01, 0, 0 ), Vector3( 87.938, 0, 0 ) ]
+"values": [Vector3(-0.349066, 0, 0), Vector3(0.698132, 0, 0)]
 }
 
-[sub_resource type="BoxShape" id=5]
-extents = Vector3( 1, 1.66367, 0.115274 )
+[sub_resource type="BoxShape3D" id="5"]
+size = Vector3(2, 3.32734, 0.230548)
 
-[sub_resource type="ShaderMaterial" id=6]
-shader = ExtResource( 4 )
-shader_param/u_position = Vector3( 0, 0, 0 )
-shader_param/u_velocity = Vector3( 0, 0, -20 )
-shader_param/u_texture = ExtResource( 6 )
+[sub_resource type="ShaderMaterial" id="6"]
+render_priority = 0
+shader = ExtResource( "4" )
+shader_param/u_position = Vector3(0, 0, 0)
+shader_param/u_velocity = Vector3(0, 0, -20)
+shader_param/u_texture = ExtResource( "6" )
 
-[sub_resource type="Gradient" id=7]
-offsets = PoolRealArray( 0, 0.389241, 0.515823, 0.64557, 1 )
-colors = PoolColorArray( 1, 1, 1, 0, 1, 1, 1, 0.92638, 1, 1, 1, 1, 1, 1, 1, 0.909849, 1, 1, 1, 0 )
+[sub_resource type="Gradient" id="7"]
+offsets = PackedFloat32Array(0, 0.389241, 0.515823, 0.64557, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.92638, 1, 1, 1, 1, 1, 1, 1, 0.909849, 1, 1, 1, 0)
 
-[sub_resource type="GradientTexture" id=8]
-gradient = SubResource( 7 )
+[sub_resource type="GradientTexture1D" id="8"]
+gradient = SubResource( "7" )
 width = 16
 
-[sub_resource type="ParticlesMaterial" id=9]
+[sub_resource type="ParticlesMaterial" id="9"]
 emission_shape = 2
-emission_box_extents = Vector3( 100, 100, 100 )
-gravity = Vector3( 0, 0, 0 )
-color_ramp = SubResource( 8 )
+emission_box_extents = Vector3(100, 100, 100)
+gravity = Vector3(0, 0, 0)
+color_ramp = SubResource( "8" )
 
-[sub_resource type="SpatialMaterial" id=10]
-flags_unshaded = true
-params_billboard_mode = 3
+[sub_resource type="StandardMaterial3D" id="10"]
+shading_mode = 0
+albedo_color = Color(0.498039, 0.498039, 0.498039, 1)
+billboard_mode = 3
 particles_anim_h_frames = 1
 particles_anim_v_frames = 1
 particles_anim_loop = false
-albedo_color = Color( 0.498039, 0.498039, 0.498039, 1 )
 
-[sub_resource type="QuadMesh" id=11]
-material = SubResource( 10 )
-size = Vector2( 0.3, 0.3 )
+[sub_resource type="QuadMesh" id="11"]
+material = SubResource( "10" )
+size = Vector2(0.3, 0.3)
 
-[node name="Ship" type="RigidBody"]
+[node name="Ship" type="RigidDynamicBody3D"]
 gravity_scale = 0.0
 contacts_reported = 3
 contact_monitor = true
 can_sleep = false
 linear_damp = 0.5
 angular_damp = 1.0
-script = ExtResource( 1 )
+script = ExtResource( "1" )
 linear_acceleration = 220.0
 angular_acceleration = 3.0
 speed_cap_in_space = 340.0
-freeze_mode = 0
 
-[node name="FlightCollisionShape" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.297878, -0.538365 )
-shape = SubResource( 1 )
+[node name="FlightCollisionShape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.297878, -0.538365)
+shape = SubResource( "1" )
 
-[node name="FlightCollisionShape2" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7.09019, -0.750727, -1.21641 )
-shape = SubResource( 2 )
+[node name="FlightCollisionShape2" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.09019, -0.750727, -1.21641)
+shape = SubResource( "2" )
 
-[node name="FlightCollisionShape3" type="CollisionShape" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6.65316, -0.750727, -1.21641 )
-shape = SubResource( 2 )
+[node name="FlightCollisionShape3" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.65316, -0.750727, -1.21641)
+shape = SubResource( "2" )
 
 [node name="CharacterSpawnPosition" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.881683, -2.34405 )
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.881683, -2.34405)
 
 [node name="GroundCheckPosition" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.71605, 0.65127 )
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.71605, 0.65127)
 
 [node name="Controller" type="Node" parent="."]
-script = ExtResource( 3 )
+script = ExtResource( "3" )
 keyboard_turn_sensitivity = 1.0
 
-[node name="CommandPanel" type="Area" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74615, -2.57037 )
+[node name="CommandPanel" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74615, -2.57037)
 
-[node name="CollisionShape" type="CollisionShape" parent="CommandPanel"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.141755, 0 )
-shape = SubResource( 3 )
+[node name="CollisionShape" type="CollisionShape3D" parent="CommandPanel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.141755, 0)
+shape = SubResource( "3" )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/hatch_open = SubResource( 4 )
+anims/RESET = SubResource( "Animation_ecnp7" )
+anims/hatch_open = SubResource( "4" )
 
 [node name="Visual" type="Node" parent="."]
 
-[node name="VisualRoot" type="Spatial" parent="Visual"]
+[node name="VisualRoot" type="Node3D" parent="Visual"]
 
-[node name="ship" parent="Visual/VisualRoot" instance=ExtResource( 7 )]
-transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
+[node name="ship" parent="Visual/VisualRoot" instance=ExtResource( "7" )]
+transform = Transform3D(-1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0)
+
+[node name="HatchUp" parent="Visual/VisualRoot/ship" index="2"]
+transform = Transform3D(1, 0, 0, 0, 0.939693, 0.34202, 0, -0.34202, 0.939693, 0, 0.907461, -7.5999)
 
 [node name="HatchDown" parent="Visual/VisualRoot/ship" index="3"]
-transform = Transform( 1, 0, 0, 0, -0.241922, -0.970295, 0, 0.970295, -0.241922, 0, -1.0341, -4.21388 )
+transform = Transform3D(1, -1.96338e-07, 3.89095e-07, 3.38122e-07, -0.213797, -0.976878, 2.74986e-07, 0.976878, -0.213797, 0, -1.0341, -4.21388)
 
-[node name="KinematicBody" type="KinematicBody" parent="Visual/VisualRoot/ship/HatchDown" index="0"]
+[node name="KinematicBody" type="CharacterBody3D" parent="Visual/VisualRoot/ship/HatchDown" index="0"]
 
-[node name="CollisionShape" type="CollisionShape" parent="Visual/VisualRoot/ship/HatchDown/KinematicBody"]
-transform = Transform( 1, -1.7053e-13, 4.26326e-14, 0, 1, 0, 0, 0, 1, 5.68434e-13, -1.61023, 0.0508492 )
-shape = SubResource( 5 )
+[node name="CollisionShape" type="CollisionShape3D" parent="Visual/VisualRoot/ship/HatchDown/KinematicBody"]
+transform = Transform3D(1, -1.7053e-13, 4.26326e-14, 0, 1, 0, 0, 0, 1, 5.68434e-13, -1.61023, 0.0508492)
+shape = SubResource( "5" )
 
-[node name="MotionParticles" type="Particles" parent="Visual/VisualRoot"]
-material_override = SubResource( 6 )
+[node name="MotionParticles" type="GPUParticles3D" parent="Visual/VisualRoot"]
+material_override = SubResource( "6" )
 cast_shadow = 0
 amount = 200
 lifetime = 0.5
-visibility_aabb = AABB( -100, -100, -100, 200, 200, 200 )
+visibility_aabb = AABB(-100, -100, -100, 200, 200, 200)
 local_coords = false
-process_material = SubResource( 9 )
-draw_pass_1 = SubResource( 11 )
-script = ExtResource( 5 )
+process_material = SubResource( "9" )
+draw_pass_1 = SubResource( "11" )
+script = ExtResource( "5" )
 
 [node name="CameraHints" type="Node" parent="Visual/VisualRoot"]
-script = ExtResource( 2 )
+script = ExtResource( "2" )
 distance_to_target = 20.0
 height_modifier = 0.4
 target_height_modifier = 6.0
 
-[node name="InteriorLight" type="OmniLight" parent="Visual/VisualRoot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0306, -0.153431 )
-light_color = Color( 0.972549, 0.85098, 0.439216, 1 )
+[node name="InteriorLight" type="OmniLight3D" parent="Visual/VisualRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0306, -0.153431)
+light_color = Color(0.972549, 0.85098, 0.439216, 1)
 light_energy = 2.0
 shadow_enabled = true
 omni_range = 6.0
 omni_attenuation = 2.37841
 omni_shadow_mode = 0
 
-[node name="JetVFXMainLeft" parent="Visual/VisualRoot" instance=ExtResource( 8 )]
-transform = Transform( -0.65, 0, -2.53119e-07, 0, 0.65, 0, 2.53119e-07, 0, -0.65, -3.55307, -0.220573, 6.47426 )
+[node name="JetVFXMainLeft" parent="Visual/VisualRoot" instance=ExtResource( "8" )]
+transform = Transform3D(-0.65, 0, -2.53119e-07, 0, 0.65, 0, 2.53119e-07, 0, -0.65, -3.55307, -0.220573, 6.47426)
 
-[node name="JetVFXMainRight" parent="Visual/VisualRoot" instance=ExtResource( 8 )]
-transform = Transform( -0.65, 0, -2.53119e-07, 0, 0.65, 0, 2.53119e-07, 0, -0.65, 3.56022, -0.220573, 6.47425 )
+[node name="JetVFXMainRight" parent="Visual/VisualRoot" instance=ExtResource( "8" )]
+transform = Transform3D(-0.65, 0, -2.53119e-07, 0, 0.65, 0, 2.53119e-07, 0, -0.65, 3.56022, -0.220573, 6.47425)
 
-[node name="JetVFXLeftWing1" parent="Visual/VisualRoot" instance=ExtResource( 8 )]
-transform = Transform( 0.214803, 6.7333e-08, -0.10705, 0.10705, -4.29633e-08, 0.214803, 4.11005e-08, -0.24, -6.8486e-08, -5.75988, -1.13909, 2.13196 )
+[node name="JetVFXLeftWing1" parent="Visual/VisualRoot" instance=ExtResource( "8" )]
+transform = Transform3D(0.214803, 6.7333e-08, -0.10705, 0.10705, -4.29633e-08, 0.214803, 4.11005e-08, -0.24, -6.8486e-08, -5.75988, -1.13909, 2.13196)
 
-[node name="JetVFXLeftWing2" parent="Visual/VisualRoot" instance=ExtResource( 8 )]
-transform = Transform( 0.214803, 6.7333e-08, -0.10705, 0.10705, -4.29633e-08, 0.214803, 4.11005e-08, -0.24, -6.8486e-08, -6.85655, -1.64187, -1.04728 )
+[node name="JetVFXLeftWing2" parent="Visual/VisualRoot" instance=ExtResource( "8" )]
+transform = Transform3D(0.214803, 6.7333e-08, -0.10705, 0.10705, -4.29633e-08, 0.214803, 4.11005e-08, -0.24, -6.8486e-08, -6.85655, -1.64187, -1.04728)
 
-[node name="JetVFXRightWing1" parent="Visual/VisualRoot" instance=ExtResource( 8 )]
-transform = Transform( 0.215075, 1.86069e-08, 0.106502, -0.106502, -4.27436e-08, 0.215075, 3.56423e-08, -0.24, -3.00475e-08, 5.76443, -1.12076, 2.13129 )
+[node name="JetVFXRightWing1" parent="Visual/VisualRoot" instance=ExtResource( "8" )]
+transform = Transform3D(0.215075, 1.86069e-08, 0.106502, -0.106502, -4.27436e-08, 0.215075, 3.56423e-08, -0.24, -3.00475e-08, 5.76443, -1.12076, 2.13129)
 
-[node name="JetVFXRightWing2" parent="Visual/VisualRoot" instance=ExtResource( 8 )]
-transform = Transform( 0.215075, 1.86069e-08, 0.106502, -0.106502, -4.27436e-08, 0.215075, 3.56423e-08, -0.24, -3.00475e-08, 6.84852, -1.65759, -1.04728 )
+[node name="JetVFXRightWing2" parent="Visual/VisualRoot" instance=ExtResource( "8" )]
+transform = Transform3D(0.215075, 1.86069e-08, 0.106502, -0.106502, -4.27436e-08, 0.215075, 3.56423e-08, -0.24, -3.00475e-08, 6.84852, -1.65759, -1.04728)
 
-[node name="DirectionalLight" type="DirectionalLight" parent="Visual"]
-transform = Transform( 0.939214, -0.216764, -0.266253, -6.7796e-08, -0.775496, 0.631352, -0.343332, -0.592975, -0.728357, 0.241943, 15.964, -0.240347 )
+[node name="DirectionalLight" type="DirectionalLight3D" parent="Visual"]
+transform = Transform3D(0.939214, -0.216764, -0.266253, -6.7796e-08, -0.775496, 0.631352, -0.343332, -0.592975, -0.728357, 0.241943, 15.964, -0.240347)
 editor_only = true
 
-[node name="ShipAudio" type="Spatial" parent="."]
-script = ExtResource( 10 )
+[node name="ShipAudio" type="Node3D" parent="."]
+script = ExtResource( "10" )
 
 [node name="MainJets" type="AudioStreamPlayer3D" parent="ShipAudio"]
-stream = ExtResource( 9 )
+stream = ExtResource( "9" )
 attenuation_model = 3
 autoplay = true
 
 [node name="SecondaryJets" type="AudioStreamPlayer3D" parent="ShipAudio"]
-stream = ExtResource( 11 )
+stream = ExtResource( "11" )
 attenuation_model = 3
 autoplay = true
 
 [node name="ShipIdle" type="AudioStreamPlayer3D" parent="ShipAudio"]
-unit_size = 10.0
 
 [node name="Hit01" type="AudioStreamPlayer3D" parent="ShipAudio"]
 unit_db = 2.0
-unit_size = 10.0
 
 [node name="Hit02" type="AudioStreamPlayer3D" parent="ShipAudio"]
 unit_db = 2.0
-unit_size = 10.0
 
 [node name="Hit03" type="AudioStreamPlayer3D" parent="ShipAudio"]
 unit_db = 2.0
-unit_size = 10.0
 
 [node name="On" type="AudioStreamPlayer" parent="ShipAudio"]
-stream = ExtResource( 13 )
+stream = ExtResource( "13" )
 
 [node name="Off" type="AudioStreamPlayer" parent="ShipAudio"]
-stream = ExtResource( 12 )
+stream = ExtResource( "12" )
 
 [node name="SuperSpeedOn" type="AudioStreamPlayer" parent="ShipAudio"]
-stream = ExtResource( 14 )
+stream = ExtResource( "14" )
 
 [node name="SuperSpeedOff" type="AudioStreamPlayer" parent="ShipAudio"]
-stream = ExtResource( 16 )
+stream = ExtResource( "16" )
 
 [node name="SuperSpeedLoop" type="AudioStreamPlayer" parent="ShipAudio"]
-stream = ExtResource( 15 )
+stream = ExtResource( "15" )
 
 [node name="AirFriction" type="AudioStreamPlayer" parent="ShipAudio"]
-stream = ExtResource( 17 )
+stream = ExtResource( "17" )
 autoplay = true
 
 [node name="Scrape" type="AudioStreamPlayer3D" parent="ShipAudio"]
-stream = ExtResource( 18 )
+stream = ExtResource( "18" )
 unit_db = 3.0
-unit_size = 10.0
 
 [connection signal="body_entered" from="." to="ShipAudio" method="_on_Ship_body_entered"]
 

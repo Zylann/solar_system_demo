@@ -5,6 +5,8 @@ const SolarSystem = preload("../solar_system/solar_system.gd")
 const Ship = preload("../ship/ship.gd")
 const Util = preload("../util/util.gd")
 const CollisionLayers = preload("../collision_layers.gd")
+# TODO This is very close to Godot's CharacterBody3D. Introduce prefixes?
+# It could be confusing to not realize this is actually from the project and not Godot
 const CharacterBody = preload("res://addons/zylann.3d_basics/character/character.gd")
 const SplitChunkRigidBodyComponent = preload("../solar_system/split_chunk_rigidbody_component.gd")
 
@@ -209,9 +211,11 @@ func _enter_ship(ship: Ship):
 
 
 func _set_visual_state(state: Mannequiny.States):
-	if _visual_state != state:
-		_visual_state = state
-		_visual_animated.transition_to(_visual_state)
+	# TODO Temporarily removed Mannequinny, it did not port well to Godot4
+	pass
+#	if _visual_state != state:
+#		_visual_state = state
+#		_visual_animated.transition_to(_visual_state)
 
 
 func _process(delta: float):
@@ -233,7 +237,14 @@ func _process(delta: float):
 	var old_root_basis = _visual_root.transform.basis.orthonormalized()
 	_visual_root.look_at(gtrans.origin + forward, up)
 	_visual_root.transform.basis = old_root_basis.slerp(_visual_root.transform.basis, delta * 8.0)
+	
+	# TODO Temporarily removed Mannequinny, it did not port well to Godot4
+	#_process_visual_animated(forward, character_body)
+	
+	_visual_head.global_transform.basis = head_basis
 
+
+func _process_visual_animated(forward: Vector3, character_body: CharacterBody3D):
 	_visual_animated.set_move_direction(forward)
 	
 	var state = Mannequiny.States.RUN
@@ -246,8 +257,6 @@ func _process(delta: float):
 	if not character_body.is_landed():
 		state = Mannequiny.States.AIR
 	_set_visual_state(state)
-	
-	_visual_head.global_transform.basis = head_basis
 
 
 func _get_solar_system() -> SolarSystem:

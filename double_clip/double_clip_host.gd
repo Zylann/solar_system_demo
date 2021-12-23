@@ -20,7 +20,7 @@ func _ready():
 	
 	_far_viewport = Viewport.new()
 	_far_viewport.size = _world_viewport.size
-	_far_viewport.world = _world_viewport.world
+	_far_viewport.world_3d = _world_viewport.world_3d
 	#_far_viewport.own_world = true
 	_far_viewport.transparent_bg = false
 	_far_viewport.render_target_v_flip = true

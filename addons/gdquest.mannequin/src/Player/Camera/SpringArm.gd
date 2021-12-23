@@ -1,5 +1,5 @@
 @tool
-extends SpringArm
+extends SpringArm3D
 # Control the zoom of the camera with `zoom`, a value between 0 and 1
 
 @export var length_range := Vector2(3.0, 6.0):

@@ -6,9 +6,9 @@ class_name CameraRig
 
 signal aim_fired(target_position)
 
-@onready var camera: InterpolatedCamera = $InterpolatedCamera
-@onready var spring_arm: SpringArm = $SpringArm
-@onready var aim_ray: RayCast = $InterpolatedCamera/AimRay
+@onready var camera: InterpolatedCamera3D = $InterpolatedCamera
+@onready var spring_arm: SpringArm3D = $SpringArm
+@onready var aim_ray: RayCast3D = $InterpolatedCamera/AimRay
 @onready var aim_target: Sprite3D = $AimTarget
 
 var player: CharacterBody3D
@@ -28,7 +28,7 @@ var zoom := 0.5:
 
 
 func _ready() -> void:
-	set_as_toplevel(true)
+	top_level = true
 	await owner.ready
 	player = owner
 

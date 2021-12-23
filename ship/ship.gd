@@ -13,8 +13,12 @@ const STATE_FLYING = 1
 
 @onready var _visual_root = $Visual/VisualRoot
 @onready var _controller = $Controller
+# Nodes that should be enabled only when landed
 @onready var _landed_nodes = [
-	$Visual/VisualRoot/ship/Interior2,
+	# TODO Godot4 now imports some nodes with unpredictable names if they collide instead of incrementing.
+	# The model has Interior and Interior-colonly but then the second was supposed to be named Interior2,
+	# now instead it is some random name with an @ which means it may not be relied on...
+	#$Visual/VisualRoot/ship/Interior2,
 	$Visual/VisualRoot/ship/HatchDown/KinematicBody,
 	$CommandPanel
 ]
@@ -51,6 +55,13 @@ var _last_contacts_count := 0
 
 
 func _ready():
+	# Workaround because these node names can easily be unreliable due to import issues
+	var visual_model_root = _visual_root.get_node("ship")
+	for i in visual_model_root.get_child_count():
+		var node = visual_model_root.get_child(i)
+		if node is StaticBody3D:
+			_landed_nodes.append(node)
+
 	for n in _landed_nodes:
 		_landed_node_parents.append(n.get_parent())
 	
@@ -156,7 +167,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 	var speed_cap := speed_cap_in_space_mod
 	
 	var motor = _move_cmd.z * forward * linear_acceleration_mod
-	state.add_force(motor, Vector3())
+	state.apply_central_force(motor)
 
 	_turn_cmd.x = clamp(_turn_cmd.x, -1, 1)
 	_turn_cmd.y = clamp(_turn_cmd.y, -1, 1)
@@ -183,7 +194,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 		var gravity_dir := (pull_center - gtrans.origin).normalized()
 		var stellar_mass := Util.get_sphere_volume(stellar_body.radius)
 		var f := 0.005 * stellar_mass / (gd * gd)
-		state.add_force(gravity_dir * f, Vector3())
+		state.apply_central_force(gravity_dir * f)
 		
 		# Near-planet damping
 		var distance_to_surface := distance_to_core - stellar_body.radius

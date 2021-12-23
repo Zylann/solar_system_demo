@@ -183,7 +183,7 @@ func _debug_voxel_raycast(volume):
 	var ray_dir_local = vtrans_inv.basis * cam.project_ray_normal(vp_center)
 	var hit = vt.raycast(ray_pos_local, ray_dir_local, 20)
 	if hit != null:
-		DDD.draw_box(vtrans * (hit.position + Vector3(0.5, 0.5, 0.5)),
+		DDD.draw_box(vtrans * (Vector3(hit.position) + Vector3(0.5, 0.5, 0.5)),
 			Vector3(1.0, 1.0, 1.0), Color(0.5, 0.5, 0.5))
 		var wpos = vtrans * (ray_pos_local + ray_dir_local * hit.distance)
 		var s = 0.2
