@@ -21,11 +21,11 @@
 
 [sub_resource type="CapsuleShape3D" id="1"]
 radius = 3.03344
-height = 10.5521
+height = 16.0
 
 [sub_resource type="CapsuleShape3D" id="2"]
 radius = 1.52219
-height = 6.94857
+height = 10.0
 
 [sub_resource type="SphereShape3D" id="3"]
 radius = 1.65989
@@ -122,15 +122,15 @@ angular_acceleration = 3.0
 speed_cap_in_space = 340.0
 
 [node name="FlightCollisionShape" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.297878, -0.538365)
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.297878, -0.538365)
 shape = SubResource( "1" )
 
 [node name="FlightCollisionShape2" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.09019, -0.750727, -1.21641)
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 7.09019, -0.750727, -1.21641)
 shape = SubResource( "2" )
 
 [node name="FlightCollisionShape3" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.65316, -0.750727, -1.21641)
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, -6.65316, -0.750727, -1.21641)
 shape = SubResource( "2" )
 
 [node name="CharacterSpawnPosition" type="Position3D" parent="."]
@@ -165,7 +165,7 @@ transform = Transform3D(-1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 
 transform = Transform3D(1, 0, 0, 0, 0.939693, 0.34202, 0, -0.34202, 0.939693, 0, 0.907461, -7.5999)
 
 [node name="HatchDown" parent="Visual/VisualRoot/ship" index="3"]
-transform = Transform3D(1, -1.96338e-07, 3.89095e-07, 3.38122e-07, -0.213797, -0.976878, 2.74986e-07, 0.976878, -0.213797, 0, -1.0341, -4.21388)
+transform = Transform3D(1, 5.86161e-08, 5.42005e-07, 5.42005e-07, -0.213793, -0.976879, 5.86161e-08, 0.976879, -0.213793, 0, -1.0341, -4.21388)
 
 [node name="KinematicBody" type="CharacterBody3D" parent="Visual/VisualRoot/ship/HatchDown" index="0"]
 
