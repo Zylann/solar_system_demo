@@ -1,13 +1,13 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://dc4lolnw2ugli"]
 
-[ext_resource path="res://camera/camera.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://camera/camera.gd" id="1"]
 
-[node name="Camera" type="Camera"]
+[node name="Camera" type="Camera3D"]
 current = true
 fov = 80.0
 near = 0.1
 far = 100000.0
-script = ExtResource( 1 )
+script = ExtResource( "1" )
 distance_to_target = 20.0
 
 [node name="VoxelViewer" type="VoxelViewer" parent="."]

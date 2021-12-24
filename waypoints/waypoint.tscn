@@ -1,13 +1,13 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://co45bdw7qhu7i"]
 
-[ext_resource path="res://waypoints/waypoint.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://waypoints/waypoint.gd" id="1"]
 
-[sub_resource type="SphereShape" id=1]
+[sub_resource type="SphereShape3D" id="1"]
 
-[node name="Waypoint" type="Spatial"]
-script = ExtResource( 1 )
+[node name="Waypoint" type="Node3D"]
+script = ExtResource( "1" )
 
-[node name="Area" type="Area" parent="."]
+[node name="Area" type="Area3D" parent="."]
 
-[node name="CollisionShape" type="CollisionShape" parent="Area"]
-shape = SubResource( 1 )
+[node name="CollisionShape" type="CollisionShape3D" parent="Area"]
+shape = SubResource( "1" )
