@@ -149,7 +149,7 @@ func _physics_process(delta: float):
 	if _reference_body_id != 0:
 		# When we are on a planet, the sky is no longer in world space,
 		# so we must simulate its motion relative to us
-		_environment.background_sky_orientation = ref_trans_inverse.basis
+		_environment.sky_rotation = ref_trans_inverse.basis.get_euler()
 	else:
 		_environment.background_sky_orientation = Basis()
 	
