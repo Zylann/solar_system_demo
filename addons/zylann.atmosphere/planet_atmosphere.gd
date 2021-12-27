@@ -13,9 +13,8 @@ const SWITCH_MARGIN_RATIO = 1.1
 const AtmosphereShader = preload("./planet_atmosphere.gdshader")
 const DefaultShader = AtmosphereShader
 
-
 var _planet_radius := 1.0
-@export var planet_radius := 1.0:
+@export var planet_radius: float:
 	get:
 		return _planet_radius
 	set(value):
@@ -23,7 +22,7 @@ var _planet_radius := 1.0
 
 
 var _atmosphere_height := 0.1
-@export var atmosphere_height := 0.1:
+@export var atmosphere_height : float:
 	get:
 		return _atmosphere_height
 	set(value):
@@ -55,10 +54,10 @@ var _prev_atmo_clip_distance : float = 0.0
 # These parameters are assigned internally,
 # they don't need to be shown in the list of shader params
 const _api_shader_params = {
-	"u_planet_radius": true,
-	"u_atmosphere_height": true,
-	"u_clip_mode": true,
-	"u_sun_position": true
+	&"u_planet_radius": true,
+	&"u_atmosphere_height": true,
+	&"u_clip_mode": true,
+	&"u_sun_position": true
 }
 
 func _init():

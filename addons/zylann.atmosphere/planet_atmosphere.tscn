@@ -1,6 +1,15 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://c36velgas3n3k"]
 
-[ext_resource path="res://addons/zylann.atmosphere/planet_atmosphere.gd" type="Script" id=2]
+[ext_resource type="Script" path="res://addons/zylann.atmosphere/planet_atmosphere.gd" id="2"]
 
-[node name="PlanetAthmosphere" type="Spatial"]
-script = ExtResource( 2 )
+[node name="PlanetAthmosphere" type="Node3D"]
+script = ExtResource( "2" )
+planet_radius = 1.0
+atmosphere_height = 0.1
+sun_path = NodePath("")
+shader_params/u_day_color0 = null
+shader_params/u_day_color1 = null
+shader_params/u_night_color0 = Color(0.15, 0.1, 0.33, 1)
+shader_params/u_night_color1 = Color(0, 0, 0, 1)
+shader_params/u_density = null
+shader_params/u_attenuation_distance = null

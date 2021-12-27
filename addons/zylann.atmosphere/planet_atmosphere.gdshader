@@ -99,7 +99,8 @@ void vertex() {
 void fragment() {
 	// TODO Is depth texture really needed in the end?
 	float nonlinear_depth = texture(DEPTH_TEXTURE, SCREEN_UV).x;
-	vec3 ndc = vec3(SCREEN_UV, nonlinear_depth) * 2.0 - 1.0;
+	// Note, we assume Vulkan here, which has NDC in 0..1 (OpenGL is -1..1)
+	vec3 ndc = vec3(SCREEN_UV * 2.0 - 1.0, nonlinear_depth);
 	vec4 view_coords = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
 	//view_coords.xyz /= view_coords.w;
 	//float linear_depth = -view_coords.z; // Not what I want because it changes when looking around
