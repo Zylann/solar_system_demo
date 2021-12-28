@@ -54,6 +54,7 @@ light_energy = 2.0
 spot_range = 60.0
 spot_attenuation = 1.93187
 spot_angle_attenuation = 0.732043
+visible = false
 
 [node name="Body" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.272492, 0)
