@@ -1,0 +1,8 @@
+[gd_resource type="Font" load_steps=2 format=3 uid="uid://768phpwhg47h"]
+
+[ext_resource type="FontData" uid="uid://ir58tc8kwot7" path="res://addons/zylann.debug_draw/Hack-Regular.ttf" id="1_5kfg4"]
+
+[resource]
+spacing_top = -2
+spacing_bottom = -2
+data/0 = ExtResource( "1_5kfg4" )
