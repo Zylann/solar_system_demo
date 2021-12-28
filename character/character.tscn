@@ -49,8 +49,7 @@ side_offset = 1.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.876689, 0)
 
 [node name="FlashLight" type="SpotLight3D" parent="Visual"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34576, 0)
-visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34576, -0.396333)
 light_energy = 2.0
 spot_range = 60.0
 spot_attenuation = 1.93187
