@@ -81,7 +81,7 @@ func draw_transformed_cube(trans: Transform3D, color: Color = Color(1,1,1)):
 	var mat := _get_line_material()
 	mat.albedo_color = color
 	mi.material_override = mat
-	mi.transform = Transform3D(trans.basis, trans.origin - trans.basis * Vector3(0.5,0.5,0.5))
+	mi.transform = Transform3D(trans.basis, trans.origin)
 	_boxes.append({
 		"node": mi,
 		"frame": Engine.get_frames_drawn() + LINES_LINGER_FRAMES
@@ -282,15 +282,17 @@ func _on_CanvasItem_draw():
 
 
 static func _create_wirecube_mesh(color := Color(1,1,1)) -> ArrayMesh:
+	var n = -0.5
+	var p = 0.5
 	var positions := PackedVector3Array([
-		Vector3(0, 0, 0),
-		Vector3(1, 0, 0),
-		Vector3(1, 0, 1),
-		Vector3(0, 0, 1),
-		Vector3(0, 1, 0),
-		Vector3(1, 1, 0),
-		Vector3(1, 1, 1),
-		Vector3(0, 1, 1)
+		Vector3(n, n, n),
+		Vector3(p, n, n),
+		Vector3(p, n, p),
+		Vector3(n, n, p),
+		Vector3(n, p, n),
+		Vector3(p, p, n),
+		Vector3(p, p, p),
+		Vector3(n, p, p)
 	])
 	var colors := PackedColorArray([
 		color, color, color, color,
