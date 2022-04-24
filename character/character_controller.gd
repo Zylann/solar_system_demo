@@ -35,13 +35,13 @@ var _last_motor := Vector3()
 func _physics_process(delta):
 	var motor := Vector3()
 	
-	if Input.is_key_pressed(KEY_W):
+	if Input.is_action_pressed("forward"):
 		motor += Vector3(0, 0, -1)
-	if Input.is_key_pressed(KEY_S):
+	if Input.is_action_pressed("back"):
 		motor += Vector3(0, 0, 1)
-	if Input.is_key_pressed(KEY_A):
+	if Input.is_action_pressed("left"):
 		motor += Vector3(-1, 0, 0)
-	if Input.is_key_pressed(KEY_D):
+	if Input.is_action_pressed("right"):
 		motor += Vector3(1, 0, 0)
 	
 	var character_body := _get_body()
@@ -147,31 +147,29 @@ func _process_actions():
 
 
 func _unhandled_input(event):
-	if event is InputEventKey:
-		if event.pressed and not event.is_echo():
-			match event.scancode:
-				KEY_SPACE:
-					var body := _get_body()
-					body.jump()
-				KEY_E:
-					_interact_cmd = true
-				KEY_F:
-					_flashlight.visible = not _flashlight.visible
-					if _flashlight.visible:
-						_audio.play_light_on()
-					else:
-						_audio.play_light_off()
-				KEY_T:
-					_waypoint_cmd = true
-					
-	elif event is InputEventMouseButton:
-		if event.pressed:
-			match event.button_index:
-				BUTTON_LEFT:
-					_dig_cmd = true
-				BUTTON_RIGHT:
-					_build_cmd = true
 
+	if event is InputEventMouseMotion:
+		return
+	if event.is_echo():
+		return
+
+	if event.is_action_pressed("primary"):
+		_dig_cmd = true
+	elif event.is_action_pressed("secondary"):
+		_build_cmd = true
+	elif event.is_action_pressed("jump"):
+		var body := _get_body()
+		body.jump()
+	elif event.is_action_pressed("interact"):
+		_interact_cmd = true
+	elif event.is_action_pressed("flashlight"):
+		_flashlight.visible = not _flashlight.visible
+		if _flashlight.visible:
+			_audio.play_light_on()
+		else:
+			_audio.play_light_off()
+	elif event.is_action_pressed("waypoint"):
+		_waypoint_cmd = true
 
 func _interact():
 	var character_body := _get_body()
