@@ -26,25 +26,25 @@ func _process(delta: float):
 	
 	var motor := Vector3()
 	
-	if Input.is_key_pressed(KEY_S):
+	if Input.is_action_pressed("back"):
 		motor.z -= 1
-	if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_Z):
+	if Input.is_action_pressed("forward") or Input.is_key_pressed(KEY_Z):
 		motor.z += 1
 #	if Input.is_key_pressed(KEY_A):
 #		motor.x -= 1
 #	if Input.is_key_pressed(KEY_D):
 #		motor.x += 1
-	if Input.is_key_pressed(KEY_SPACE):
+	if Input.is_action_pressed("ship_speed"):
 		motor.y += 1
-	if Input.is_key_pressed(KEY_SHIFT):
+	if Input.is_action_pressed("ship_brake"):
 		motor.y -= 1
 
-	if Input.is_key_pressed(KEY_A):
+	if Input.is_action_pressed("left"):
 		_turn_cmd.z -= keyboard_turn_sensitivity
-	if Input.is_key_pressed(KEY_D):
+	if Input.is_action_pressed("right"):
 		_turn_cmd.z += keyboard_turn_sensitivity
 	
-	_ship.set_superspeed_cmd(Input.is_key_pressed(KEY_SPACE))
+	_ship.set_superspeed_cmd(Input.is_action_pressed("ship_speed"))
 	
 	_turn_cmd.x = clamp(_turn_cmd.x, -1.0, 1.0)
 	_turn_cmd.y = clamp(_turn_cmd.y, -1.0, 1.0)
@@ -125,11 +125,8 @@ func _input(event):
 		_turn_cmd.x += cmd.x
 		_turn_cmd.y += cmd.y
 	
-	elif event is InputEventKey:
-		if event.pressed:
-			match event.scancode:
-				KEY_E:
-					_exit_ship_cmd = true
+	elif event.is_action_pressed("interact") && !event.is_echo():
+		_exit_ship_cmd = true
 
 
 # TODO Temporary, need to replace this with a rocket launcher
