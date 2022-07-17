@@ -15,9 +15,10 @@ const STATE_FLYING = 1
 @onready var _controller = $Controller
 # Nodes that should be enabled only when landed
 @onready var _landed_nodes = [
-	# TODO Godot4 now imports some nodes with unpredictable names if they collide instead of incrementing.
-	# The model has Interior and Interior-colonly but then the second was supposed to be named Interior2,
-	# now instead it is some random name with an @ which means it may not be relied on...
+	# TODO Godot4 now imports some nodes with unpredictable names if they collide instead of
+	# incrementing.
+	# The model has Interior and Interior-colonly but then the second was supposed to be named
+	# Interior2, now instead it is some random name with an @ which means it may not be relied on...
 	#$Visual/VisualRoot/ship/Interior2,
 	$Visual/VisualRoot/ship/HatchDown/KinematicBody,
 	$CommandPanel
