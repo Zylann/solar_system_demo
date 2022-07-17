@@ -150,7 +150,7 @@ func _process(delta):
 	DDD.set_text("FPS", Engine.get_frames_per_second())
 	DDD.set_text("Static memory", _format_memory(OS.get_static_memory_usage()))
 
-	var global_stats = VoxelServer.get_stats()
+	var global_stats = VoxelEngine.get_stats()
 	for stat_group_key in global_stats:
 		var stat_group = global_stats[stat_group_key]
 		for stat_key in stat_group:
