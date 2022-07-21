@@ -25,7 +25,7 @@ func _ready():
 	_far_viewport.transparent_bg = false
 	_far_viewport.render_target_v_flip = true
 	_far_viewport.render_target_update_mode = Viewport.UPDATE_ALWAYS
-	add_child_below_node(_world_viewport, _far_viewport)
+	_world_viewport.add_sibling(_far_viewport)
 	
 	_bg_camera = Camera3D.new()
 	_bg_camera.fov = fg_camera.fov
