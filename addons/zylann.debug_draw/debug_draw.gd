@@ -8,7 +8,7 @@
 
 extends Node
 
-const DebugDrawFont = preload("res://addons/zylann.debug_draw/hack_regular_font.tres")
+const DebugDrawFont = preload("res://addons/zylann.debug_draw/Hack-Regular.ttf")
 
 ## @brief How many frames HUD text lines remain shown after being invoked.
 const TEXT_LINGER_FRAMES = 5
