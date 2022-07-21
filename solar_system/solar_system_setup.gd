@@ -260,7 +260,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	instance_generator.vertical_alignment = 0.0
 	instance_generator.emit_mode = VoxelInstanceGenerator.EMIT_FROM_FACES
 	instance_generator.noise = FastNoiseLite.new()
-	instance_generator.noise.period = 16
+	instance_generator.noise.frequency = 1.0 / 16.0
 	instance_generator.noise.fractal_octaves = 2
 	instance_generator.noise_on_scale = 1
 	#instance_generator.noise.noise_type = FastNoiseLite.TYPE_PERLIN
@@ -323,7 +323,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 
 	instance_generator = VoxelInstanceGenerator.new()
 	instance_generator.noise = FastNoiseLite.new()
-	instance_generator.noise.period = 16
+	instance_generator.noise.frequency = 1.0 / 16.0
 	instance_generator.noise.fractal_octaves = 2
 	instance_generator.noise_on_scale = 1
 	instance_generator.density = 0.06
