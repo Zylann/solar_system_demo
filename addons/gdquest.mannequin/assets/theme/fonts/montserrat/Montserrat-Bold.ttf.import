@@ -1,7 +1,7 @@
 [remap]
 
 importer="font_data_dynamic"
-type="FontData"
+type="FontFile"
 uid="uid://dhs7hsp0cemiu"
 path="res://.godot/imported/Montserrat-Bold.ttf-5a0543b0ef611cdee749936e0140f38c.fontdata"
 
@@ -12,18 +12,21 @@ dest_files=["res://.godot/imported/Montserrat-Bold.ttf-5a0543b0ef611cdee749936e0
 
 [params]
 
+Rendering=null
 antialiased=true
+generate_mipmaps=false
 multichannel_signed_distance_field=false
 msdf_pixel_range=8
 msdf_size=48
 force_autohinter=false
 hinting=1
+subpixel_positioning=1
 oversampling=0.0
+Fallbacks=null
+fallbacks=[]
+Compress=null
 compress=true
-preload/char_ranges=PackedStringArray()
-preload/glyph_ranges=PackedStringArray()
-preload/configurations=PackedStringArray()
-support_overrides/language_enabled=PackedStringArray()
-support_overrides/language_disabled=PackedStringArray()
-support_overrides/script_enabled=PackedStringArray()
-support_overrides/script_disabled=PackedStringArray()
+preload=[]
+language_support={}
+script_support={}
+opentype_features={}
