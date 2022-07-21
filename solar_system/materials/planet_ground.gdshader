@@ -1,15 +1,19 @@
 shader_type spatial;
 
-uniform sampler2D u_top_albedo_texture : hint_albedo;
+uniform sampler2D u_top_albedo_texture : source_color;
 uniform sampler2D u_top_normal_texture;
-uniform sampler2D u_side_albedo_texture : hint_albedo;
+uniform sampler2D u_side_albedo_texture : source_color;
 uniform sampler2D u_side_normal_texture;
-uniform sampler2D u_global_normalmap;
+uniform sampler2D u_global_normalmap;// : hint_normal;
 uniform float u_mountain_height;
 
 // From Voxel Tools API
+// TODO Switch to instance uniforms when they work, see Godot issue #54897
+// instance uniform vec3 u_block_local_position = vec3(0.0);
+// instance uniform vec2 u_lod_fade = vec2(0.0);
 uniform mat4 u_block_local_transform;
-uniform vec2 u_lod_fade;
+uniform vec2 u_lod_fade = vec2(0.0);
+uniform int u_transition_mask;
 
 varying vec3 v_planet_up;
 varying vec3 v_planet_normal;
@@ -42,10 +46,60 @@ vec2 get_sphere_uv(vec3 npos) {
 	return uv;
 }
 
+float get_transvoxel_secondary_factor(int idata) {
+	int cell_border_mask = (idata >> 0) & 63; // Which sides the cell is touching
+	int vertex_border_mask = (idata >> 8) & 63; // Which sides the vertex is touching
+	//int vertex_border_mask = (idata >> 6) & 63; // Which sides the vertex is touching
+	// If the vertex is near a side where there is a low-resolution neighbor,
+	// move it to secondary position
+	int m = u_transition_mask & cell_border_mask;
+	float t = float(m != 0);
+	// If the vertex lies on one or more sides, and at least one side has no low-resolution neighbor,
+	// don't move the vertex.
+	t *= float((vertex_border_mask & ~u_transition_mask) == 0);
+	
+	// Debugging
+	//t *= 0.5 + 0.5 * sin(TIME * 4.0);
+
+	//t *= 2.0;
+
+	return t;
+}
+
+vec3 get_transvoxel_position(vec3 vertex_pos, vec4 fdata) {
+	int idata = floatBitsToInt(fdata.a);
+	//int idata = int(fdata.a);
+
+	// Move vertices to smooth transitions
+	float secondary_factor = get_transvoxel_secondary_factor(idata);
+	vec3 secondary_position = fdata.xyz;
+	vec3 pos = mix(vertex_pos, secondary_position, secondary_factor);
+	//vec3 pos = vertex_pos;
+
+	// If the mesh combines transitions and the vertex belongs to a transition,
+	// when that transition isn't active we change the position of the vertices so
+	// all triangles will be degenerate and won't be visible.
+	// This is an alternative to rendering them separately,
+	// which has less draw calls and less mesh resources to create in Godot.
+	// Ideally I would tweak the index buffer like LOD does but Godot does not
+	// expose anything to use it that way.
+	int itransition = (idata >> 16) & 0xff; // Is the vertex on a transition mesh?
+	float transition_cull = float(itransition == 0 || (itransition & u_transition_mask) != 0);
+	pos *= transition_cull;
+
+	//pos *= float(itransition == 0);
+
+	return pos;
+}
+
 void vertex() {
+	VERTEX = get_transvoxel_position(VERTEX, CUSTOM0);
+	
 	mat4 planet_transform = u_block_local_transform;
 
 	vec3 local_pos = (planet_transform * vec4(VERTEX, 1.0)).xyz;
+	//vec3 local_pos = VERTEX + u_block_local_position;
+
 	v_planet_up = normalize(local_pos);
 
 	mat3 planet_basis = mat3(
@@ -53,6 +107,7 @@ void vertex() {
 		planet_transform[1].xyz, 
 		planet_transform[2].xyz);
 	v_planet_normal = planet_basis * NORMAL;
+	//v_planet_normal = NORMAL;
 	v_planet_height = length(local_pos);
 	
 	v_triplanar_uv = local_pos * 0.05;
@@ -60,8 +115,8 @@ void vertex() {
 	v_triplanar_power_normal = pow(abs(v_planet_normal), vec3(triplanar_blend_sharpness));
 	v_triplanar_power_normal /= dot(v_triplanar_power_normal, vec3(1.0));
 
-	vec3 wpos = (WORLD_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	vec3 cam_pos = (CAMERA_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+	vec3 wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+	vec3 cam_pos = (INV_VIEW_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
 	v_camera_distance = distance(wpos, cam_pos);
 	
 	TANGENT = vec3(0.0, 0.0, -1.0) * abs(v_planet_normal.x);
@@ -115,11 +170,12 @@ void fragment() {
 	// Far normalmapping
 	vec2 sphere_uv = get_sphere_uv(v_planet_up);
 	vec3 global_nm = texture(u_global_normalmap, sphere_uv).rgb;
-	global_nm.r = 1.0 - global_nm.r;
 	float min_distance = 100.0;
 	float max_distance = 2000.0;
 	float global_nm_factor = (v_camera_distance - min_distance) / (max_distance - min_distance);
 	NORMAL_MAP = mix(NORMAL_MAP, global_nm, clamp(global_nm_factor, 0.0, 1.0));
+	//ALBEDO = global_nm;
+	//NORMAL_MAP = global_nm;
 	
 	//ALBEDO = vec3(0.6, 0.4, 0.2);
 	//NORMAL = normalize(cross(dFdx(VERTEX), dFdy(VERTEX)));
@@ -153,14 +209,15 @@ void fragment() {
 	
 	// Terrible impl but can surely be optimized
 	float h = get_hash(SCREEN_UV);
-	if (u_lod_fade.y > 0.5) {
+	vec2 lod_fade = u_lod_fade;//clamp(u_lod_fade, vec2(0.01), vec2(0.99)); // DEBUG
+	if (lod_fade.y > 0.5) {
 		// Fade in
-		if (u_lod_fade.x < h) {
+		if (lod_fade.x < h) {
 			discard;
 		}
 	} else {
 		// Fade out
-		if (u_lod_fade.x > h) {
+		if (lod_fade.x > h) {
 			discard;
 		}
 	}
