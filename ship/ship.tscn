@@ -92,7 +92,7 @@ gradient = SubResource( "7" )
 width = 16
 
 [sub_resource type="ParticlesMaterial" id="9"]
-emission_shape = 2
+emission_shape = 3
 emission_box_extents = Vector3(100, 100, 100)
 gravity = Vector3(0, 0, 0)
 color_ramp = SubResource( "8" )

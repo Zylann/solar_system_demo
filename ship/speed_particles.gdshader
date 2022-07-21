@@ -10,7 +10,7 @@ void vertex() {
 	//ship_pos = vec3(0);
 	//ship_pos = vec3(sin(TIME * 4.0) * 100.0, 0, 0);
 	
-	vec3 particle_pos = WORLD_MATRIX[3].xyz;
+	vec3 particle_pos = MODEL_MATRIX[3].xyz;
 	vec3 x = -normalize(u_velocity);
 	vec3 y = normalize(cross(ship_pos - particle_pos, x));
 	vec3 z = cross(x, y);
@@ -27,7 +27,7 @@ void vertex() {
 	
 	//VERTEX = mat3(x, y, z) * VERTEX;
 	vec3 wp = mat3(x, y, z) * VERTEX + particle_pos;
-	POSITION = PROJECTION_MATRIX * INV_CAMERA_MATRIX * vec4(wp, 1.0);
+	POSITION = PROJECTION_MATRIX * VIEW_MATRIX * vec4(wp, 1.0);
 }
 
 void fragment() {
