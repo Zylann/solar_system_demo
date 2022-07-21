@@ -120,9 +120,13 @@ static func _setup_sun(body: StellarBody, root: Node3D) -> DirectionalLight3D:
 	mi.cast_shadow = false
 	root.add_child(mi)
 	
-	var directional_light = DirectionalLight3D.new()
+	var directional_light := DirectionalLight3D.new()
 	directional_light.shadow_enabled = true
-	directional_light.shadow_color = Color(0.2, 0.2, 0.2)
+	# TODO How do I make shadows not completely black now since I cant use a classic environment?
+	# The environment in this game is a space background so it's very dark. Sky is actually a post
+	# effect because you can fly out and it's a planet... And still you can also have shadows while
+	# in your ship!
+	#directional_light.shadow_color = Color(0.2, 0.2, 0.2)
 	directional_light.shadow_normal_bias = 0.2
 	directional_light.directional_shadow_split_1 = 0.1
 	directional_light.directional_shadow_split_2 = 0.2
