@@ -13,7 +13,7 @@ func _physics_process(delta):
 	# Assuming planet center is the current world origin
 	var body = get_parent()
 	var gravity_dir = -body.transform.origin.normalized()
-	body.add_central_force(gravity_dir * 9.8)
+	body.apply_central_force(gravity_dir * 9.8)
 
 
 func _process(delta):
