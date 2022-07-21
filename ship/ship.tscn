@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://blqdy4acm4wpa"]
+[gd_scene load_steps=32 format=3 uid="uid://blqdy4acm4wpa"]
 
 [ext_resource type="Script" path="res://ship/ship.gd" id="1"]
 [ext_resource type="Script" path="res://camera/camera_hints.gd" id="2"]
@@ -84,24 +84,24 @@ size = Vector3(2, 3.32734, 0.230548)
 
 [sub_resource type="ShaderMaterial" id="6"]
 render_priority = 0
-shader = ExtResource( "4" )
+shader = ExtResource("4")
 shader_param/u_position = Vector3(0, 0, 0)
+shader_param/u_texture = ExtResource("6")
 shader_param/u_velocity = Vector3(0, 0, -20)
-shader_param/u_texture = ExtResource( "6" )
 
 [sub_resource type="Gradient" id="7"]
 offsets = PackedFloat32Array(0, 0.389241, 0.515823, 0.64557, 1)
 colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.92638, 1, 1, 1, 1, 1, 1, 1, 0.909849, 1, 1, 1, 0)
 
 [sub_resource type="GradientTexture1D" id="8"]
-gradient = SubResource( "7" )
+gradient = SubResource("7")
 width = 16
 
 [sub_resource type="ParticlesMaterial" id="9"]
 emission_shape = 3
 emission_box_extents = Vector3(100, 100, 100)
 gravity = Vector3(0, 0, 0)
-color_ramp = SubResource( "8" )
+color_ramp = SubResource("8")
 
 [sub_resource type="StandardMaterial3D" id="10"]
 shading_mode = 0
@@ -112,7 +112,7 @@ particles_anim_v_frames = 1
 particles_anim_loop = false
 
 [sub_resource type="QuadMesh" id="11"]
-material = SubResource( "10" )
+material = SubResource("10")
 size = Vector2(0.3, 0.3)
 
 [node name="Ship" type="RigidDynamicBody3D"]
@@ -122,22 +122,22 @@ contact_monitor = true
 can_sleep = false
 linear_damp = 0.5
 angular_damp = 1.0
-script = ExtResource( "1" )
+script = ExtResource("1")
 linear_acceleration = 220.0
 angular_acceleration = 3.0
 speed_cap_in_space = 340.0
 
 [node name="FlightCollisionShape" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.297878, -0.538365)
-shape = SubResource( "1" )
+shape = SubResource("1")
 
 [node name="FlightCollisionShape2" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 7.09019, -0.750727, -1.21641)
-shape = SubResource( "2" )
+shape = SubResource("2")
 
 [node name="FlightCollisionShape3" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, -6.65316, -0.750727, -1.21641)
-shape = SubResource( "2" )
+shape = SubResource("2")
 
 [node name="CharacterSpawnPosition" type="Position3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.881683, -2.34405)
@@ -146,7 +146,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.881683, -2.34405)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.71605, 0.65127)
 
 [node name="Controller" type="Node" parent="."]
-script = ExtResource( "3" )
+script = ExtResource("3")
 keyboard_turn_sensitivity = 1.0
 
 [node name="CommandPanel" type="Area3D" parent="."]
@@ -154,7 +154,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74615, -2.57037)
 
 [node name="CollisionShape" type="CollisionShape3D" parent="CommandPanel"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.141755, 0)
-shape = SubResource( "3" )
+shape = SubResource("3")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -165,7 +165,7 @@ libraries = {
 
 [node name="VisualRoot" type="Node3D" parent="Visual"]
 
-[node name="ship" parent="Visual/VisualRoot" instance=ExtResource( "7" )]
+[node name="ship" parent="Visual/VisualRoot" instance=ExtResource("7")]
 transform = Transform3D(-1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0)
 
 [node name="HatchUp" parent="Visual/VisualRoot/ship" index="2"]
@@ -178,21 +178,21 @@ transform = Transform3D(1, 5.8616e-08, 5.42005e-07, 5.42005e-07, -0.213793, -0.9
 
 [node name="CollisionShape" type="CollisionShape3D" parent="Visual/VisualRoot/ship/HatchDown/KinematicBody"]
 transform = Transform3D(1, -1.7053e-13, 4.26326e-14, 0, 1, 0, 0, 0, 1, 5.68434e-13, -1.61023, 0.0508492)
-shape = SubResource( "5" )
+shape = SubResource("5")
 
 [node name="MotionParticles" type="GPUParticles3D" parent="Visual/VisualRoot"]
-material_override = SubResource( "6" )
+material_override = SubResource("6")
 cast_shadow = 0
 amount = 200
 lifetime = 0.5
 visibility_aabb = AABB(-100, -100, -100, 200, 200, 200)
 local_coords = false
-process_material = SubResource( "9" )
-draw_pass_1 = SubResource( "11" )
-script = ExtResource( "5" )
+process_material = SubResource("9")
+draw_pass_1 = SubResource("11")
+script = ExtResource("5")
 
 [node name="CameraHints" type="Node" parent="Visual/VisualRoot"]
-script = ExtResource( "2" )
+script = ExtResource("2")
 distance_to_target = 20.0
 height_modifier = 0.4
 target_height_modifier = 6.0
@@ -206,22 +206,22 @@ omni_range = 6.0
 omni_attenuation = 2.37841
 omni_shadow_mode = 0
 
-[node name="JetVFXMainLeft" parent="Visual/VisualRoot" instance=ExtResource( "8" )]
+[node name="JetVFXMainLeft" parent="Visual/VisualRoot" instance=ExtResource("8")]
 transform = Transform3D(-0.65, 0, -2.53119e-07, 0, 0.65, 0, 2.53119e-07, 0, -0.65, -3.55307, -0.220573, 6.47426)
 
-[node name="JetVFXMainRight" parent="Visual/VisualRoot" instance=ExtResource( "8" )]
+[node name="JetVFXMainRight" parent="Visual/VisualRoot" instance=ExtResource("8")]
 transform = Transform3D(-0.65, 0, -2.53119e-07, 0, 0.65, 0, 2.53119e-07, 0, -0.65, 3.56022, -0.220573, 6.47425)
 
-[node name="JetVFXLeftWing1" parent="Visual/VisualRoot" instance=ExtResource( "8" )]
+[node name="JetVFXLeftWing1" parent="Visual/VisualRoot" instance=ExtResource("8")]
 transform = Transform3D(0.214803, 6.7333e-08, -0.10705, 0.10705, -4.29633e-08, 0.214803, 4.11005e-08, -0.24, -6.8486e-08, -5.75988, -1.13909, 2.13196)
 
-[node name="JetVFXLeftWing2" parent="Visual/VisualRoot" instance=ExtResource( "8" )]
+[node name="JetVFXLeftWing2" parent="Visual/VisualRoot" instance=ExtResource("8")]
 transform = Transform3D(0.214803, 6.7333e-08, -0.10705, 0.10705, -4.29633e-08, 0.214803, 4.11005e-08, -0.24, -6.8486e-08, -6.85655, -1.64187, -1.04728)
 
-[node name="JetVFXRightWing1" parent="Visual/VisualRoot" instance=ExtResource( "8" )]
+[node name="JetVFXRightWing1" parent="Visual/VisualRoot" instance=ExtResource("8")]
 transform = Transform3D(0.215075, 1.86069e-08, 0.106502, -0.106502, -4.27436e-08, 0.215075, 3.56423e-08, -0.24, -3.00475e-08, 5.76443, -1.12076, 2.13129)
 
-[node name="JetVFXRightWing2" parent="Visual/VisualRoot" instance=ExtResource( "8" )]
+[node name="JetVFXRightWing2" parent="Visual/VisualRoot" instance=ExtResource("8")]
 transform = Transform3D(0.215075, 1.86069e-08, 0.106502, -0.106502, -4.27436e-08, 0.215075, 3.56423e-08, -0.24, -3.00475e-08, 6.84852, -1.65759, -1.04728)
 
 [node name="DirectionalLight" type="DirectionalLight3D" parent="Visual"]
@@ -229,15 +229,15 @@ transform = Transform3D(0.939214, -0.216764, -0.266253, -6.7796e-08, -0.775496, 
 editor_only = true
 
 [node name="ShipAudio" type="Node3D" parent="."]
-script = ExtResource( "10" )
+script = ExtResource("10")
 
 [node name="MainJets" type="AudioStreamPlayer3D" parent="ShipAudio"]
-stream = ExtResource( "9" )
+stream = ExtResource("9")
 attenuation_model = 3
 autoplay = true
 
 [node name="SecondaryJets" type="AudioStreamPlayer3D" parent="ShipAudio"]
-stream = ExtResource( "11" )
+stream = ExtResource("11")
 attenuation_model = 3
 autoplay = true
 
@@ -253,26 +253,26 @@ unit_db = 2.0
 unit_db = 2.0
 
 [node name="On" type="AudioStreamPlayer" parent="ShipAudio"]
-stream = ExtResource( "13" )
+stream = ExtResource("13")
 
 [node name="Off" type="AudioStreamPlayer" parent="ShipAudio"]
-stream = ExtResource( "12" )
+stream = ExtResource("12")
 
 [node name="SuperSpeedOn" type="AudioStreamPlayer" parent="ShipAudio"]
-stream = ExtResource( "14" )
+stream = ExtResource("14")
 
 [node name="SuperSpeedOff" type="AudioStreamPlayer" parent="ShipAudio"]
-stream = ExtResource( "16" )
+stream = ExtResource("16")
 
 [node name="SuperSpeedLoop" type="AudioStreamPlayer" parent="ShipAudio"]
-stream = ExtResource( "15" )
+stream = ExtResource("15")
 
 [node name="AirFriction" type="AudioStreamPlayer" parent="ShipAudio"]
-stream = ExtResource( "17" )
+stream = ExtResource("17")
 autoplay = true
 
 [node name="Scrape" type="AudioStreamPlayer3D" parent="ShipAudio"]
-stream = ExtResource( "18" )
+stream = ExtResource("18")
 unit_db = 3.0
 
 [connection signal="body_entered" from="." to="ShipAudio" method="_on_Ship_body_entered"]
