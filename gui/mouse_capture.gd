@@ -12,7 +12,7 @@ func _ready():
 
 func capture():
 	# Remove focus from the HUD
-	var focus_owner = get_focus_owner()
+	var focus_owner = get_viewport().gui_get_focus_owner()
 	if focus_owner != null:
 		focus_owner.release_focus()
 	
