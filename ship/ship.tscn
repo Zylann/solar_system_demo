@@ -73,6 +73,12 @@ tracks/1/keys = {
 "values": [Vector3(-0.349066, 0, 0), Vector3(0.698132, 0, 0)]
 }
 
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_a4qr0"]
+_data = {
+"RESET": SubResource("Animation_ecnp7"),
+"hatch_open": SubResource("4")
+}
+
 [sub_resource type="BoxShape3D" id="5"]
 size = Vector3(2, 3.32734, 0.230548)
 
@@ -151,8 +157,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.141755, 0)
 shape = SubResource( "3" )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/RESET = SubResource( "Animation_ecnp7" )
-anims/hatch_open = SubResource( "4" )
+libraries = {
+"": SubResource("AnimationLibrary_a4qr0")
+}
 
 [node name="Visual" type="Node" parent="."]
 
