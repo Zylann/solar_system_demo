@@ -206,8 +206,7 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D):
 	sphere_normalmap.create(512, 256, false, Image.FORMAT_RGB8)
 	generator.bake_sphere_normalmap(sphere_normalmap, body.radius * 0.95, 200.0 / body.radius)
 	#sphere_normalmap.save_png(str("debug_data/test_sphere_normalmap_", body.name, ".png"))
-	var sphere_normalmap_tex = ImageTexture.new()
-	sphere_normalmap_tex.create_from_image(sphere_normalmap)
+	var sphere_normalmap_tex = ImageTexture.create_from_image(sphere_normalmap)
 	mat.set_shader_param("u_global_normalmap", sphere_normalmap_tex)
 
 	var stream = VoxelStreamSQLite.new()
