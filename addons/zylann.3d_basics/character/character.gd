@@ -106,9 +106,9 @@ func _physics_process(delta : float):
 	if _velocity != Vector3():
 #		var was_on_floor = is_on_floor()
 		up_direction = current_up
-		motion_velocity = _velocity
+		velocity = _velocity
 		move_and_slide()
-		_velocity = motion_velocity
+		_velocity = velocity
 #		if is_on_floor() == false and was_on_floor:
 #			print("Stopped being on floor after applying ", _velocity)
 	
