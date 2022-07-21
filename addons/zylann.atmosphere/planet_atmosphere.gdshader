@@ -7,10 +7,10 @@ render_mode unshaded;//, depth_draw_alpha_prepass;
 uniform float u_planet_radius = 1.0;
 uniform float u_atmosphere_height = 0.1;
 uniform bool u_clip_mode = false;
-uniform vec4 u_day_color0 : hint_color = vec4(0.5, 0.8, 1.0, 1.0);
-uniform vec4 u_day_color1 : hint_color = vec4(0.5, 0.8, 1.0, 1.0);
-uniform vec4 u_night_color0 : hint_color = vec4(0.2, 0.4, 0.8, 1.0);
-uniform vec4 u_night_color1 : hint_color = vec4(0.2, 0.4, 0.8, 1.0);
+uniform vec4 u_day_color0 : source_color = vec4(0.5, 0.8, 1.0, 1.0);
+uniform vec4 u_day_color1 : source_color = vec4(0.5, 0.8, 1.0, 1.0);
+uniform vec4 u_night_color0 : source_color = vec4(0.2, 0.4, 0.8, 1.0);
+uniform vec4 u_night_color1 : source_color = vec4(0.2, 0.4, 0.8, 1.0);
 uniform vec3 u_sun_position = vec3(0.0, 0.0, 0.0);
 uniform float u_density = 0.2;
 uniform float u_attenuation_distance = 0.0;
@@ -79,8 +79,10 @@ void vertex() {
 	// and not in front of the near plane, because otherwise it's harder to layer two 
 	// atmospheres on screen and have them properly sorted. Besides, it could reduce pixel cost.
 	// So this is an option.
+	
 	if (u_clip_mode) {
 		POSITION = vec4(VERTEX, 1.0);
+		POSITION.z = 0.01; // Hotfix in Godot 4, no idea why but it works // NO it doesnt in this project. Confused
 	} else {
 		// Godot expects us to fill in `POSITION` if we mention it at all in `vertex()`,
 		// so we have to set it in the `else` block too otherwise nothing will show up
@@ -91,9 +93,9 @@ void vertex() {
 		//	mat4(CAMERA_MATRIX[0],CAMERA_MATRIX[1],CAMERA_MATRIX[2],WORLD_MATRIX[3]);
 	}
 	
-	vec4 world_pos = WORLD_MATRIX * vec4(0, 0, 0, 1);
-	v_planet_center_viewspace = (INV_CAMERA_MATRIX * world_pos).xyz;
-	v_sun_center_viewspace = (INV_CAMERA_MATRIX * vec4(u_sun_position, 1.0)).xyz;
+	vec4 world_pos = MODEL_MATRIX * vec4(0, 0, 0, 1);
+	v_planet_center_viewspace = (VIEW_MATRIX * world_pos).xyz;
+	v_sun_center_viewspace = (VIEW_MATRIX * vec4(u_sun_position, 1.0)).xyz;
 }
 
 void fragment() {
@@ -104,9 +106,9 @@ void fragment() {
 	vec4 view_coords = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
 	//view_coords.xyz /= view_coords.w;
 	//float linear_depth = -view_coords.z; // Not what I want because it changes when looking around
-	vec4 world_coords = CAMERA_MATRIX * view_coords;
+	vec4 world_coords = INV_VIEW_MATRIX * view_coords;
 	vec3 pos_world = world_coords.xyz / world_coords.w;
-	vec3 cam_pos_world = (CAMERA_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+	vec3 cam_pos_world = (INV_VIEW_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
 	// I wonder if there is a faster way to get to that distance...
 	float linear_depth = distance(cam_pos_world, pos_world);
 	
