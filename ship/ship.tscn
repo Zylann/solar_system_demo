@@ -172,7 +172,7 @@ transform = Transform3D(-1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 
 transform = Transform3D(1, 0, 0, 0, 0.939693, 0.34202, 0, -0.34202, 0.939693, 0, 0.907461, -7.5999)
 
 [node name="HatchDown" parent="Visual/VisualRoot/ship" index="3"]
-transform = Transform3D(1, 5.86161e-08, 5.42005e-07, 5.42005e-07, -0.213793, -0.976879, 5.86161e-08, 0.976879, -0.213793, 0, -1.0341, -4.21388)
+transform = Transform3D(1, 5.8616e-08, 5.42005e-07, 5.42005e-07, -0.213793, -0.976879, 5.8616e-08, 0.976879, -0.213793, 0, -1.0341, -4.21388)
 
 [node name="KinematicBody" type="CharacterBody3D" parent="Visual/VisualRoot/ship/HatchDown" index="0"]
 
