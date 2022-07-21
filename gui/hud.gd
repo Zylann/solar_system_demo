@@ -49,15 +49,15 @@ func _process(_delta: float):
 			var screen_radius_v := Vector2(screen_radius, screen_radius)
 			var screen_top_left_pos := screen_center - screen_radius_v
 			
-			_target_planet_label.rect_position = \
+			_target_planet_label.position = \
 				screen_center + 1.2 * Vector2(screen_radius, -screen_radius)
 			_target_planet_label.text = "{0}: {1}\nDistance: {2}m\nDiameter: {3}m" \
 				.format([_get_stellar_body_type_name(pointed_body), pointed_body.name, 
 					Util.format_integer_with_commas(int(distance)),
 					Util.format_integer_with_commas(int(pointed_body.radius * 2))])
 			
-			_target_label_rect.rect_position = screen_top_left_pos
-			_target_label_rect.rect_size = 2.0 * screen_radius_v
+			_target_label_rect.position = screen_top_left_pos
+			_target_label_rect.size = 2.0 * screen_radius_v
 	
 	if pointed_body != _pointed_body:
 		_pointed_body = pointed_body
