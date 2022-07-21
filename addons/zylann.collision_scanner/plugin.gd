@@ -15,12 +15,14 @@ func _enter_tree():
 	_overlay = CollisionOverlay.instantiate()
 	parent.add_child(_overlay)
 	parent.move_child(_overlay, 1)
+	#print("PATH ", _overlay.get_path())
 	# As per https://github.com/godotengine/godot/issues/6869
 	set_input_event_forwarding_always_enabled()
 
 
 func _exit_tree():
-	_overlay.queue_free()
+	if _overlay != null:
+		_overlay.queue_free()
 
 
 func handles(obj):
@@ -35,9 +37,9 @@ func forward_spatial_gui_input(camera, event):
 
 func get_3d_viewport_container() -> Control:
 	# Yes, this is a VBoxContainer, and it covers more than the actual 3D view
-	var vb = get_editor_interface().get_editor_viewport()
+	var vb = get_editor_interface().get_editor_main_control()
 	# So we have to dig for a non-exposed node type...
-	return find_first_node(vb, "SpatialEditorViewport") as Control
+	return find_first_node(vb, "Node3DEditorViewport") as Control
 
 
 static func find_first_node(node: Node, klass_name: String) -> Node:
