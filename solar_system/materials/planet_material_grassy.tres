@@ -1,16 +1,21 @@
-[gd_resource type="ShaderMaterial" load_steps=6 format=2]
+[gd_resource type="ShaderMaterial" load_steps=7 format=3 uid="uid://cp754ky7maqj2"]
 
-[ext_resource path="res://solar_system/materials/planet_ground.gdshader" type="Shader" id=1]
-[ext_resource path="res://textures/grass_albedo.png" type="Texture" id=2]
-[ext_resource path="res://textures/Rocks07_col.png" type="Texture" id=3]
-[ext_resource path="res://textures/grass_normal.png" type="Texture" id=4]
-[ext_resource path="res://textures/Rocks07_nrm.jpg" type="Texture" id=5]
+[ext_resource type="Shader" path="res://solar_system/materials/planet_ground.gdshader" id="1"]
+[ext_resource type="Texture2D" uid="uid://dq0s3scgs2ncg" path="res://textures/grass_albedo.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://ctkhu2p5jilw3" path="res://test_sphere_normalmap_Mercury.png" id="2_1sjcp"]
+[ext_resource type="Texture2D" uid="uid://jfywo4xd75ku" path="res://textures/Rocks07_col.webp" id="2_ylcsf"]
+[ext_resource type="Texture2D" uid="uid://dvpf64ui03kn5" path="res://textures/Rocks07_nrm.webp" id="3_780vy"]
+[ext_resource type="Texture2D" uid="uid://ksj4nnvstubh" path="res://textures/grass_normal.png" id="4"]
 
 [resource]
-shader = ExtResource( 1 )
-shader_param/u_mountain_height = 0.0
+render_priority = 0
+shader = ExtResource("1")
 shader_param/u_block_local_transform = null
-shader_param/u_top_albedo_texture = ExtResource( 2 )
-shader_param/u_top_normal_texture = ExtResource( 4 )
-shader_param/u_side_albedo_texture = ExtResource( 3 )
-shader_param/u_side_normal_texture = ExtResource( 5 )
+shader_param/u_global_normalmap = ExtResource("2_1sjcp")
+shader_param/u_lod_fade = null
+shader_param/u_mountain_height = 10000.0
+shader_param/u_side_albedo_texture = ExtResource("2_ylcsf")
+shader_param/u_side_normal_texture = ExtResource("3_780vy")
+shader_param/u_top_albedo_texture = ExtResource("2")
+shader_param/u_top_normal_texture = ExtResource("4")
+shader_param/u_transition_mask = null

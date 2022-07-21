@@ -1,59 +1,56 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=10 format=3 uid="uid://dfg7thpcsus18"]
 
-[ext_resource path="res://character/character.tscn" type="PackedScene" id=1]
-[ext_resource path="res://textures/Rocks07_col.png" type="Texture" id=2]
-[ext_resource path="res://camera/camera.tscn" type="PackedScene" id=3]
-[ext_resource path="res://gui/mouse_capture.tscn" type="PackedScene" id=4]
+[ext_resource type="PackedScene" uid="uid://hh0mump0swlx" path="res://character/character.tscn" id="1"]
+[ext_resource type="Texture2D" uid="uid://jfywo4xd75ku" path="res://textures/Rocks07_col.webp" id="2_yc0vv"]
+[ext_resource type="PackedScene" uid="uid://dc4lolnw2ugli" path="res://camera/camera.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://gui/mouse_capture.tscn" id="4"]
 
-[sub_resource type="SphereMesh" id=1]
+[sub_resource type="SphereMesh" id="1"]
 radius = 50.0
 height = 100.0
 
-[sub_resource type="SpatialMaterial" id=2]
-albedo_texture = ExtResource( 2 )
-uv1_scale = Vector3( 0.1, 0.1, 0.1 )
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xk0m3"]
+albedo_texture = ExtResource("2_yc0vv")
+uv1_scale = Vector3(0.2, 0.2, 0.2)
 uv1_triplanar = true
+uv1_triplanar_sharpness = 10.1965
 
-[sub_resource type="SphereShape" id=3]
+[sub_resource type="SphereShape3D" id="3"]
 radius = 50.0
 
-[sub_resource type="ProceduralSky" id=4]
-sky_top_color = Color( 0.121569, 0.227451, 0.290196, 1 )
-sky_horizon_color = Color( 0.254902, 0.376471, 0.47451, 1 )
-ground_bottom_color = Color( 0.0431373, 0.0431373, 0.0431373, 1 )
-ground_horizon_color = Color( 0.439216, 0.392157, 0.254902, 1 )
+[sub_resource type="Sky" id="4"]
 
-[sub_resource type="Environment" id=5]
+[sub_resource type="Environment" id="5"]
 background_mode = 2
-background_sky = SubResource( 4 )
+sky = SubResource("4")
 
 [node name="Node" type="Node"]
 
-[node name="Character" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 51.1012, 0 )
+[node name="Character" parent="." instance=ExtResource("1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 51.1012, 0)
 
-[node name="Planet" type="MeshInstance" parent="."]
-mesh = SubResource( 1 )
-material/0 = SubResource( 2 )
+[node name="Planet" type="MeshInstance3D" parent="."]
+mesh = SubResource("1")
+surface_material_override/0 = SubResource("StandardMaterial3D_xk0m3")
 
-[node name="StaticBody" type="StaticBody" parent="Planet"]
+[node name="StaticBody" type="StaticBody3D" parent="Planet"]
 
-[node name="CollisionShape" type="CollisionShape" parent="Planet/StaticBody"]
-shape = SubResource( 3 )
+[node name="CollisionShape" type="CollisionShape3D" parent="Planet/StaticBody"]
+shape = SubResource("3")
 
-[node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.638231, 0.769845, 0, -0.769845, 0.638231, 0, 0, 0 )
+[node name="DirectionalLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.638231, 0.769845, 0, -0.769845, 0.638231, 0, 0, 0)
 shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource( 5 )
+environment = SubResource("5")
 
-[node name="Camera" type="Camera" parent="."]
-transform = Transform( 0.998932, -0.0340342, 0.0312436, 0, 0.676261, 0.736663, -0.0462005, -0.735876, 0.675539, 0.629355, 66.9992, 16.362 )
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(0.998932, -0.0340342, 0.0312436, 0, 0.676261, 0.736663, -0.0462005, -0.735876, 0.675539, 0.629355, 66.9992, 16.362)
 visible = false
 
-[node name="Camera2" parent="." instance=ExtResource( 3 )]
+[node name="Camera2" parent="." instance=ExtResource("3")]
 distance_to_target = 4.0
 initial_target = NodePath("../Character/Head")
 
-[node name="MouseCapture" parent="." instance=ExtResource( 4 )]
+[node name="MouseCapture" parent="." instance=ExtResource("4")]

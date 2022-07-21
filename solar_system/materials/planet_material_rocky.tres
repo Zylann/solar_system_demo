@@ -1,18 +1,19 @@
 [gd_resource type="ShaderMaterial" load_steps=6 format=3 uid="uid://c1mtyp8wn6gxe"]
 
-[ext_resource type="Texture2D" uid="uid://bma3ysf53n0wm" path="res://textures/sand_normal.png" id="1"]
-[ext_resource type="Texture2D" uid="uid://b4pcf0vewxddo" path="res://textures/Rocks07_col.png" id="2"]
-[ext_resource type="Texture2D" uid="uid://dchty1pqrvs12" path="res://textures/Rocks07_nrm.jpg" id="3"]
-[ext_resource type="Texture2D" uid="uid://xp2povn2426r" path="res://textures/sand_albedo.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://jfywo4xd75ku" path="res://textures/Rocks07_col.webp" id="2_0qao3"]
+[ext_resource type="Texture2D" uid="uid://dvpf64ui03kn5" path="res://textures/Rocks07_nrm.webp" id="3_mvtut"]
+[ext_resource type="Texture2D" uid="uid://xp2povn2426r" path="res://textures/sand_albedo.png" id="4_3sgd2"]
 [ext_resource type="Shader" path="res://solar_system/materials/planet_ground.gdshader" id="5"]
+[ext_resource type="Texture2D" uid="uid://bma3ysf53n0wm" path="res://textures/sand_normal.png" id="5_peden"]
 
 [resource]
 render_priority = 0
-shader = ExtResource( "5" )
-shader_param/u_mountain_height = 0.0
-shader_param/u_block_local_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+shader = ExtResource("5")
+shader_param/u_block_local_transform = null
 shader_param/u_lod_fade = null
-shader_param/u_top_albedo_texture = ExtResource( "4" )
-shader_param/u_top_normal_texture = ExtResource( "1" )
-shader_param/u_side_albedo_texture = ExtResource( "2" )
-shader_param/u_side_normal_texture = ExtResource( "3" )
+shader_param/u_mountain_height = null
+shader_param/u_side_albedo_texture = ExtResource("2_0qao3")
+shader_param/u_side_normal_texture = ExtResource("3_mvtut")
+shader_param/u_top_albedo_texture = ExtResource("4_3sgd2")
+shader_param/u_top_normal_texture = ExtResource("5_peden")
+shader_param/u_transition_mask = null
