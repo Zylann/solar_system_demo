@@ -199,8 +199,8 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D):
 	generator.use_subdivision = true
 	generator.subdivision_size = 8
 
-#			ResourceSaver.save(str("debug_data/generator_", body.name, ".tres"), generator, 
-#				ResourceSaver.FLAG_BUNDLE_RESOURCES)
+	# ResourceSaver.save(str("debug_data/generator_", body.name, ".tres"), generator, 
+	# 			ResourceSaver.FLAG_BUNDLE_RESOURCES)
 
 	var sphere_normalmap = Image.new()
 	sphere_normalmap.create(512, 256, false, Image.FORMAT_RGB8)
