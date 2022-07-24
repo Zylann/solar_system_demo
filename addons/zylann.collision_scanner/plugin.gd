@@ -15,7 +15,6 @@ func _enter_tree():
 	_overlay = CollisionOverlay.instantiate()
 	parent.add_child(_overlay)
 	parent.move_child(_overlay, 1)
-	#print("PATH ", _overlay.get_path())
 	# As per https://github.com/godotengine/godot/issues/6869
 	set_input_event_forwarding_always_enabled()
 

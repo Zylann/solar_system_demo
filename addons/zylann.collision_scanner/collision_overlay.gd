@@ -1,12 +1,11 @@
 @tool
 extends Control
 
-@onready var _texture_rect := $TextureRect as TextureRect
-
 const BASE_CELL_SIZE = 8
 const RAY_LENGTH = 4000.0
 const FRAME_TIME_BUDGET_MS = 6
 
+var _texture_rect : TextureRect
 var _image : Image
 var _texture : ImageTexture
 var _cell_x := 0
@@ -15,11 +14,18 @@ var _cell_size := BASE_CELL_SIZE
 var _done = false
 var _camera : Camera3D
 var _prev_camera_transform : Transform3D
+var _restart_when_camera_transform_changes := true
 
 
 func _init():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	set_anchors_preset(Control.PRESET_WIDE)
 	set_physics_process(false)
+
+	_texture_rect = TextureRect.new()
+	_texture_rect.set_anchors_preset(Control.PRESET_WIDE)
+	_texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_texture_rect)
 
 
 func set_camera(camera: Camera3D):
@@ -33,8 +39,6 @@ func set_camera(camera: Camera3D):
 
 func _reset():
 	set_physics_process(false)
-	if _texture_rect == null:
-		return
 	if size.x == 0 or size.y == 0:
 		print("Invalid rect size ", size)
 		return
@@ -76,10 +80,15 @@ func _notification(what):
 func _process(delta):
 	if _camera == null or not is_instance_valid(_camera):
 		return
-	if _camera.global_transform != _prev_camera_transform:
+	if _restart_when_camera_transform_changes and \
+	not _camera.global_transform.is_equal_approx(_prev_camera_transform):
 		_prev_camera_transform = _camera.global_transform
 		_restart()
 		return
+
+
+func set_restart_when_camera_transform_changes(enabled: bool):
+	_restart_when_camera_transform_changes = enabled
 
 
 func _physics_process(delta):
@@ -87,6 +96,11 @@ func _physics_process(delta):
 		print("Camera is null, stopping")
 		_camera = null
 		set_physics_process(false)
+		return
+	
+	# This might happen?
+	if not is_physics_processing():
+		push_warning("is_physics_processing() == false but Godot still called _physics_process??")
 		return
 	
 	var world := _camera.get_world_3d()
@@ -143,10 +157,7 @@ func _physics_process(delta):
 			# TODO Optimize: Godot 4 did not implement a way to update an ImageTexture sub-region
 #			VisualServer.texture_set_data_partial(_texture.get_rid(), 
 #				_image, 0, y, _image.get_width(), prev_cell_size, 0, y, 0, 0)
-			# TODO Can't use `update()` because of https://github.com/godotengine/godot/issues/63131
-			#_texture.update(_image)
-			# So will use the slowest way possible
-			_texture = ImageTexture.create_from_image(_image)
+			_texture.update(_image)
 			_texture_rect.texture = _texture
 		
 	if _done:
