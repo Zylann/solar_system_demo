@@ -6,7 +6,7 @@
 # TODO Thread-safety
 # TODO 2D functions
 
-extends Node
+extends CanvasLayer
 
 const DebugDrawFont = preload("res://addons/zylann.debug_draw/Hack-Regular.ttf")
 
@@ -15,7 +15,7 @@ const TEXT_LINGER_FRAMES = 5
 ## @brief How many frames lines remain shown after being drawn.
 const LINES_LINGER_FRAMES = 1
 ## @brief Color of the text drawn as HUD
-const TEXT_COLOR = Color(1,1,1)
+const TEXT_COLOR = Color.WHITE
 ## @brief Background color of the text drawn as HUD
 const TEXT_BG_COLOR = Color(0.3, 0.3, 0.3, 0.8)
 ## @brief font size used for debug text
@@ -39,6 +39,10 @@ var _line_immediate_mesh : ImmediateMesh
 
 
 func _ready():
+	# Always process even if the game is paused
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	# Draw 2D on top of every other CanvasLayer
+	layer = 100
 	_line_immediate_mesh = ImmediateMesh.new()
 	var immediate_mesh_instance = MeshInstance3D.new()
 	immediate_mesh_instance.material_override = _get_line_material()
@@ -51,7 +55,7 @@ func _ready():
 ## @param size: size of the cube in world units
 ## @param color
 ## @param linger_frames: optionally makes the box remain drawn for longer
-func draw_cube(position: Vector3, size: float, color: Color = Color(1,1,1), linger := 0):
+func draw_cube(position: Vector3, size: float, color: Color = Color.WHITE, linger := 0):
 	draw_box(position, Vector3(size, size, size), color, linger)
 
 
@@ -60,7 +64,7 @@ func draw_cube(position: Vector3, size: float, color: Color = Color(1,1,1), ling
 ## @param size: size of the box in world units
 ## @param color
 ## @param linger_frames: optionally makes the box remain drawn for longer
-func draw_box(position: Vector3, size: Vector3, color: Color = Color(1,1,1), linger_frames = 0):
+func draw_box(position: Vector3, size: Vector3, color: Color = Color.WHITE, linger_frames = 0):
 	var mi := _get_box()
 	var mat := _get_line_material()
 	mat.albedo_color = color
@@ -76,7 +80,7 @@ func draw_box(position: Vector3, size: Vector3, color: Color = Color(1,1,1), lin
 ## @brief Draws the unshaded outline of a 3D transformed cube.
 ## @param trans: transform of the cube. The basis defines its size.
 ## @param color
-func draw_transformed_cube(trans: Transform3D, color: Color = Color(1,1,1)):
+func draw_transformed_cube(trans: Transform3D, color: Color = Color.WHITE):
 	var mi := _get_box()
 	var mat := _get_line_material()
 	mat.albedo_color = color
@@ -102,7 +106,7 @@ func draw_axes(transform: Transform3D, scale = 1.0):
 ## @param aabb: world-space box to draw as an AABB
 ## @param color
 ## @param linger_frames: optionally makes the box remain drawn for longer
-func draw_box_aabb(aabb: AABB, color = Color(1,1,1), linger_frames = 0):
+func draw_box_aabb(aabb: AABB, color = Color.WHITE, linger_frames = 0):
 	var mi := _get_box()
 	var mat := _get_line_material()
 	mat.albedo_color = color
@@ -140,7 +144,7 @@ func draw_ray_3d(origin: Vector3, direction: Vector3, length: float, color : Col
 ## Multiple calls with the same `key` will override previous text.
 ## @param key: identifier of the line
 ## @param text: text to show next to the key
-func set_text(key: String, value):
+func set_text(key: String, value=""):
 	_texts[key] = {
 		"text": value if typeof(value) == TYPE_STRING else str(value),
 		"frame": Engine.get_frames_drawn() + TEXT_LINGER_FRAMES
@@ -152,7 +156,7 @@ func _get_box() -> MeshInstance3D:
 	if len(_box_pool) == 0:
 		mi = MeshInstance3D.new()
 		if _box_mesh == null:
-			_box_mesh = _create_wirecube_mesh(Color(1, 1, 1))
+			_box_mesh = _create_wirecube_mesh(Color.WHITE)
 		mi.mesh = _box_mesh
 		add_child(mi)
 	else:
@@ -273,15 +277,15 @@ func _on_CanvasItem_draw():
 
 	for key in _texts.keys():
 		var t = _texts[key]
-		var text := str(key, ": ", t.text, "\n")
-		var ss := font.get_string_size(text, TEXT_SIZE)
+		var text := str(key, ": ", t.text)
+		var ss := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, TEXT_SIZE)
 		ci.draw_rect(Rect2(pos, Vector2(ss.x + xpad * 2, line_height)), TEXT_BG_COLOR)
-		ci.draw_string(font, pos + font_offset, text,HORIZONTAL_ALIGNMENT_LEFT, -1, TEXT_SIZE,
+		ci.draw_string(font, pos + font_offset, text, HORIZONTAL_ALIGNMENT_LEFT, -1, TEXT_SIZE,
 			TEXT_COLOR)
 		pos.y += line_height
 
 
-static func _create_wirecube_mesh(color := Color(1,1,1)) -> ArrayMesh:
+static func _create_wirecube_mesh(color := Color.WHITE) -> ArrayMesh:
 	var n = -0.5
 	var p = 0.5
 	var positions := PackedVector3Array([
