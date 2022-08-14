@@ -81,19 +81,19 @@ func _init():
 
 	# Setup defaults for the builtin shader
 	# This is a workaround for https://github.com/godotengine/godot/issues/24488
-	material.set_shader_param("u_day_color0", Color(0.29, 0.39, 0.92))
-	material.set_shader_param("u_day_color1", Color(0.76, 0.90, 1.0))
-	material.set_shader_param("u_night_color0", Color(0.15, 0.10, 0.33))
-	material.set_shader_param("u_night_color1", Color(0.0, 0.0, 0.0))
-	material.set_shader_param("u_density", 0.2)
-	material.set_shader_param("u_sun_position", Vector3(5000, 0, 0))
+	material.set_shader_uniform("u_day_color0", Color(0.29, 0.39, 0.92))
+	material.set_shader_uniform("u_day_color1", Color(0.76, 0.90, 1.0))
+	material.set_shader_uniform("u_night_color0", Color(0.15, 0.10, 0.33))
+	material.set_shader_uniform("u_night_color1", Color(0.0, 0.0, 0.0))
+	material.set_shader_uniform("u_density", 0.2)
+	material.set_shader_uniform("u_sun_position", Vector3(5000, 0, 0))
 
 
 func _ready():
 	var mat = _get_material()
-	mat.set_shader_param("u_planet_radius", _planet_radius)
-	mat.set_shader_param("u_atmosphere_height", _atmosphere_height)
-	mat.set_shader_param("u_clip_mode", false)
+	mat.set_shader_uniform("u_planet_radius", _planet_radius)
+	mat.set_shader_uniform("u_atmosphere_height", _atmosphere_height)
+	mat.set_shader_uniform("u_clip_mode", 0.0)
 
 
 func set_custom_shader(shader: Shader):
@@ -115,11 +115,11 @@ func _get_material() -> ShaderMaterial:
 
 
 func set_shader_param(param_name: String, value):
-	_get_material().set_shader_param(param_name, value)
+	_get_material().set_shader_uniform(param_name, value)
 
 
 func get_shader_param(param_name: String):
-	return _get_material().get_shader_param(param_name)
+	return _get_material().get_shader_uniform(param_name)
 
 
 # Shader parameters are exposed like this so we can have more custom shaders in the future,
@@ -127,7 +127,7 @@ func get_shader_param(param_name: String):
 func _get_property_list():
 	var props := []
 	var mat := _get_material()
-	var shader_params := RenderingServer.shader_get_param_list(mat.shader.get_rid())
+	var shader_params := RenderingServer.shader_get_shader_uniform_list(mat.shader.get_rid())
 	for p in shader_params:
 		if _api_shader_params.has(p.name):
 			continue
@@ -152,7 +152,7 @@ func _set(p_key: StringName, value):
 	if key.begins_with("shader_params/"):
 		var param_name := key.right(len("shader_params/"))
 		var mat := _get_material()
-		mat.set_shader_param(param_name, value)
+		mat.set_shader_uniform(param_name, value)
 
 
 func _get_configuration_warnings() -> PackedStringArray:
@@ -168,7 +168,7 @@ func set_planet_radius(new_radius: float):
 	if _planet_radius == new_radius:
 		return
 	_planet_radius = max(new_radius, 0.0)
-	_mesh_instance.material_override.set_shader_param("u_planet_radius", _planet_radius)
+	_mesh_instance.material_override.set_shader_uniform("u_planet_radius", _planet_radius)
 	_update_cull_margin()
 
 
@@ -180,7 +180,7 @@ func set_atmosphere_height(new_height: float):
 	if _atmosphere_height == new_height:
 		return
 	_atmosphere_height = max(new_height, 0.0)
-	_mesh_instance.material_override.set_shader_param("u_atmosphere_height", _atmosphere_height)
+	_mesh_instance.material_override.set_shader_uniform("u_atmosphere_height", _atmosphere_height)
 	_update_cull_margin()
 
 
@@ -201,7 +201,7 @@ func _set_mode(mode: int):
 			print("Switching ", name, " to near mode")
 		# If camera is close enough, switch shader to near clip mode
 		# otherwise it will pass through the quad
-		mat.set_shader_param("u_clip_mode", true)
+		mat.set_shader_uniform("u_clip_mode", 1.0)
 		_mesh_instance.mesh = _near_mesh
 		_mesh_instance.transform = Transform3D()
 		# TODO Sometimes there is a short flicker, figure out why
@@ -209,7 +209,7 @@ func _set_mode(mode: int):
 	else:
 		if OS.is_stdout_verbose():
 			print("Switching ", name, " to far mode")
-		mat.set_shader_param("u_clip_mode", false)
+		mat.set_shader_uniform("u_clip_mode", 0.0)
 		_mesh_instance.mesh = _far_mesh
 
 
@@ -258,4 +258,5 @@ func _process(_delta):
 		var sun = get_node(_sun_path)
 		if sun is Node3D:
 			var mat := _get_material()
-			mat.set_shader_param("u_sun_position", sun.global_transform.origin)
+			mat.set_shader_uniform("u_sun_position", sun.global_transform.origin)
+

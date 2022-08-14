@@ -79,10 +79,8 @@ void vertex() {
 	// and not in front of the near plane, because otherwise it's harder to layer two 
 	// atmospheres on screen and have them properly sorted. Besides, it could reduce pixel cost.
 	// So this is an option.
-	
 	if (u_clip_mode) {
 		POSITION = vec4(VERTEX, 1.0);
-		POSITION.z = 0.01; // Hotfix in Godot 4, no idea why but it works // NO it doesnt in this project. Confused
 	} else {
 		// Godot expects us to fill in `POSITION` if we mention it at all in `vertex()`,
 		// so we have to set it in the `else` block too otherwise nothing will show up
