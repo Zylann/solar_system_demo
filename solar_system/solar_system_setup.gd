@@ -148,13 +148,13 @@ static func _setup_atmosphere(body: StellarBody, root: Node3D):
 	atmo.sun_path = "/root/GameWorld/Sun/DirectionalLight"
 	#atmo.day_color = body.atmosphere_color
 	#atmo.night_color = body.atmosphere_color.darkened(0.8)
-	atmo.set_shader_param("u_density", 0.001)
-	atmo.set_shader_param("u_attenuation_distance", 50.0)
-	atmo.set_shader_param("u_day_color0", body.atmosphere_color)
-	atmo.set_shader_param("u_day_color1", 
+	atmo.set_shader_uniform("u_density", 0.001)
+	atmo.set_shader_uniform("u_attenuation_distance", 50.0)
+	atmo.set_shader_uniform("u_day_color0", body.atmosphere_color)
+	atmo.set_shader_uniform("u_day_color1", 
 		body.atmosphere_color.lerp(Color(1,1,1), 0.5))
-	atmo.set_shader_param("u_night_color0", body.atmosphere_color.darkened(0.8))
-	atmo.set_shader_param("u_night_color1", 
+	atmo.set_shader_uniform("u_night_color0", body.atmosphere_color.darkened(0.8))
+	atmo.set_shader_uniform("u_night_color1", 
 		body.atmosphere_color.darkened(0.8).lerp(Color(1,1,1), 0.0))
 	root.add_child(atmo)
 
@@ -176,7 +176,7 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D):
 		mat = PlanetGrassyMaterial.duplicate()
 	else:
 		mat = PlanetRockyMaterial.duplicate()
-	mat.set_shader_param("u_mountain_height", body.radius + 80.0)
+	mat.set_shader_uniform("u_mountain_height", body.radius + 80.0)
 	
 	var generator : VoxelGeneratorGraph = BasePlanetVoxelGraph.duplicate(true)
 	var sphere_node_id := generator.find_node_by_name("sphere")
@@ -207,7 +207,7 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D):
 	generator.bake_sphere_normalmap(sphere_normalmap, body.radius * 0.95, 200.0 / body.radius)
 	#sphere_normalmap.save_png(str("debug_data/test_sphere_normalmap_", body.name, ".png"))
 	var sphere_normalmap_tex = ImageTexture.create_from_image(sphere_normalmap)
-	mat.set_shader_param("u_global_normalmap", sphere_normalmap_tex)
+	mat.set_shader_uniform("u_global_normalmap", sphere_normalmap_tex)
 
 	var stream = VoxelStreamSQLite.new()
 	stream.database_path = str(SAVE_FOLDER_PATH, "/", body.name, ".sqlite")

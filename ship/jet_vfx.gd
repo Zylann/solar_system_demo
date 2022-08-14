@@ -19,6 +19,6 @@ func set_power(p: float):
 func _process(delta: float):
 	_power = lerp(_power, _target_power, delta * 2.0)
 	var p = _power
-	_mesh_instance.material_override.set_shader_param("u_power", p)
+	_mesh_instance.material_override.set_shader_uniform("u_power", p)
 	_mesh_instance.scale = Vector3(1, 1, 0.1 + p * 15.0 * _mesh_instance.scale.x)
 	_light.light_energy = p * 2.0
