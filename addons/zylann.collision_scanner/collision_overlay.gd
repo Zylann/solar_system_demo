@@ -19,11 +19,11 @@ var _restart_when_camera_transform_changes := true
 
 func _init():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	set_anchors_preset(Control.PRESET_WIDE)
+	set_anchors_preset(Control.PRESET_FULL_RECT)
 	set_physics_process(false)
 
 	_texture_rect = TextureRect.new()
-	_texture_rect.set_anchors_preset(Control.PRESET_WIDE)
+	_texture_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_texture_rect)
 
@@ -45,7 +45,7 @@ func _reset():
 	_cell_x = 0
 	_cell_y = 0
 	_cell_size = BASE_CELL_SIZE
-	if _image == null or _image.get_size() != size:
+	if _image == null or _image.get_size() != Vector2i(size):
 		print("Creating image ", size)
 		_image = Image.new()
 		_image.create(size.x, size.y, false, Image.FORMAT_RGB8)
