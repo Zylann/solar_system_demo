@@ -148,13 +148,13 @@ static func _setup_atmosphere(body: StellarBody, root: Node3D):
 	atmo.sun_path = "/root/GameWorld/Sun/DirectionalLight"
 	#atmo.day_color = body.atmosphere_color
 	#atmo.night_color = body.atmosphere_color.darkened(0.8)
-	atmo.set_shader_uniform("u_density", 0.001)
-	atmo.set_shader_uniform("u_attenuation_distance", 50.0)
-	atmo.set_shader_uniform("u_day_color0", body.atmosphere_color)
-	atmo.set_shader_uniform("u_day_color1", 
+	atmo.set_shader_param("u_density", 0.001)
+	atmo.set_shader_param("u_attenuation_distance", 50.0)
+	atmo.set_shader_param("u_day_color0", body.atmosphere_color)
+	atmo.set_shader_param("u_day_color1", 
 		body.atmosphere_color.lerp(Color(1,1,1), 0.5))
-	atmo.set_shader_uniform("u_night_color0", body.atmosphere_color.darkened(0.8))
-	atmo.set_shader_uniform("u_night_color1", 
+	atmo.set_shader_param("u_night_color0", body.atmosphere_color.darkened(0.8))
+	atmo.set_shader_param("u_night_color1", 
 		body.atmosphere_color.darkened(0.8).lerp(Color(1,1,1), 0.0))
 	root.add_child(atmo)
 
