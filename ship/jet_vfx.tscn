@@ -14,8 +14,8 @@ width = 64
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 3 )
-shader_param/u_power = 1.0
-shader_param/u_gradient = SubResource( 3 )
+shader_parameter/u_power = 1.0
+shader_parameter/u_gradient = SubResource( 3 )
 
 [node name="JetVFX" type="Spatial"]
 script = ExtResource( 1 )

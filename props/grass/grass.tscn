@@ -7,8 +7,8 @@
 [sub_resource type="ShaderMaterial" id="1"]
 render_priority = 0
 shader = ExtResource( "3" )
-shader_param/alpha_scissor_threshold = 0.5
-shader_param/texture_albedo = ExtResource( "1" )
+shader_parameter/alpha_scissor_threshold = 0.5
+shader_parameter/texture_albedo = ExtResource( "1" )
 
 [node name="Spatial" type="Node3D"]
 

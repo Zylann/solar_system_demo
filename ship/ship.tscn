@@ -85,9 +85,9 @@ size = Vector3(2, 3.32734, 0.230548)
 [sub_resource type="ShaderMaterial" id="6"]
 render_priority = 0
 shader = ExtResource("4")
-shader_param/u_position = Vector3(0, 0, 0)
-shader_param/u_texture = ExtResource("6")
-shader_param/u_velocity = Vector3(0, 0, -20)
+shader_parameter/u_position = Vector3(0, 0, 0)
+shader_parameter/u_texture = ExtResource("6")
+shader_parameter/u_velocity = Vector3(0, 0, -20)
 
 [sub_resource type="Gradient" id="7"]
 offsets = PackedFloat32Array(0, 0.389241, 0.515823, 0.64557, 1)

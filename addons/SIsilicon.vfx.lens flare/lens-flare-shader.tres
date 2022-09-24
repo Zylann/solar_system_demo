@@ -95,11 +95,11 @@ void fragment() {
 [resource]
 render_priority = 0
 shader = SubResource("1")
-shader_param/bloom_bias = 1.05
-shader_param/bloom_scale = 10.0
-shader_param/distort = 2.0
-shader_param/distortion_quality = null
-shader_param/ghost_dispersal = 0.3
-shader_param/ghosts = 7
-shader_param/halo_width = 0.25
-shader_param/lod = 2.0
+shader_parameter/bloom_bias = 1.05
+shader_parameter/bloom_scale = 10.0
+shader_parameter/distort = 2.0
+shader_parameter/distortion_quality = null
+shader_parameter/ghost_dispersal = 0.3
+shader_parameter/ghosts = 7
+shader_parameter/halo_width = 0.25
+shader_parameter/lod = 2.0
