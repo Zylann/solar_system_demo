@@ -83,26 +83,26 @@ func play_stop_superspeed():
 func _process(delta):
 	_smooth_main_jet_power = lerp(_smooth_main_jet_power, _target_main_jet_power, delta * 5.0)
 	var jet_power = clamp(_smooth_main_jet_power, 0.0, 1.0)
-	_main_jets_player.unit_db = linear2db(jet_power)
+	_main_jets_player.unit_db = linear_to_db(jet_power)
 	_main_jets_player.pitch_scale = lerp(0.8, 1.0, jet_power)
 
 	_smooth_secondary_jet_power = \
 		lerp(_smooth_secondary_jet_power, _target_secondary_jet_power, delta * 5.0)
 	jet_power = clamp(_smooth_secondary_jet_power, 0.0, 1.0)
-	_secondary_jets_player.unit_db = linear2db(jet_power) - 5.0
+	_secondary_jets_player.unit_db = linear_to_db(jet_power) - 5.0
 	_secondary_jets_player.pitch_scale = lerp(0.8, 1.0, jet_power)
 	
 	var speed = get_parent().linear_velocity.length()
 	var air_factor = clamp(speed / get_parent().speed_cap_on_planet, 0.0, 1.0)
 	var planet_factor = _ambient_sounds.get_planet_factor()
-	_air_friction_player.volume_db = linear2db((air_factor * 0.9 + 0.1) * planet_factor)
+	_air_friction_player.volume_db = linear_to_db((air_factor * 0.9 + 0.1) * planet_factor)
 	DDD.set_text("SFX air factor", air_factor)
 	
 	var contacts = get_parent().get_last_contacts_count()
 	if contacts > 0 and not get_parent().freeze:
 		if not _scrape_player.playing:
 			_scrape_player.play()
-		_scrape_player.unit_db = linear2db(clamp(air_factor * 5.0, 0.0, 1.0))
+		_scrape_player.unit_db = linear_to_db(clamp(air_factor * 5.0, 0.0, 1.0))
 	else:
 		if _scrape_player.playing:
 			_scrape_player.stop()
