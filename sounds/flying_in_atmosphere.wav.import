@@ -1,7 +1,7 @@
 [remap]
 
 importer="wav"
-type="AudioStreamSample"
+type="AudioStreamWAV"
 uid="uid://di02v1xesv46s"
 path="res://.godot/imported/flying_in_atmosphere.wav-816bd36e4a8a7cb485fca24a91e47af5.sample"
 

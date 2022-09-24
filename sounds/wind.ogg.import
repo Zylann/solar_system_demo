@@ -1,7 +1,7 @@
 [remap]
 
 importer="oggvorbisstr"
-type="AudioStreamOGGVorbis"
+type="AudioStreamOggVorbis"
 uid="uid://3i1kbpjr4qk"
 path="res://.godot/imported/wind.ogg-5c63a5e875481a84f404a4b047ee4eb4.oggvorbisstr"
 
@@ -14,3 +14,6 @@ dest_files=["res://.godot/imported/wind.ogg-5c63a5e875481a84f404a4b047ee4eb4.ogg
 
 loop=true
 loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

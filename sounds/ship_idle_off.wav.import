@@ -1,7 +1,7 @@
 [remap]
 
 importer="wav"
-type="AudioStreamSample"
+type="AudioStreamWAV"
 uid="uid://dy844m2mrvc6n"
 path="res://.godot/imported/ship_idle_off.wav-f7ee7d2744f49654374ef2a2f398ded4.sample"
 

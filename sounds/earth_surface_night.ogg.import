@@ -1,7 +1,7 @@
 [remap]
 
 importer="oggvorbisstr"
-type="AudioStreamOGGVorbis"
+type="AudioStreamOggVorbis"
 uid="uid://b2u02ggxwyvl0"
 path="res://.godot/imported/earth_surface_night.ogg-a988842725dd86138adeb91b606013be.oggvorbisstr"
 
@@ -14,3 +14,6 @@ dest_files=["res://.godot/imported/earth_surface_night.ogg-a988842725dd86138adeb
 
 loop=true
 loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

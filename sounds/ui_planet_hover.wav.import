@@ -1,7 +1,7 @@
 [remap]
 
 importer="wav"
-type="AudioStreamSample"
+type="AudioStreamWAV"
 uid="uid://bpacs3ufj22ps"
 path="res://.godot/imported/ui_planet_hover.wav-cd2e2ea760b6af71b1e6d1d09528dd03.sample"
 
