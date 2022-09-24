@@ -12,6 +12,6 @@ func _process(delta):
 	#trans.origin = base_translation + velocity
 	#transform = gtrans
 	
-	material_override.set_shader_uniform("u_position", global_transform.origin)
-	material_override.set_shader_uniform("u_velocity", velocity)
+	material_override.set_shader_parameter("u_position", global_transform.origin)
+	material_override.set_shader_parameter("u_velocity", velocity)
 
