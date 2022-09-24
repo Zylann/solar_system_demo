@@ -1,5 +1,8 @@
 shader_type spatial;
 
+#include "addons/zylann.voxel/shaders/transvoxel.gdshaderinc"
+#include "addons/zylann.voxel/shaders/lod_fade.gdshaderinc"
+
 uniform sampler2D u_top_albedo_texture : source_color;
 uniform sampler2D u_top_normal_texture;
 uniform sampler2D u_side_albedo_texture : source_color;
@@ -12,8 +15,6 @@ uniform float u_mountain_height;
 // instance uniform vec3 u_block_local_position = vec3(0.0);
 // instance uniform vec2 u_lod_fade = vec2(0.0);
 uniform mat4 u_block_local_transform;
-uniform vec2 u_lod_fade = vec2(0.0);
-uniform int u_transition_mask;
 
 varying vec3 v_planet_up;
 varying vec3 v_planet_normal;
@@ -21,10 +22,6 @@ varying float v_planet_height;
 varying vec3 v_triplanar_uv;
 varying vec3 v_triplanar_power_normal;
 varying float v_camera_distance;
-
-float get_hash(vec2 c) {
-	return fract(sin(dot(c.xy, vec2(12.9898,78.233))) * 43758.5453);
-}
 
 vec4 triplanar_texture(sampler2D p_sampler, vec3 p_weights, vec3 p_triplanar_pos) {
 	vec4 samp = vec4(0.0);
@@ -44,52 +41,6 @@ vec2 get_sphere_uv(vec3 npos) {
 		-0.5 * skew3(npos.y) + 0.5
 	);
 	return uv;
-}
-
-float get_transvoxel_secondary_factor(int idata) {
-	int cell_border_mask = (idata >> 0) & 63; // Which sides the cell is touching
-	int vertex_border_mask = (idata >> 8) & 63; // Which sides the vertex is touching
-	//int vertex_border_mask = (idata >> 6) & 63; // Which sides the vertex is touching
-	// If the vertex is near a side where there is a low-resolution neighbor,
-	// move it to secondary position
-	int m = u_transition_mask & cell_border_mask;
-	float t = float(m != 0);
-	// If the vertex lies on one or more sides, and at least one side has no low-resolution neighbor,
-	// don't move the vertex.
-	t *= float((vertex_border_mask & ~u_transition_mask) == 0);
-	
-	// Debugging
-	//t *= 0.5 + 0.5 * sin(TIME * 4.0);
-
-	//t *= 2.0;
-
-	return t;
-}
-
-vec3 get_transvoxel_position(vec3 vertex_pos, vec4 fdata) {
-	int idata = floatBitsToInt(fdata.a);
-	//int idata = int(fdata.a);
-
-	// Move vertices to smooth transitions
-	float secondary_factor = get_transvoxel_secondary_factor(idata);
-	vec3 secondary_position = fdata.xyz;
-	vec3 pos = mix(vertex_pos, secondary_position, secondary_factor);
-	//vec3 pos = vertex_pos;
-
-	// If the mesh combines transitions and the vertex belongs to a transition,
-	// when that transition isn't active we change the position of the vertices so
-	// all triangles will be degenerate and won't be visible.
-	// This is an alternative to rendering them separately,
-	// which has less draw calls and less mesh resources to create in Godot.
-	// Ideally I would tweak the index buffer like LOD does but Godot does not
-	// expose anything to use it that way.
-	int itransition = (idata >> 16) & 0xff; // Is the vertex on a transition mesh?
-	float transition_cull = float(itransition == 0 || (itransition & u_transition_mask) != 0);
-	pos *= transition_cull;
-
-	//pos *= float(itransition == 0);
-
-	return pos;
 }
 
 void vertex() {
@@ -206,20 +157,8 @@ void fragment() {
 	//ALBEDO += 0.15 * vec3(get_hash(blpos.xy), get_hash(blpos.xz), get_hash(blpos.yz));
 
 	// Discard has to be last to workaround https://github.com/godotengine/godot/issues/34966
-	
-	// Terrible impl but can surely be optimized
-	float h = get_hash(SCREEN_UV);
-	vec2 lod_fade = u_lod_fade;//clamp(u_lod_fade, vec2(0.01), vec2(0.99)); // DEBUG
-	if (lod_fade.y > 0.5) {
-		// Fade in
-		if (lod_fade.x < h) {
-			discard;
-		}
-	} else {
-		// Fade out
-		if (lod_fade.x > h) {
-			discard;
-		}
+	if (get_lod_fade_discard(SCREEN_UV)) {
+		discard;
 	}
 
 	//ALBEDO = NORMAL;
