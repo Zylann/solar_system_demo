@@ -77,8 +77,14 @@ var screen : MeshInstance3D
 var material : ShaderMaterial
 
 func _init():
+	var mesh = QuadMesh.new()
+	mesh.orientation = QuadMesh.FACE_Z
+	mesh.size = Vector2(2,2)
+	mesh.flip_faces = true
+
 	screen = MeshInstance3D.new()
-	screen.mesh = BoxMesh.new()
+	screen.mesh = mesh
+	# TODO This is to prevent the mesh from being culled, but is there a better way?
 	screen.scale = Vector3(1,1,1) * pow(2.0,30);
 	add_child(screen)
 	screen.material_override = preload("lens-flare-shader.tres").duplicate()

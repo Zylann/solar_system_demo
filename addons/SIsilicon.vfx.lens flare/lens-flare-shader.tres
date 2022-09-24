@@ -22,7 +22,7 @@ uniform sampler2D starburst;
 
 void vertex() {
 	POSITION = vec4(VERTEX, 1.0);
-	POSITION.z = -1.0;
+	//POSITION.z = -1.0;
 }
 
 float weight(vec2 pos) {
