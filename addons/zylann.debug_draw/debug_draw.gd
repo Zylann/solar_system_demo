@@ -260,7 +260,7 @@ func _process_canvas():
 		_canvas_item.position = Vector2(8, 8)
 		_canvas_item.draw.connect(_on_CanvasItem_draw)
 		add_child(_canvas_item)
-	_canvas_item.update()
+	_canvas_item.queue_redraw()
 
 
 func _on_CanvasItem_draw():
