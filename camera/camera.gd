@@ -20,7 +20,7 @@ var _default_target_height_modifier := 1.5
 var _default_side_offset := 0.0
 
 var _target : Node3D = null
-var _target_rigidbody : RigidDynamicBody3D = null
+var _target_rigidbody : RigidBody3D = null
 var _prev_target_pos := Vector3()
 var _max_target_speed := 50.0
 
@@ -61,7 +61,7 @@ func set_target(target: Node3D):
 	_target = target
 	
 	_target_rigidbody = null
-	if target is RigidDynamicBody3D:
+	if target is RigidBody3D:
 		_target_rigidbody = target
 	
 	var hints : CameraHints

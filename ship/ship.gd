@@ -1,4 +1,4 @@
-extends RigidDynamicBody3D
+extends RigidBody3D
 
 const StellarBody = preload("../solar_system/stellar_body.gd")
 const Util = preload("../util/util.gd")

@@ -115,7 +115,7 @@ particles_anim_loop = false
 material = SubResource("10")
 size = Vector2(0.3, 0.3)
 
-[node name="Ship" type="RigidDynamicBody3D"]
+[node name="Ship" type="RigidBody3D"]
 gravity_scale = 0.0
 contacts_reported = 3
 contact_monitor = true
