@@ -13,7 +13,7 @@ func set_solar_system(ss : SolarSystem):
 
 
 func _process(delta):
-	update()
+	queue_redraw()
 
 
 func _draw():
