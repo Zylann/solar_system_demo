@@ -60,8 +60,9 @@ const _api_shader_params = {
 	&"u_sun_position": true
 }
 
+
 func _init():
-	var material = ShaderMaterial.new()
+	var material := ShaderMaterial.new()
 	material.shader = AtmosphereShader
 	_mesh_instance = MeshInstance3D.new()
 	_mesh_instance.material_override = material
@@ -69,7 +70,9 @@ func _init():
 	add_child(_mesh_instance)
 
 	_near_mesh = QuadMesh.new()
+	_near_mesh.orientation = PlaneMesh.FACE_Z
 	_near_mesh.size = Vector2(2.0, 2.0)
+	_near_mesh.flip_faces = true
 	
 	#_far_mesh = _create_far_mesh()
 	_far_mesh = BoxMesh.new()
@@ -81,19 +84,19 @@ func _init():
 
 	# Setup defaults for the builtin shader
 	# This is a workaround for https://github.com/godotengine/godot/issues/24488
-	material.set_shader_uniform("u_day_color0", Color(0.29, 0.39, 0.92))
-	material.set_shader_uniform("u_day_color1", Color(0.76, 0.90, 1.0))
-	material.set_shader_uniform("u_night_color0", Color(0.15, 0.10, 0.33))
-	material.set_shader_uniform("u_night_color1", Color(0.0, 0.0, 0.0))
-	material.set_shader_uniform("u_density", 0.2)
-	material.set_shader_uniform("u_sun_position", Vector3(5000, 0, 0))
+	material.set_shader_parameter("u_day_color0", Color(0.29, 0.39, 0.92))
+	material.set_shader_parameter("u_day_color1", Color(0.76, 0.90, 1.0))
+	material.set_shader_parameter("u_night_color0", Color(0.15, 0.10, 0.33))
+	material.set_shader_parameter("u_night_color1", Color(0.0, 0.0, 0.0))
+	material.set_shader_parameter("u_density", 0.2)
+	material.set_shader_parameter("u_sun_position", Vector3(5000, 0, 0))
 
 
 func _ready():
-	var mat = _get_material()
-	mat.set_shader_uniform("u_planet_radius", _planet_radius)
-	mat.set_shader_uniform("u_atmosphere_height", _atmosphere_height)
-	mat.set_shader_uniform("u_clip_mode", 0.0)
+	var mat := _get_material()
+	mat.set_shader_parameter("u_planet_radius", _planet_radius)
+	mat.set_shader_parameter("u_atmosphere_height", _atmosphere_height)
+	mat.set_shader_parameter("u_clip_mode", 0.0)
 
 
 func set_custom_shader(shader: Shader):
@@ -115,11 +118,11 @@ func _get_material() -> ShaderMaterial:
 
 
 func set_shader_param(param_name: String, value):
-	_get_material().set_shader_uniform(param_name, value)
+	_get_material().set_shader_parameter(param_name, value)
 
 
 func get_shader_param(param_name: String):
-	return _get_material().get_shader_uniform(param_name)
+	return _get_material().get_shader_parameter(param_name)
 
 
 # Shader parameters are exposed like this so we can have more custom shaders in the future,
@@ -127,7 +130,7 @@ func get_shader_param(param_name: String):
 func _get_property_list():
 	var props := []
 	var mat := _get_material()
-	var shader_params := RenderingServer.shader_get_shader_uniform_list(mat.shader.get_rid())
+	var shader_params := RenderingServer.get_shader_parameter_list(mat.shader.get_rid())
 	for p in shader_params:
 		if _api_shader_params.has(p.name):
 			continue
@@ -144,7 +147,7 @@ func _get(p_key: StringName):
 	if key.begins_with("shader_params/"):
 		var param_name = key.right(len("shader_params/"))
 		var mat := _get_material()
-		return mat.get_shader_param(param_name)
+		return mat.get_shader_parameter(param_name)
 
 
 func _set(p_key: StringName, value):
@@ -152,7 +155,7 @@ func _set(p_key: StringName, value):
 	if key.begins_with("shader_params/"):
 		var param_name := key.right(len("shader_params/"))
 		var mat := _get_material()
-		mat.set_shader_uniform(param_name, value)
+		mat.set_shader_parameter(param_name, value)
 
 
 func _get_configuration_warnings() -> PackedStringArray:
@@ -167,8 +170,9 @@ func _get_configuration_warnings() -> PackedStringArray:
 func set_planet_radius(new_radius: float):
 	if _planet_radius == new_radius:
 		return
-	_planet_radius = max(new_radius, 0.0)
-	_mesh_instance.material_override.set_shader_uniform("u_planet_radius", _planet_radius)
+	_planet_radius = maxf(new_radius, 0.0)
+	var sm : ShaderMaterial = _mesh_instance.material_override
+	sm.set_shader_parameter("u_planet_radius", _planet_radius)
 	_update_cull_margin()
 
 
@@ -179,8 +183,9 @@ func _update_cull_margin():
 func set_atmosphere_height(new_height: float):
 	if _atmosphere_height == new_height:
 		return
-	_atmosphere_height = max(new_height, 0.0)
-	_mesh_instance.material_override.set_shader_uniform("u_atmosphere_height", _atmosphere_height)
+	_atmosphere_height = maxf(new_height, 0.0)
+	var sm : ShaderMaterial = _mesh_instance.material_override
+	sm.set_shader_parameter("u_atmosphere_height", _atmosphere_height)
 	_update_cull_margin()
 
 
@@ -201,7 +206,7 @@ func _set_mode(mode: int):
 			print("Switching ", name, " to near mode")
 		# If camera is close enough, switch shader to near clip mode
 		# otherwise it will pass through the quad
-		mat.set_shader_uniform("u_clip_mode", 1.0)
+		mat.set_shader_parameter("u_clip_mode", 1.0)
 		_mesh_instance.mesh = _near_mesh
 		_mesh_instance.transform = Transform3D()
 		# TODO Sometimes there is a short flicker, figure out why
@@ -209,7 +214,7 @@ func _set_mode(mode: int):
 	else:
 		if OS.is_stdout_verbose():
 			print("Switching ", name, " to far mode")
-		mat.set_shader_uniform("u_clip_mode", 0.0)
+		mat.set_shader_parameter("u_clip_mode", 0.0)
 		_mesh_instance.mesh = _far_mesh
 
 
@@ -246,7 +251,7 @@ func _process(_delta):
 		if _prev_atmo_clip_distance != atmo_clip_distance:
 			_prev_atmo_clip_distance = atmo_clip_distance
 			# The mesh instance should not be scaled, so we resize the cube instead
-			var cm = BoxMesh.new()
+			var cm := BoxMesh.new()
 			cm.size = Vector3(atmo_clip_distance, atmo_clip_distance, atmo_clip_distance)
 			_mesh_instance.mesh = cm
 			_far_mesh = cm
@@ -258,5 +263,28 @@ func _process(_delta):
 		var sun = get_node(_sun_path)
 		if sun is Node3D:
 			var mat := _get_material()
-			mat.set_shader_uniform("u_sun_position", sun.global_transform.origin)
+			mat.set_shader_parameter("u_sun_position", sun.global_transform.origin)
+
+
+#static func _make_quad_mesh() -> Mesh:
+#	#  2---3
+#	#  | x |
+#	#  0---1
+#	var vertices = [
+#		Vector3(-1, -1, 0),
+#		Vector3(1, -1, 0),
+#		Vector3(-1, 1, 0),
+#		Vector3(1, 1, 0)
+#	]
+#	var indices = [
+#		0, 2, 1,
+#		1, 2, 3
+#	]
+#	var arrays = []
+#	arrays.resize(Mesh.ARRAY_MAX)
+#	arrays[Mesh.ARRAY_VERTEX] = PackedVector3Array(vertices)
+#	arrays[Mesh.ARRAY_INDEX] = PackedInt32Array(indices)
+#	var mesh = ArrayMesh.new()
+#	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+#	return mesh
 
