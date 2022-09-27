@@ -1,7 +1,7 @@
 @tool
 extends Node
 
-@export_range(0, 100) var flareStrength := 10.0:
+@export_range(0, 16) var flareStrength := 1.0:
 	get:
 		return flareStrength
 	set(value):
@@ -41,7 +41,7 @@ extends Node
 		material.set_shader_parameter('distort', value)
 
 
-@export_range(0, 100) var ghostCount := 7:
+@export_range(0, 20) var ghostCount := 7:
 	get:
 		return ghostCount
 	set(value):
@@ -73,6 +73,14 @@ extends Node
 		material.set_shader_parameter('lens_dirt', value)
 
 
+@export var streakStrength := 0.5:
+	get:
+		return streakStrength
+	set(value):
+		streakStrength = value
+		material.set_shader_parameter('streak_strength', value)
+
+
 var screen : MeshInstance3D
 var material : ShaderMaterial
 
@@ -89,3 +97,17 @@ func _init():
 	add_child(screen)
 	screen.material_override = preload("lens-flare-shader.tres").duplicate()
 	material = screen.material_override
+
+
+func _enter_tree() -> void:
+	flareStrength = flareStrength
+	flareBias = flareBias
+	distortion = distortion
+	distortionQuality = distortionQuality
+	ghostCount = ghostCount
+	ghostSpacing = ghostSpacing
+	haloWidth = haloWidth
+	streakStrength = streakStrength
+	flareBlur = flareBlur
+	lensDirt = lensDirt
+

@@ -1,10 +1,13 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://by00g8m68yc55"]
+[gd_resource type="ShaderMaterial" load_steps=7 format=3 uid="uid://by00g8m68yc55"]
+
+[ext_resource type="Texture2D" uid="uid://cttvpeo7w72p" path="res://addons/SIsilicon.vfx.lens flare/lens-dirt-default.jpeg" id="1_i2kpg"]
 
 [sub_resource type="Shader" id="1"]
 code = "shader_type spatial;
 render_mode skip_vertex_transform, unshaded, blend_add;
 
 uniform float lod = 0.0;
+uniform float stretch_to_aspect = 0.5;
 
 uniform int ghosts = 4;
 uniform float ghost_dispersal = 0.5;
@@ -13,6 +16,8 @@ uniform float distort = 0.25;
 
 uniform float bloom_scale = 10.0;
 uniform float bloom_bias = 0.95;
+
+uniform float streak_strength = 1.0;
 
 uniform int distortion_quality : hint_range(0, 2);
 
@@ -65,6 +70,7 @@ void fragment() {
 	float distortion = pixelSizeX * distort;
 	vec2 direction = normalize(ghostVec);
 	
+	// Ghosts
 	vec3 result = vec3(0.0);
 	for(int i = 0; i < ghosts; ++i) {
 		vec2 offset = fract(texcoord + ghostVec * float(i));
@@ -72,9 +78,12 @@ void fragment() {
 	}
 	result *= texture(lens_color, vec2(length(vec2(0.5) - texcoord) / length(vec2(0.5)), 0)).rgb;
 	
-	vec2 haloVec = normalize(ghostVec) * halo_width;
+	// Halo
+	vec2 aspect = vec2(1.0, mix(1.0, VIEWPORT_SIZE.x / VIEWPORT_SIZE.y, stretch_to_aspect));
+	vec2 haloVec = normalize(ghostVec / aspect) * aspect * halo_width;
 	result += textureDistorted(SCREEN_TEXTURE, texcoord + haloVec, direction, distortion) * weight(fract(texcoord + haloVec));
 	
+	// Starburst
 	vec2 centerVec = SCREEN_UV - vec2(0.5);
 	float d = length(centerVec);
 	float radial = acos(centerVec.x / d);
@@ -84,13 +93,27 @@ void fragment() {
 			texture(starburst, vec2(radial + starOffset)).r
 		  * texture(starburst, vec2(radial + starOffset * 0.5)).r;
 	star = clamp(star + (1.0 - smoothstep(0.0, 0.3, d)), 0.0, 1.0);
-	result *= star;
+	result *= mix(0.5, star, streak_strength);
 	
 	ALBEDO = result * mix(texture(lens_dirt, texcoord).rgb, vec3(0.5), 0.4);
 	
 	//uncomment to debug bright point extraction
 	//ALBEDO = bloomtex(SCREEN_TEXTURE, SCREEN_UV).rgb;
 }"
+
+[sub_resource type="Gradient" id="Gradient_kktcp"]
+colors = PackedColorArray(1, 0.909209, 0.467832, 1, 1, 0.342403, 0.851428, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_1m8wp"]
+gradient = SubResource("Gradient_kktcp")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_knmmo"]
+noise_type = 5
+frequency = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ebh81"]
+height = 1
+noise = SubResource("FastNoiseLite_knmmo")
 
 [resource]
 render_priority = 0
@@ -102,4 +125,9 @@ shader_parameter/distortion_quality = null
 shader_parameter/ghost_dispersal = 0.3
 shader_parameter/ghosts = 7
 shader_parameter/halo_width = 0.25
+shader_parameter/lens_color = SubResource("GradientTexture1D_1m8wp")
+shader_parameter/lens_dirt = ExtResource("1_i2kpg")
 shader_parameter/lod = 2.0
+shader_parameter/starburst = SubResource("NoiseTexture2D_ebh81")
+shader_parameter/streak_strength = null
+shader_parameter/stretch_to_aspect = null
