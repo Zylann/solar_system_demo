@@ -14,9 +14,14 @@ uniform vec4 u_night_color1 : source_color = vec4(0.2, 0.4, 0.8, 1.0);
 uniform vec3 u_sun_position = vec3(0.0, 0.0, 0.0);
 uniform float u_density = 0.2;
 uniform float u_attenuation_distance = 0.0;
+// Blends towards depth calculation using a simplified sphere, instead of the depth buffer.
+// May be used over large distances to remove flickering, at the expense of less accuracy.void
+// This is because Godot's depth buffer is lacking precision. 32-bit option plz?
+uniform float u_sphere_depth_factor = 0.0;
 
 varying vec3 v_planet_center_viewspace;
 varying vec3 v_sun_center_viewspace;
+
 
 // x = first hit, y = second hit. Equal if not hit.
 vec2 ray_sphere(vec3 center, float radius, vec3 ray_origin, vec3 ray_dir) {
@@ -123,6 +128,14 @@ void fragment() {
 	if (rs_atmo.x != rs_atmo.y) {
 		float t_begin = max(rs_atmo.x, 0.0);
 		float t_end = max(rs_atmo.y, 0.0);
+		
+		vec2 rs_ground = ray_sphere(v_planet_center_viewspace, u_planet_radius, ray_origin, ray_dir);
+		float gd = 10000000.0;
+		if (rs_ground.x != rs_ground.y) {
+			gd = rs_ground.x;
+		}
+		linear_depth = mix(linear_depth, gd, u_sphere_depth_factor);
+		
 		t_end = min(t_end, linear_depth);
 
 		vec3 sun_dir = normalize(v_sun_center_viewspace - v_planet_center_viewspace);

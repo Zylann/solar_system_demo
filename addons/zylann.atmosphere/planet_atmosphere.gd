@@ -145,7 +145,7 @@ func _get_property_list():
 func _get(p_key: StringName):
 	var key = String(p_key)
 	if key.begins_with("shader_params/"):
-		var param_name = key.right(len("shader_params/"))
+		var param_name = key.substr(len("shader_params/"))
 		var mat := _get_material()
 		return mat.get_shader_parameter(param_name)
 
@@ -153,7 +153,7 @@ func _get(p_key: StringName):
 func _set(p_key: StringName, value):
 	var key = String(p_key)
 	if key.begins_with("shader_params/"):
-		var param_name := key.right(len("shader_params/"))
+		var param_name := key.substr(len("shader_params/"))
 		var mat := _get_material()
 		mat.set_shader_parameter(param_name, value)
 
