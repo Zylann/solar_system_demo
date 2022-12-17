@@ -2,6 +2,8 @@ extends RigidBody3D
 
 const StellarBody = preload("../solar_system/stellar_body.gd")
 const Util = preload("../util/util.gd")
+const SolarSystemSetup = preload("../solar_system/solar_system_setup.gd")
+const Settings = preload("res://settings.gd")
 
 const STATE_LANDED = 0
 const STATE_FLYING = 1
@@ -54,6 +56,9 @@ var _ref_change_info = null
 var _was_superspeed := false
 var _last_contacts_count := 0
 
+var _speed_cap_in_space_superspeed_multiplier = 10.0
+var _linear_acceleration_superspeed_multiplier = 15.0
+
 
 func _ready():
 	# Workaround because these node names can easily be unreliable due to import issues
@@ -70,6 +75,13 @@ func _ready():
 	enable_controller()
 	
 	get_solar_system().reference_body_changed.connect(_on_solar_system_reference_body_changed)
+
+
+func apply_game_settings(s: Settings):
+	if s.world_scale_x10:
+		speed_cap_in_space *= SolarSystemSetup.LARGE_SCALE
+		_speed_cap_in_space_superspeed_multiplier *= SolarSystemSetup.LARGE_SCALE
+		_linear_acceleration_superspeed_multiplier *= SolarSystemSetup.LARGE_SCALE
 
 
 func enable_controller():
@@ -154,8 +166,8 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 	
 	var superspeed = false
 	if _superspeed_cmd and stellar_body.type == StellarBody.TYPE_SUN:
-		speed_cap_in_space_mod *= 10.0
-		linear_acceleration_mod *= 15.0
+		speed_cap_in_space_mod *= _speed_cap_in_space_superspeed_multiplier
+		linear_acceleration_mod *= _linear_acceleration_superspeed_multiplier
 		superspeed = true
 	
 	if superspeed != _was_superspeed:
@@ -195,6 +207,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 		var gravity_dir := (pull_center - gtrans.origin).normalized()
 		var stellar_mass := Util.get_sphere_volume(stellar_body.radius)
 		var f := 0.005 * stellar_mass / (gd * gd)
+		f = minf(f, 25.0)
 		state.apply_central_force(gravity_dir * f)
 		
 		# Near-planet damping

@@ -1,5 +1,6 @@
 
 const StellarBody = preload("./stellar_body.gd")
+const Settings = preload("res://settings.gd")
 
 const VolumetricAtmosphereScene = preload("res://addons/zylann.atmosphere/planet_atmosphere.tscn")
 const BigRock1Scene = preload("../props/big_rocks/big_rock1.tscn")
@@ -23,9 +24,10 @@ const EarthNightSound = preload("res://sounds/earth_surface_night.ogg")
 const WindSound = preload("res://sounds/wind.ogg")
 
 const SAVE_FOLDER_PATH = "debug_data"
+const LARGE_SCALE = 10.0
 
 
-static func create_solar_system_data() -> Array:
+static func create_solar_system_data(settings: Settings) -> Array:
 	var bodies = []
 	
 	var sun = StellarBody.new()
@@ -107,6 +109,16 @@ static func create_solar_system_data() -> Array:
 	planet.day_ambient_sound = WindSound
 	bodies.append(planet)
 	
+	var scale = 1.0
+	if settings.world_scale_x10:
+		scale = LARGE_SCALE
+
+	for body in bodies:
+		body.radius *= scale
+		var speed = body.distance_to_parent * TAU / body.orbit_revolution_time
+		body.distance_to_parent *= scale
+		body.orbit_revolution_time = body.distance_to_parent * TAU / speed
+	
 	return bodies
 
 
@@ -122,33 +134,41 @@ static func _setup_sun(body: StellarBody, root: Node3D) -> DirectionalLight3D:
 	
 	var directional_light := DirectionalLight3D.new()
 	directional_light.shadow_enabled = true
-	# TODO How do I make shadows not completely black now since I cant use a classic environment?
 	# The environment in this game is a space background so it's very dark. Sky is actually a post
 	# effect because you can fly out and it's a planet... And still you can also have shadows while
 	# in your ship!
-	#directional_light.shadow_color = Color(0.2, 0.2, 0.2)
+	directional_light.shadow_opacity = 0.9
 	directional_light.shadow_normal_bias = 0.2
 	directional_light.directional_shadow_split_1 = 0.1
 	directional_light.directional_shadow_split_2 = 0.2
 	directional_light.directional_shadow_split_3 = 0.5
 	directional_light.directional_shadow_blend_splits = true
-	directional_light.directional_shadow_max_distance = 200.0
+	directional_light.directional_shadow_max_distance = 20000.0
 	directional_light.name = "DirectionalLight"
 	body.node.add_child(directional_light)
 	
 	return directional_light
 
 
-static func _setup_atmosphere(body: StellarBody, root: Node3D):
+static func _setup_atmosphere(body: StellarBody, root: Node3D, settings: Settings):
 	var atmo = VolumetricAtmosphereScene.instantiate()
 	#atmo.scale = Vector3(1, 1, 1) * (0.99 * body.radius)
-	atmo.planet_radius = body.radius * 1.03
-	atmo.atmosphere_height = 175.0#0.12 * body.radius
+	if settings.world_scale_x10:
+		atmo.planet_radius = body.radius * 1.0
+		atmo.atmosphere_height = 125.0 * LARGE_SCALE
+	else:
+		atmo.planet_radius = body.radius * 1.03
+		atmo.atmosphere_height = 0.12 * body.radius
 	# TODO This is kinda bad to hardcode the path, need to find another robust way
-	atmo.sun_path = "/root/GameWorld/Sun/DirectionalLight"
+	atmo.sun_path = "/root/Main/GameWorld/Sun/DirectionalLight"
 	#atmo.day_color = body.atmosphere_color
 	#atmo.night_color = body.atmosphere_color.darkened(0.8)
-	atmo.set_shader_param("u_density", 0.001)
+	var atmo_density = 0.001
+	if body.type == StellarBody.TYPE_GAS:
+		if settings.world_scale_x10:
+			# TODO Need to investigate this, atmosphere currently blows up HDR when large and dense
+			atmo_density /= LARGE_SCALE
+	atmo.set_shader_param("u_density", atmo_density)
 	atmo.set_shader_param("u_attenuation_distance", 50.0)
 	atmo.set_shader_param("u_day_color0", body.atmosphere_color)
 	atmo.set_shader_param("u_day_color1", 
@@ -156,6 +176,7 @@ static func _setup_atmosphere(body: StellarBody, root: Node3D):
 	atmo.set_shader_param("u_night_color0", body.atmosphere_color.darkened(0.8))
 	atmo.set_shader_param("u_night_color1", 
 		body.atmosphere_color.darkened(0.8).lerp(Color(1,1,1), 0.0))
+	body.atmosphere = atmo
 	root.add_child(atmo)
 
 
@@ -169,7 +190,7 @@ static func _setup_sea(body: StellarBody, root: Node3D):
 	root.add_child(sea_mesh_instance)
 
 
-static func _setup_rocky_planet(body: StellarBody, root: Node3D):
+static func _setup_rocky_planet(body: StellarBody, root: Node3D, settings: Settings):
 	var mat : ShaderMaterial
 	# TODO Dont hardcode this
 	if body.name == "Earth":
@@ -179,51 +200,74 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D):
 	mat.set_shader_parameter("u_mountain_height", body.radius + 80.0)
 	
 	var generator : VoxelGeneratorGraph = BasePlanetVoxelGraph.duplicate(true)
-	var sphere_node_id := generator.find_node_by_name("sphere")
+	var graph : VoxelGraphFunction = generator.get_main_function()
+	var sphere_node_id := graph.find_node_by_name("sphere")
 	# TODO Need an API that doesnt suck
-	var radius_input_id := 3
-	generator.set_node_default_input(sphere_node_id, radius_input_id, body.radius)
-	var ravine_blend_noise_node_id := generator.find_node_by_name("ravine_blend_noise")
+	var radius_param_id := 0
+	graph.set_node_param(sphere_node_id, radius_param_id, body.radius)
+	var ravine_blend_noise_node_id := graph.find_node_by_name("ravine_blend_noise")
 	var noise_param_id := 0
-	var ravine_blend_noise = generator.get_node_param(ravine_blend_noise_node_id, noise_param_id)
+	var ravine_blend_noise = graph.get_node_param(ravine_blend_noise_node_id, noise_param_id)
 	ravine_blend_noise.seed = body.name.hash()
-	var cave_height_node_id := generator.find_node_by_name("cave_height_subtract")
-	generator.set_node_default_input(cave_height_node_id, 1, body.radius - 100.0)
-	var cave_noise_node_id := generator.find_node_by_name("cave_noise")
-	var cave_noise = generator.get_node_param(cave_noise_node_id, noise_param_id)
+	var cave_height_node_id := graph.find_node_by_name("cave_height_subtract")
+	graph.set_node_default_input(cave_height_node_id, 1, body.radius - 100.0)
+	var cave_noise_node_id := graph.find_node_by_name("cave_noise")
+	var cave_noise = graph.get_node_param(cave_noise_node_id, noise_param_id)
 	cave_noise.period = 900.0 / body.radius
+	var ravine_depth_multiplier_node_id := graph.find_node_by_name("ravine_depth_multiplier")
+	var ravine_depth = graph.get_node_default_input(ravine_depth_multiplier_node_id, 1)
+	if settings.world_scale_x10:
+		ravine_depth *= LARGE_SCALE
+	graph.set_node_default_input(ravine_depth_multiplier_node_id, 1, ravine_depth)
 	# var cave_height_multiplier_node_id = generator.find_node_by_name("cave_height_multiplier")
 	# generator.set_node_default_input(cave_height_multiplier_node_id, 1, 0.015)
 	generator.compile()
 
 	generator.use_subdivision = true
 	generator.subdivision_size = 8
+	#generator.sdf_clip_threshold = 10.0
+	generator.use_optimized_execution_map = true
 
-	# ResourceSaver.save(str("debug_data/generator_", body.name, ".tres"), generator, 
+	# ResourceSaver.save(generator, str("debug_data/generator_", body.name, ".tres"),
 	# 			ResourceSaver.FLAG_BUNDLE_RESOURCES)
 
-	var sphere_normalmap = Image.new()
-	sphere_normalmap.create(512, 256, false, Image.FORMAT_RGB8)
-	generator.bake_sphere_normalmap(sphere_normalmap, body.radius * 0.95, 200.0 / body.radius)
+	#var sphere_normalmap = Image.new()
+	#sphere_normalmap.create(512, 256, false, Image.FORMAT_RGB8)
+	#generator.bake_sphere_normalmap(sphere_normalmap, body.radius * 0.95, 200.0 / body.radius)
 	#sphere_normalmap.save_png(str("debug_data/test_sphere_normalmap_", body.name, ".png"))
-	var sphere_normalmap_tex = ImageTexture.create_from_image(sphere_normalmap)
-	mat.set_shader_parameter("u_global_normalmap", sphere_normalmap_tex)
+	#var sphere_normalmap_tex = ImageTexture.create_from_image(sphere_normalmap)
+	#mat.set_shader_parameter("u_global_normalmap", sphere_normalmap_tex)
 
 	var stream = VoxelStreamSQLite.new()
 	stream.database_path = str(SAVE_FOLDER_PATH, "/", body.name, ".sqlite")
 
+	var extra_lods = 0
+	if settings.world_scale_x10:
+		var temp = int(LARGE_SCALE)
+		while temp > 1:
+			extra_lods += 1
+			temp /= 2
+
 	var pot = 1024
 	while body.radius >= pot:
 		pot *= 2
+
 	var volume := VoxelLodTerrain.new()
-	volume.lod_count = 7
+	volume.lod_count = 7 + extra_lods
 	volume.lod_distance = 60.0
 	volume.collision_lod_count = 2
 	volume.generator = generator
 	volume.stream = stream
-	volume.view_distance = 100000
+	var view_distance = 100000
+	if settings.world_scale_x10:
+		view_distance *= LARGE_SCALE
+	volume.view_distance = view_distance
 	volume.voxel_bounds = AABB(Vector3(-pot, -pot, -pot), Vector3(2 * pot, 2 * pot, 2 * pot))
 	volume.lod_fade_duration = 0.3
+	volume.threaded_update_enabled = true
+	# Keep all edited blocks loaded. Leaving this off enables data streaming, but it is slower
+	volume.full_load_mode_enabled = true
+	
 	volume.normalmap_enabled = true
 	volume.normalmap_tile_resolution_min = 4
 	volume.normalmap_tile_resolution_max = 8
@@ -231,11 +275,16 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D):
 	volume.normalmap_max_deviation_degrees = 50
 	volume.normalmap_octahedral_encoding_enabled = false
 	volume.normalmap_use_gpu = true
+
 	volume.material = mat
 	# TODO Set before setting voxel bounds?
 	volume.mesh_block_size = 32
+
+	# volume.debug_set_draw_enabled(true)
+	# volume.debug_set_draw_flag(VoxelLodTerrain.DEBUG_DRAW_OCTREE_NODES, true)
+
 	volume.mesher = VoxelMesherTransvoxel.new()
-	volume.mesher.mesh_optimization_enabled = true
+	#volume.mesher.mesh_optimization_enabled = true
 	volume.mesher.mesh_optimization_error_threshold = 0.0025
 	#volume.set_process_mode(VoxelLodTerrain.PROCESS_MODE_PHYSICS)
 	body.volume = volume
@@ -361,7 +410,9 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	body.instancer = instancer
 
 
-static func setup_stellar_body(body: StellarBody, parent: Node) -> DirectionalLight3D:
+static func setup_stellar_body(body: StellarBody, parent: Node, 
+	settings: Settings) -> DirectionalLight3D:
+	
 	var root := Node3D.new()
 	root.name = body.name
 	body.node = root
@@ -373,13 +424,13 @@ static func setup_stellar_body(body: StellarBody, parent: Node) -> DirectionalLi
 		sun_light = _setup_sun(body, root)
 	
 	elif body.type == StellarBody.TYPE_ROCKY:
-		_setup_rocky_planet(body, root)
+		_setup_rocky_planet(body, root, settings)
 
 	if body.sea:
 		_setup_sea(body, root)
 	
 	if body.type != StellarBody.TYPE_SUN:
-		_setup_atmosphere(body, root)
+		_setup_atmosphere(body, root, settings)
 	
 	return sun_light
 

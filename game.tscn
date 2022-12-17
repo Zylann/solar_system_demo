@@ -1,0 +1,162 @@
+[gd_scene load_steps=18 format=3 uid="uid://dx0qy8pg0q72b"]
+
+[ext_resource type="Script" path="res://solar_system/solar_system.gd" id="1_tcbv5"]
+[ext_resource type="Texture2D" uid="uid://b0s3fc7sjnlof" path="res://solar_system/space_background.png" id="2_06f30"]
+[ext_resource type="Script" path="res://gui/hud.gd" id="3_rlxpp"]
+[ext_resource type="FontFile" path="res://gui/fonts/hack_regular_16_dynamic_font.tres" id="4_5b8os"]
+[ext_resource type="Texture2D" uid="uid://dnkytmccfss5m" path="res://gui/select_rect.png" id="5_hq7jk"]
+[ext_resource type="Texture2D" uid="uid://31ebse57lvhs" path="res://gui/crosshair.png" id="6_rc6j7"]
+[ext_resource type="PackedScene" path="res://waypoints/waypoint_hud.tscn" id="7_b4x6s"]
+[ext_resource type="AudioStream" uid="uid://bpacs3ufj22ps" path="res://sounds/ui_planet_hover.wav" id="8_tvaq7"]
+[ext_resource type="Script" path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" id="9_w721i"]
+[ext_resource type="PackedScene" path="res://gui/mouse_capture.tscn" id="10_4n27f"]
+[ext_resource type="Script" path="res://gui/loading_screen.gd" id="11_vsdyb"]
+[ext_resource type="Script" path="res://voxel_debug_info.gd" id="12_ysp6t"]
+[ext_resource type="Script" path="res://sounds/ambient_sounds.gd" id="13_esoyx"]
+[ext_resource type="AudioStream" uid="uid://pdsd7xlt73p1" path="res://sounds/deep_space.ogg" id="14_krriv"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_cmlyd"]
+panorama = ExtResource("2_06f30")
+
+[sub_resource type="Sky" id="1"]
+sky_material = SubResource("PanoramaSkyMaterial_cmlyd")
+
+[sub_resource type="Environment" id="2"]
+background_mode = 2
+sky = SubResource("1")
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 18.0
+glow_enabled = true
+glow_levels/5 = 0.0
+glow_levels/6 = 1.0
+glow_levels/7 = 1.0
+glow_intensity = 1.0
+glow_blend_mode = 0
+glow_hdr_threshold = 0.8
+
+[node name="GameWorld" type="Node"]
+script = ExtResource("1_tcbv5")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("2")
+
+[node name="SpawnPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8000, 0, 0)
+
+[node name="HUD" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_rlxpp")
+
+[node name="TargetPlanetLabel" type="Label" parent="HUD"]
+theme_override_fonts/font = ExtResource("4_5b8os")
+text = "Hello world"
+
+[node name="TargetPlanetRect" type="NinePatchRect" parent="HUD"]
+modulate = Color(1, 1, 1, 0.784314)
+texture = ExtResource("5_hq7jk")
+patch_margin_left = 15
+patch_margin_top = 15
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="Crosshair" type="CenterContainer" parent="HUD"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="HUD/Crosshair"]
+offset_left = 560.0
+offset_top = 308.0
+offset_right = 592.0
+offset_bottom = 340.0
+mouse_filter = 2
+texture = ExtResource("6_rc6j7")
+stretch_mode = 4
+
+[node name="WaypointHUD" parent="HUD" instance=ExtResource("7_b4x6s")]
+layout_mode = 3
+anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlanetHoverSound" type="AudioStreamPlayer" parent="HUD"]
+stream = ExtResource("8_tvaq7")
+
+[node name="LensFlare" type="Node" parent="."]
+script = ExtResource("9_w721i")
+flareStrength = 4.0
+flareBias = 0.95
+flareBlur = 3.0
+distortion = 7.422
+haloWidth = 0.449
+
+[node name="MouseCapture" parent="." instance=ExtResource("10_4n27f")]
+layout_mode = 3
+anchors_preset = 0
+capture_mouse_in_ready = false
+
+[node name="LoadingScreen" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.65098)
+script = ExtResource("11_vsdyb")
+
+[node name="CC" type="CenterContainer" parent="LoadingScreen"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PC" type="PanelContainer" parent="LoadingScreen/CC"]
+custom_minimum_size = Vector2(200, 0)
+offset_left = 476.0
+offset_top = 295.0
+offset_right = 676.0
+offset_bottom = 352.0
+
+[node name="VB" type="VBoxContainer" parent="LoadingScreen/CC/PC"]
+offset_right = 200.0
+offset_bottom = 57.0
+
+[node name="Label" type="Label" parent="LoadingScreen/CC/PC/VB"]
+offset_right = 200.0
+offset_bottom = 26.0
+text = "Loading..."
+horizontal_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="LoadingScreen/CC/PC/VB"]
+offset_top = 30.0
+offset_right = 200.0
+offset_bottom = 57.0
+max_value = 1.0
+
+[node name="VoxelDebugInfo" type="Node" parent="."]
+script = ExtResource("12_ysp6t")
+enable_hotkeys = true
+
+[node name="AmbientSounds" type="Node" parent="."]
+script = ExtResource("13_esoyx")
+
+[node name="DeepSpace" type="AudioStreamPlayer" parent="AmbientSounds"]
+stream = ExtResource("14_krriv")
+autoplay = true
+bus = &"SFX"
+
+[node name="PlanetDay" type="AudioStreamPlayer" parent="AmbientSounds"]
+
+[node name="PlanetNight" type="AudioStreamPlayer" parent="AmbientSounds"]
+
+[connection signal="loading_progressed" from="." to="LoadingScreen" method="_on_GameWorld_loading_progressed"]

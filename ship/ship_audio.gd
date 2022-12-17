@@ -26,7 +26,8 @@ const ShipHitSounds = [
 @onready var _superspeed_start_player = $SuperSpeedOn
 @onready var _superspeed_stop_player = $SuperSpeedOff
 @onready var _superspeed_loop_player = $SuperSpeedLoop
-@onready var _ambient_sounds = get_node("/root/GameWorld/AmbientSounds")
+# TODO Hardcoded path is not good.
+@onready var _ambient_sounds = get_node("/root/Main/GameWorld/AmbientSounds")
 @onready var _air_friction_player = $AirFriction
 @onready var _scrape_player = $Scrape
 
@@ -83,13 +84,13 @@ func play_stop_superspeed():
 func _process(delta):
 	_smooth_main_jet_power = lerp(_smooth_main_jet_power, _target_main_jet_power, delta * 5.0)
 	var jet_power = clamp(_smooth_main_jet_power, 0.0, 1.0)
-	_main_jets_player.unit_db = linear_to_db(jet_power)
+	_main_jets_player.volume_db = linear_to_db(jet_power)
 	_main_jets_player.pitch_scale = lerp(0.8, 1.0, jet_power)
 
 	_smooth_secondary_jet_power = \
 		lerp(_smooth_secondary_jet_power, _target_secondary_jet_power, delta * 5.0)
 	jet_power = clamp(_smooth_secondary_jet_power, 0.0, 1.0)
-	_secondary_jets_player.unit_db = linear_to_db(jet_power) - 5.0
+	_secondary_jets_player.volume_db = linear_to_db(jet_power) - 5.0
 	_secondary_jets_player.pitch_scale = lerp(0.8, 1.0, jet_power)
 	
 	var speed = get_parent().linear_velocity.length()
@@ -102,7 +103,7 @@ func _process(delta):
 	if contacts > 0 and not get_parent().freeze:
 		if not _scrape_player.playing:
 			_scrape_player.play()
-		_scrape_player.unit_db = linear_to_db(clamp(air_factor * 5.0, 0.0, 1.0))
+		_scrape_player.volume_db = linear_to_db(clamp(air_factor * 5.0, 0.0, 1.0))
 	else:
 		if _scrape_player.playing:
 			_scrape_player.stop()

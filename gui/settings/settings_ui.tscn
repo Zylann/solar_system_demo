@@ -1,0 +1,244 @@
+[gd_scene load_steps=4 format=3 uid="uid://2n0u3k5i6lwq"]
+
+[ext_resource type="Script" path="res://gui/settings/settings_ui.gd" id="1_wl3h4"]
+[ext_resource type="Shader" path="res://gui/background_blur.gdshader" id="2_htf4p"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mxpjy"]
+shader = ExtResource("2_htf4p")
+
+[node name="SettingsUI" type="CenterContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wl3h4")
+
+[node name="PC" type="PanelContainer" parent="."]
+material = SubResource("ShaderMaterial_mxpjy")
+custom_minimum_size = Vector2(600, 300)
+offset_left = 276.0
+offset_top = 174.0
+offset_right = 876.0
+offset_bottom = 474.0
+
+[node name="MC" type="MarginContainer" parent="PC"]
+offset_right = 600.0
+offset_bottom = 300.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VB" type="VBoxContainer" parent="PC/MC"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 592.0
+offset_bottom = 292.0
+
+[node name="Label" type="Label" parent="PC/MC/VB"]
+offset_right = 584.0
+offset_bottom = 37.0
+theme_override_font_sizes/font_size = 24
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="TabContainer" type="TabContainer" parent="PC/MC/VB"]
+offset_top = 41.0
+offset_right = 584.0
+offset_bottom = 249.0
+size_flags_vertical = 3
+
+[node name="Game" type="MarginContainer" parent="PC/MC/VB/TabContainer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 31.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="GC" type="GridContainer" parent="PC/MC/VB/TabContainer/Game"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 576.0
+offset_bottom = 169.0
+theme_override_constants/h_separation = 16
+columns = 2
+
+[node name="Label" type="RichTextLabel" parent="PC/MC/VB/TabContainer/Game/GC"]
+custom_minimum_size = Vector2(300, 0)
+offset_right = 300.0
+offset_bottom = 69.0
+bbcode_enabled = true
+text = "World Scale x10 [color=#777](set before start)[/color]
+[color=yellow]Warning: buggy on planets, might require double-precision build[/color]"
+fit_content_height = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PC/MC/VB/TabContainer/Game/GC"]
+offset_left = 316.0
+offset_right = 406.0
+offset_bottom = 69.0
+theme_override_constants/separation = 0
+
+[node name="WorldScaleX10" type="CheckBox" parent="PC/MC/VB/TabContainer/Game/GC/VBoxContainer"]
+offset_right = 90.0
+offset_bottom = 31.0
+text = "Enabled"
+
+[node name="Graphics" type="MarginContainer" parent="PC/MC/VB/TabContainer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 31.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="GC" type="GridContainer" parent="PC/MC/VB/TabContainer/Graphics"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 576.0
+offset_bottom = 169.0
+theme_override_constants/h_separation = 16
+columns = 2
+
+[node name="Label2" type="Label" parent="PC/MC/VB/TabContainer/Graphics/GC"]
+offset_top = 2.0
+offset_right = 126.0
+offset_bottom = 28.0
+text = "Lens flares"
+
+[node name="LensFlares" type="CheckBox" parent="PC/MC/VB/TabContainer/Graphics/GC"]
+offset_left = 142.0
+offset_right = 568.0
+offset_bottom = 31.0
+text = "Enabled"
+
+[node name="Label3" type="Label" parent="PC/MC/VB/TabContainer/Graphics/GC"]
+offset_top = 37.0
+offset_right = 126.0
+offset_bottom = 63.0
+text = "Glow"
+
+[node name="Glow" type="CheckBox" parent="PC/MC/VB/TabContainer/Graphics/GC"]
+offset_left = 142.0
+offset_top = 35.0
+offset_right = 568.0
+offset_bottom = 66.0
+text = "Enabled"
+
+[node name="Label4" type="Label" parent="PC/MC/VB/TabContainer/Graphics/GC"]
+offset_top = 72.0
+offset_right = 126.0
+offset_bottom = 98.0
+text = "Shadows"
+
+[node name="Shadows" type="CheckBox" parent="PC/MC/VB/TabContainer/Graphics/GC"]
+offset_left = 142.0
+offset_top = 70.0
+offset_right = 568.0
+offset_bottom = 101.0
+text = "Enabled"
+
+[node name="Label" type="Label" parent="PC/MC/VB/TabContainer/Graphics/GC"]
+offset_top = 107.0
+offset_right = 126.0
+offset_bottom = 133.0
+text = "Detail rendering"
+
+[node name="DetailRenderingSelector" type="OptionButton" parent="PC/MC/VB/TabContainer/Graphics/GC"]
+offset_left = 142.0
+offset_top = 105.0
+offset_right = 568.0
+offset_bottom = 136.0
+size_flags_horizontal = 3
+item_count = 3
+selected = 0
+popup/item_0/text = "GPU"
+popup/item_0/id = 0
+popup/item_1/text = "CPU"
+popup/item_1/id = 1
+popup/item_2/text = "Disabled"
+popup/item_2/id = 2
+
+[node name="Sound" type="MarginContainer" parent="PC/MC/VB/TabContainer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 31.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="GridContainer" type="GridContainer" parent="PC/MC/VB/TabContainer/Sound"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 576.0
+offset_bottom = 169.0
+theme_override_constants/h_separation = 16
+columns = 2
+
+[node name="Label" type="Label" parent="PC/MC/VB/TabContainer/Sound/GridContainer"]
+offset_right = 101.0
+offset_bottom = 26.0
+text = "Main volume"
+
+[node name="MainVolume" type="HSlider" parent="PC/MC/VB/TabContainer/Sound/GridContainer"]
+custom_minimum_size = Vector2(100, 0)
+offset_left = 117.0
+offset_right = 568.0
+offset_bottom = 16.0
+size_flags_horizontal = 3
+max_value = 1.0
+
+[node name="Debug" type="MarginContainer" parent="PC/MC/VB/TabContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 31.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="GC" type="GridContainer" parent="PC/MC/VB/TabContainer/Debug"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 576.0
+offset_bottom = 169.0
+theme_override_constants/h_separation = 16
+columns = 2
+
+[node name="Label" type="Label" parent="PC/MC/VB/TabContainer/Debug/GC"]
+offset_top = 2.0
+offset_right = 71.0
+offset_bottom = 28.0
+text = "HUD text"
+
+[node name="ShowDebugText" type="CheckBox" parent="PC/MC/VB/TabContainer/Debug/GC"]
+offset_left = 87.0
+offset_right = 177.0
+offset_bottom = 31.0
+text = "Enabled"
+
+[node name="HB" type="HBoxContainer" parent="PC/MC/VB"]
+offset_top = 253.0
+offset_right = 584.0
+offset_bottom = 284.0
+alignment = 1
+
+[node name="Close" type="Button" parent="PC/MC/VB/HB"]
+custom_minimum_size = Vector2(200, 0)
+offset_left = 192.0
+offset_right = 392.0
+offset_bottom = 31.0
+text = "Close"
+
+[connection signal="pressed" from="PC/MC/VB/HB/Close" to="." method="_on_Close_pressed"]

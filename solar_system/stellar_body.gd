@@ -1,4 +1,6 @@
 
+const PlanetAtmosphere = preload("res://addons/zylann.atmosphere/planet_atmosphere.gd")
+
 const TYPE_SUN = 0
 const TYPE_ROCKY = 1
 const TYPE_GAS = 2
@@ -31,6 +33,7 @@ var waypoints = []
 var node : Node3D
 var volume : VoxelLodTerrain
 var instancer : VoxelInstancer
+var atmosphere : PlanetAtmosphere
 var static_bodies := []
 
 
