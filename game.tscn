@@ -143,7 +143,6 @@ visible = false
 
 [node name="VoxelDebugInfo" type="Node" parent="."]
 script = ExtResource("12_ysp6t")
-enable_hotkeys = false
 
 [node name="AmbientSounds" type="Node" parent="."]
 script = ExtResource("13_esoyx")
@@ -158,6 +157,7 @@ bus = &"SFX"
 [node name="PlanetNight" type="AudioStreamPlayer" parent="AmbientSounds"]
 
 [connection signal="loading_progressed" from="." to="LoadingScreen" method="_on_GameWorld_loading_progressed"]
+[connection signal="reference_body_changed" from="." to="AmbientSounds" method="_on_GameWorld_reference_body_changed"]
 [connection signal="exit_to_menu_requested" from="PauseMenu" to="." method="_on_PauseMenu_exit_to_menu_requested"]
 [connection signal="exit_to_os_requested" from="PauseMenu" to="." method="_on_PauseMenu_exit_to_os_requested"]
 [connection signal="resume_requested" from="PauseMenu" to="." method="_on_PauseMenu_resume_requested"]
