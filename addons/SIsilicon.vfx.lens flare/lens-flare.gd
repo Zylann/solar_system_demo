@@ -81,6 +81,13 @@ extends Node
 		material.set_shader_parameter('streak_strength', value)
 
 
+@export var enabled := true:
+	get:
+		return screen.visible
+	set(value):
+		screen.visible = value
+
+
 var screen : MeshInstance3D
 var material : ShaderMaterial
 
