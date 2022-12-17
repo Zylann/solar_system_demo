@@ -8,7 +8,7 @@ This is a 3D space game demo, with procedurally-generated planets. It is a techn
 Features
 -----------
 
-- Procedurally-generated planets and moon (1 to 2 Km in radius)
+- Procedurally-generated planets and moon (1 to 2 Km in radius, or 10 to 20 Km in large scale mode)
 - Deterministic, non-realistic celestial motion at all times
 - Simple atmospheres
 - Fully editable terrain using voxels
@@ -22,7 +22,9 @@ Features
 - Third-person character
 - Simple environment props such as rocks and grass
 - Basic waypoint system to pin locations
-- Lens flares from [SIsilicon](https://github.com/SIsilicon/Godot-Lens-Flare-Plugin)
+- Main menu and in-game menu with settings
+- Option to increase the scale of planets x10 (physics is buggy on planets, maybe unless you use a double-precision Godot build)
+- Lens flares from [SIsilicon](https://github.com/SIsilicon/Godot-Lens-Flare-Plugin), ported to Godot 4 for the demo
 
 Note:
 This is a demo project, so any lack of gameplay, placeholders or absence of roadmap is intentional. It is meant to showcase an example of how to start making a game like this. There is no plan to make it a fully-fledged space game, but bug-fixes or small improvements may be welcome.
