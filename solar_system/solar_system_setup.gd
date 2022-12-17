@@ -117,7 +117,7 @@ static func _setup_sun(body: StellarBody, root: Node3D) -> DirectionalLight3D:
 	mesh.height = 2.0 * mesh.radius
 	mi.mesh = mesh
 	mi.material_override = SunMaterial
-	mi.cast_shadow = false
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	root.add_child(mi)
 	
 	var directional_light := DirectionalLight3D.new()
