@@ -280,9 +280,6 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D, settings: Setti
 	# TODO Set before setting voxel bounds?
 	volume.mesh_block_size = 32
 
-	# volume.debug_set_draw_enabled(true)
-	# volume.debug_set_draw_flag(VoxelLodTerrain.DEBUG_DRAW_OCTREE_NODES, true)
-
 	volume.mesher = VoxelMesherTransvoxel.new()
 	#volume.mesher.mesh_optimization_enabled = true
 	volume.mesher.mesh_optimization_error_threshold = 0.0025

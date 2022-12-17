@@ -194,12 +194,30 @@ func _physics_process(delta: float):
 		_environment.glow_enabled = _settings.glow_enabled
 	if _settings.lens_flares_enabled != _lens_flare.enabled:
 		_lens_flare.enabled = _settings.lens_flares_enabled
-
-	# DEBUG
+	
+	_physics_count += 1
+	
+	# Debug
+	
+	for body in _bodies:
+		var volume : VoxelLodTerrain = body.volume
+		if body.volume == null:
+			continue
+		if _settings.show_octree_nodes \
+		or _settings.show_mesh_updates \
+		or _settings.show_edited_data_blocks:
+			volume.debug_set_draw_enabled(true)
+			volume.debug_set_draw_flag(VoxelLodTerrain.DEBUG_DRAW_EDITED_BLOCKS, 
+				_settings.show_edited_data_blocks)
+			volume.debug_set_draw_flag(VoxelLodTerrain.DEBUG_DRAW_MESH_UPDATES,
+				_settings.show_mesh_updates)
+			volume.debug_set_draw_flag(VoxelLodTerrain.DEBUG_DRAW_OCTREE_NODES,
+				_settings.show_octree_nodes)
+		else:
+			volume.debug_set_draw_enabled(false)
 	
 	if len(_bodies) > 0:
 		DDD.set_text("Reference body", _bodies[_reference_body_id].name)
-	_physics_count += 1
 
 	for i in len(_bodies):
 		var body : StellarBody = _bodies[i]

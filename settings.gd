@@ -10,3 +10,6 @@ var glow_enabled = true
 var detail_rendering_mode = DETAIL_RENDERING_GPU
 var main_volume_linear = 1.0
 var debug_text = true
+var show_octree_nodes = false
+var show_mesh_updates = false
+var show_edited_data_blocks = false

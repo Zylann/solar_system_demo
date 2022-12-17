@@ -13,6 +13,10 @@ const Binding = preload("res://binding.gd")
 @onready var _main_volume_slider = $PC/MC/VB/TabContainer/Sound/GridContainer/MainVolume
 
 @onready var _debug_text_checkbox = $PC/MC/VB/TabContainer/Debug/GC/ShowDebugText
+@onready var _show_octree_nodes_checkbox = $PC/MC/VB/TabContainer/Debug/GC/ShowOctreeNodes
+@onready var _show_mesh_updates_checkbox = $PC/MC/VB/TabContainer/Debug/GC/ShowMeshUpdates
+@onready var _show_edited_data_blocks_checkbox = \
+	$PC/MC/VB/TabContainer/Debug/GC/ShowEditedDataBlocks
 
 
 var _settings : Settings
@@ -40,6 +44,10 @@ func set_settings(s: Settings):
 	_bindings.append(Binding.create(_settings, "detail_rendering_mode", _detail_rendering_selector))
 	_bindings.append(Binding.create(_settings, "main_volume_linear", _main_volume_slider))
 	_bindings.append(Binding.create(_settings, "debug_text", _debug_text_checkbox))
+	_bindings.append(Binding.create(_settings, "show_octree_nodes", _show_octree_nodes_checkbox))
+	_bindings.append(Binding.create(_settings, "show_mesh_updates", _show_mesh_updates_checkbox))
+	_bindings.append(Binding.create(_settings, "show_edited_data_blocks", 
+		_show_edited_data_blocks_checkbox))
 	
 	_update_ui()
 
