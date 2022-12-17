@@ -13,3 +13,4 @@ var debug_text = true
 var show_octree_nodes = false
 var show_mesh_updates = false
 var show_edited_data_blocks = false
+var wireframe = false

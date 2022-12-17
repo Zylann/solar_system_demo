@@ -17,6 +17,7 @@ const Binding = preload("res://binding.gd")
 @onready var _show_mesh_updates_checkbox = $PC/MC/VB/TabContainer/Debug/GC/ShowMeshUpdates
 @onready var _show_edited_data_blocks_checkbox = \
 	$PC/MC/VB/TabContainer/Debug/GC/ShowEditedDataBlocks
+@onready var _wireframe_checkbox = $PC/MC/VB/TabContainer/Debug/GC/Wireframe
 
 
 var _settings : Settings
@@ -48,6 +49,7 @@ func set_settings(s: Settings):
 	_bindings.append(Binding.create(_settings, "show_mesh_updates", _show_mesh_updates_checkbox))
 	_bindings.append(Binding.create(_settings, "show_edited_data_blocks", 
 		_show_edited_data_blocks_checkbox))
+	_bindings.append(Binding.create(_settings, "wireframe", _wireframe_checkbox))
 	
 	_update_ui()
 

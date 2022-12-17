@@ -16,7 +16,7 @@ script = ExtResource("1_wl3h4")
 
 [node name="PC" type="PanelContainer" parent="."]
 material = SubResource("ShaderMaterial_mxpjy")
-custom_minimum_size = Vector2(600, 300)
+custom_minimum_size = Vector2(600, 350)
 layout_mode = 2
 
 [node name="MC" type="MarginContainer" parent="PC"]
@@ -186,6 +186,14 @@ layout_mode = 2
 text = "Show edited data blocks"
 
 [node name="ShowEditedDataBlocks" type="CheckBox" parent="PC/MC/VB/TabContainer/Debug/GC"]
+layout_mode = 2
+text = "Enabled"
+
+[node name="Label5" type="Label" parent="PC/MC/VB/TabContainer/Debug/GC"]
+layout_mode = 2
+text = "Wireframe"
+
+[node name="Wireframe" type="CheckBox" parent="PC/MC/VB/TabContainer/Debug/GC"]
 layout_mode = 2
 text = "Enabled"
 
