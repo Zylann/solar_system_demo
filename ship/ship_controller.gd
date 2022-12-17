@@ -95,7 +95,7 @@ func _try_exit_ship():
 	var ray_query := PhysicsRayQueryParameters3D.new()
 	ray_query.from = ground_check_pos
 	ray_query.to = ground_check_pos + down * 2.0
-	ray_query.exclude = [self]
+	ray_query.exclude = [ship.get_rid()]
 	var hit := space_state.intersect_ray(ray_query)
 
 	if hit.is_empty():
@@ -154,7 +154,7 @@ func _process_dig_actions():
 	var ray_query := PhysicsRayQueryParameters3D.new()
 	ray_query.from = cam_pos
 	ray_query.to = cam_pos + front * 50.0
-	ray_query.exclude = [self]
+	ray_query.exclude = [_ship.get_rid()]
 	var hit = space_state.intersect_ray(ray_query)
 	
 	var dig_cmd = Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)

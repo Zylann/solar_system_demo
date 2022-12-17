@@ -104,7 +104,7 @@ func _process_actions():
 	var ray_query := PhysicsRayQueryParameters3D.new()
 	ray_query.from = cam_pos
 	ray_query.to = cam_pos + front * 50.0
-	ray_query.exclude = [self]
+	ray_query.exclude = [character_body.get_rid()]
 	var hit = space_state.intersect_ray(ray_query)
 
 	if not hit.is_empty():

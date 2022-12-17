@@ -92,7 +92,7 @@ func _physics_process(delta : float):
 	var ray_query := PhysicsRayQueryParameters3D.new()
 	ray_query.from = gtrans.origin + 0.1 * planet_up
 	ray_query.to = gtrans.origin - 0.1 * planet_up
-	ray_query.exclude = [self]
+	ray_query.exclude = [get_rid()]
 	var ground_hit = space_state.intersect_ray(ray_query)
 	_landed = not ground_hit.is_empty()
 	

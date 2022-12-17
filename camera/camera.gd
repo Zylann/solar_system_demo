@@ -123,7 +123,7 @@ func _physics_process(delta: float):
 	
 	# Collision avoidance
 	var dss := get_world_3d().direct_space_state
-	var ignored := [_target_rigidbody] if _target_rigidbody != null else []
+	var ignored := [_target_rigidbody.get_rid()] if _target_rigidbody != null else []
 	var ray_query := PhysicsRayQueryParameters3D.new()
 	ray_query.from = tt.origin
 	ray_query.to = ideal_trans.origin
