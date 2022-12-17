@@ -224,6 +224,13 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D):
 	volume.view_distance = 100000
 	volume.voxel_bounds = AABB(Vector3(-pot, -pot, -pot), Vector3(2 * pot, 2 * pot, 2 * pot))
 	volume.lod_fade_duration = 0.3
+	volume.normalmap_enabled = true
+	volume.normalmap_tile_resolution_min = 4
+	volume.normalmap_tile_resolution_max = 8
+	volume.normalmap_begin_lod_index = 2
+	volume.normalmap_max_deviation_degrees = 50
+	volume.normalmap_octahedral_encoding_enabled = false
+	volume.normalmap_use_gpu = true
 	volume.material = mat
 	# TODO Set before setting voxel bounds?
 	volume.mesh_block_size = 32
