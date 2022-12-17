@@ -263,7 +263,9 @@ func _process(_delta):
 		var sun = get_node(_sun_path)
 		if sun is Node3D:
 			var mat := _get_material()
-			mat.set_shader_parameter("u_sun_position", sun.global_transform.origin)
+			var pos = global_position + sun.global_transform.basis.z
+			#pos = global_transform.affine_inverse() * pos
+			mat.set_shader_parameter("u_sun_position", pos)
 
 
 #static func _make_quad_mesh() -> Mesh:
