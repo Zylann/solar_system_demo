@@ -143,7 +143,7 @@ visible = false
 
 [node name="VoxelDebugInfo" type="Node" parent="."]
 script = ExtResource("12_ysp6t")
-enable_hotkeys = true
+enable_hotkeys = false
 
 [node name="AmbientSounds" type="Node" parent="."]
 script = ExtResource("13_esoyx")

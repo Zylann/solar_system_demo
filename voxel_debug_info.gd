@@ -44,6 +44,19 @@ func _unhandled_input(event):
 
 				KEY_M:
 					_log_pointed_mesh_block_info()
+				
+				KEY_I:
+					print("Dumping planet as scene")
+					var current_planet = _solar_system.get_reference_stellar_body()
+					var err = current_planet.volume.debug_dump_as_scene(
+						"debug_scene_dump.scn", true)
+					if err != OK:
+						push_error(str("Error when dumping: ", err))
+
+				# KEY_KP_3:
+				# 	var current_planet = _solar_system.get_reference_stellar_body()
+				# 	if current_planet.instancer != null:
+				# 		current_planet.instancer.debug_log_edited_bocks()
 
 
 func _log_pointed_mesh_block_info():
@@ -137,8 +150,10 @@ func _debug_voxel_raycast_sweep():
 
 func _toggle_collision_scanner():
 	if get_parent().has_node("CollisionOverlay"):
+		print("Turn off collision scanner")
 		get_parent().get_node("CollisionOverlay").queue_free()
 	else:
+		print("Turn on collision scanner")
 		var overlay = CollisionScannerScene.instantiate()
 		overlay.name = "CollisionOverlay"
 		overlay.set_restart_when_camera_transform_changes(false)
