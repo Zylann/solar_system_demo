@@ -166,11 +166,12 @@ func _physics_process(delta: float):
 	else:
 		_environment.background_sky_orientation = Basis()
 	
+	# DEBUG
+	
 	if len(_bodies) > 0:
 		DDD.set_text("Reference body", _bodies[_reference_body_id].name)
 	_physics_count += 1
 
-	# DEBUG
 	for i in len(_bodies):
 		var body : StellarBody = _bodies[i]
 		if body.volume == null:
@@ -237,7 +238,8 @@ func _process_atmosphere_large_distance_hack():
 			var distance = cam_pos_world.distance_to(planet_pos_world)
 			var transition_distance_start = body.radius * 3.0
 			var transition_length = 2000.0
-			var sphere_factor = clamp((distance - transition_distance_start) / transition_length, 0.0, 1.0)
+			var sphere_factor = \
+				clamp((distance - transition_distance_start) / transition_length, 0.0, 1.0)
 			# DDD.set_text(str("Sphere atmo factor in ", body.name), sphere_factor)
 			# DDD.set_text(str("Atmo mode in ", body.name), body.atmosphere._mode)
 			body.atmosphere.set_shader_param("u_sphere_depth_factor", sphere_factor)
