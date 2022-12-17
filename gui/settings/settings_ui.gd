@@ -52,13 +52,3 @@ func _update_ui():
 func _on_Close_pressed():
 	hide()
 
-
-func _unhandled_input(event):
-	if visible == false:
-		return
-	if event is InputEventKey:
-		if event.pressed:
-			if event.keycode == KEY_ESCAPE:
-				hide()
-
-

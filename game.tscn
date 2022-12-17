@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dx0qy8pg0q72b"]
+[gd_scene load_steps=19 format=3 uid="uid://dx0qy8pg0q72b"]
 
 [ext_resource type="Script" path="res://solar_system/solar_system.gd" id="1_tcbv5"]
 [ext_resource type="Texture2D" uid="uid://b0s3fc7sjnlof" path="res://solar_system/space_background.png" id="2_06f30"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://addons/SIsilicon.vfx.lens flare/lens-flare.gd" id="9_w721i"]
 [ext_resource type="PackedScene" path="res://gui/mouse_capture.tscn" id="10_4n27f"]
 [ext_resource type="Script" path="res://gui/loading_screen.gd" id="11_vsdyb"]
+[ext_resource type="PackedScene" uid="uid://b1jp62h7crdt7" path="res://gui/pause_menu/pause_menu.tscn" id="12_cuwn3"]
 [ext_resource type="Script" path="res://voxel_debug_info.gd" id="12_ysp6t"]
 [ext_resource type="Script" path="res://sounds/ambient_sounds.gd" id="13_esoyx"]
 [ext_resource type="AudioStream" uid="uid://pdsd7xlt73p1" path="res://sounds/deep_space.ogg" id="14_krriv"]
@@ -54,11 +55,13 @@ mouse_filter = 2
 script = ExtResource("3_rlxpp")
 
 [node name="TargetPlanetLabel" type="Label" parent="HUD"]
+layout_mode = 0
 theme_override_fonts/font = ExtResource("4_5b8os")
 text = "Hello world"
 
 [node name="TargetPlanetRect" type="NinePatchRect" parent="HUD"]
 modulate = Color(1, 1, 1, 0.784314)
+layout_mode = 0
 texture = ExtResource("5_hq7jk")
 patch_margin_left = 15
 patch_margin_top = 15
@@ -66,6 +69,7 @@ patch_margin_right = 16
 patch_margin_bottom = 16
 
 [node name="Crosshair" type="CenterContainer" parent="HUD"]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -74,16 +78,13 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="TextureRect" type="TextureRect" parent="HUD/Crosshair"]
-offset_left = 560.0
-offset_top = 308.0
-offset_right = 592.0
-offset_bottom = 340.0
+layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("6_rc6j7")
 stretch_mode = 4
 
 [node name="WaypointHUD" parent="HUD" instance=ExtResource("7_b4x6s")]
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 15
 grow_horizontal = 2
 grow_vertical = 2
@@ -114,6 +115,7 @@ color = Color(0, 0, 0, 0.65098)
 script = ExtResource("11_vsdyb")
 
 [node name="CC" type="CenterContainer" parent="LoadingScreen"]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -122,26 +124,22 @@ grow_vertical = 2
 
 [node name="PC" type="PanelContainer" parent="LoadingScreen/CC"]
 custom_minimum_size = Vector2(200, 0)
-offset_left = 476.0
-offset_top = 295.0
-offset_right = 676.0
-offset_bottom = 352.0
+layout_mode = 2
 
 [node name="VB" type="VBoxContainer" parent="LoadingScreen/CC/PC"]
-offset_right = 200.0
-offset_bottom = 57.0
+layout_mode = 2
 
 [node name="Label" type="Label" parent="LoadingScreen/CC/PC/VB"]
-offset_right = 200.0
-offset_bottom = 26.0
+layout_mode = 2
 text = "Loading..."
 horizontal_alignment = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="LoadingScreen/CC/PC/VB"]
-offset_top = 30.0
-offset_right = 200.0
-offset_bottom = 57.0
+layout_mode = 2
 max_value = 1.0
+
+[node name="PauseMenu" parent="." instance=ExtResource("12_cuwn3")]
+visible = false
 
 [node name="VoxelDebugInfo" type="Node" parent="."]
 script = ExtResource("12_ysp6t")
@@ -160,3 +158,7 @@ bus = &"SFX"
 [node name="PlanetNight" type="AudioStreamPlayer" parent="AmbientSounds"]
 
 [connection signal="loading_progressed" from="." to="LoadingScreen" method="_on_GameWorld_loading_progressed"]
+[connection signal="exit_to_menu_requested" from="PauseMenu" to="." method="_on_PauseMenu_exit_to_menu_requested"]
+[connection signal="exit_to_os_requested" from="PauseMenu" to="." method="_on_PauseMenu_exit_to_os_requested"]
+[connection signal="resume_requested" from="PauseMenu" to="." method="_on_PauseMenu_resume_requested"]
+[connection signal="settings_requested" from="PauseMenu" to="." method="_on_PauseMenu_settings_requested"]

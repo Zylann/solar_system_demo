@@ -1,0 +1,91 @@
+[gd_scene load_steps=4 format=3 uid="uid://b1jp62h7crdt7"]
+
+[ext_resource type="Script" path="res://gui/pause_menu/pause_menu.gd" id="1_n007e"]
+[ext_resource type="Shader" path="res://gui/background_blur.gdshader" id="1_nw8rs"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_md44f"]
+shader = ExtResource("1_nw8rs")
+
+[node name="PauseMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_n007e")
+
+[node name="CC" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CC"]
+material = SubResource("ShaderMaterial_md44f")
+offset_left = 376.0
+offset_top = 212.0
+offset_right = 776.0
+offset_bottom = 436.0
+
+[node name="MarginContainer" type="MarginContainer" parent="CC/PanelContainer"]
+custom_minimum_size = Vector2(400, 0)
+offset_right = 400.0
+offset_bottom = 224.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CC/PanelContainer/MarginContainer"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 392.0
+offset_bottom = 216.0
+
+[node name="Label" type="Label" parent="CC/PanelContainer/MarginContainer/VBoxContainer"]
+offset_right = 384.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 32
+text = "Pause"
+horizontal_alignment = 1
+
+[node name="Resume" type="Button" parent="CC/PanelContainer/MarginContainer/VBoxContainer"]
+offset_top = 52.0
+offset_right = 384.0
+offset_bottom = 83.0
+text = "Resume"
+
+[node name="Settings" type="Button" parent="CC/PanelContainer/MarginContainer/VBoxContainer"]
+offset_top = 87.0
+offset_right = 384.0
+offset_bottom = 118.0
+text = "Settings"
+
+[node name="Control" type="Control" parent="CC/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 3
+anchors_preset = 0
+offset_top = 122.0
+offset_right = 384.0
+offset_bottom = 138.0
+
+[node name="ExitToMenu" type="Button" parent="CC/PanelContainer/MarginContainer/VBoxContainer"]
+offset_top = 142.0
+offset_right = 384.0
+offset_bottom = 173.0
+size_flags_horizontal = 3
+text = "Exit to menu"
+
+[node name="ExitToOS" type="Button" parent="CC/PanelContainer/MarginContainer/VBoxContainer"]
+offset_top = 177.0
+offset_right = 384.0
+offset_bottom = 208.0
+size_flags_horizontal = 3
+text = "Exit to OS"
+
+[connection signal="pressed" from="CC/PanelContainer/MarginContainer/VBoxContainer/Resume" to="." method="_on_Resume_pressed"]
+[connection signal="pressed" from="CC/PanelContainer/MarginContainer/VBoxContainer/Settings" to="." method="_on_Settings_pressed"]
+[connection signal="pressed" from="CC/PanelContainer/MarginContainer/VBoxContainer/ExitToMenu" to="." method="_on_ExitToMenu_pressed"]
+[connection signal="pressed" from="CC/PanelContainer/MarginContainer/VBoxContainer/ExitToOS" to="." method="_on_ExitToOs_pressed"]

@@ -6,6 +6,7 @@ const Settings = preload("res://settings.gd")
 @onready var _settings_ui = $SettingsUI
 
 var _settings = Settings.new()
+var _game
 
 
 func _ready():
@@ -13,15 +14,14 @@ func _ready():
 
 
 func _on_MainMenu_start_requested():
+	assert(_game == null)
 	_main_menu.hide()
 	var game_scene : PackedScene = load("res://game.tscn")
-	var game = game_scene.instantiate()
-	game.set_settings(_settings)
-	add_child(game)
-	# TODO Apply settings in game
-	# TODO Add a pause menu
-	# TODO Make settings UI available in game
-	# TODO Allow return to main menu
+	_game = game_scene.instantiate()
+	_game.set_settings(_settings)
+	_game.set_settings_ui(_settings_ui)
+	_game.exit_to_menu_requested.connect(_on_game_exit_to_menu_requested)
+	add_child(_game)
 
 
 func _on_MainMenu_settings_requested():
@@ -32,8 +32,23 @@ func _on_MainMenu_exit_requested():
 	get_tree().quit()
 
 
+func _on_game_exit_to_menu_requested():
+	_game.queue_free()
+	_game = null
+	_main_menu.show()
+
+
 func _process(delta):
 	AudioServer.set_bus_volume_db(0, linear_to_db(_settings.main_volume_linear))
 	DDD.visible = _settings.debug_text
 
+
+func _unhandled_input(event):
+	if _game != null:
+		# Let the game handle it
+		return
+	if event is InputEventKey:
+		if event.pressed and not event.is_echo():
+			if event.keycode == KEY_ESCAPE:
+				_settings_ui.hide()
 

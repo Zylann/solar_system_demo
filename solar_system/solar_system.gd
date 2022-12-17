@@ -21,12 +21,15 @@ class LoadingProgress:
 
 signal reference_body_changed(info)
 signal loading_progressed(info)
+signal exit_to_menu_requested
 
 
-@onready var _environment = $WorldEnvironment.environment
+@onready var _environment : Environment = $WorldEnvironment.environment
 @onready var _spawn_point = $SpawnPoint
 @onready var _mouse_capture = $MouseCapture
 @onready var _hud = $HUD
+@onready var _pause_menu = $PauseMenu
+@onready var _lens_flare = $LensFlare
 
 var _ship = null
 
@@ -38,6 +41,7 @@ var _physics_count_on_last_reference_change = 0
 # This is a placeholder instance to allow testing the game without going from the usual main scene.
 # It will be overriden in the normal flow.
 var _settings := Settings.new()
+var _settings_ui : Control
 
 
 func _ready():
@@ -83,6 +87,23 @@ func _ready():
 
 func set_settings(s: Settings):
 	_settings = s
+
+
+func set_settings_ui(ui: Control):
+	_settings_ui = ui
+
+
+func _unhandled_input(event):
+	if event is InputEventKey:
+		if event.pressed and not event.is_echo():
+			if event.keycode == KEY_ESCAPE:
+				if _settings_ui.visible:
+					_settings_ui.hide()
+				elif _pause_menu.visible:
+					_pause_menu.hide()
+					_mouse_capture.capture()
+				else:
+					_pause_menu.show()
 
 
 func _physics_process(delta: float):
@@ -166,6 +187,14 @@ func _physics_process(delta: float):
 	else:
 		_environment.background_sky_orientation = Basis()
 	
+	# Update graphics settings
+	if _settings.shadows_enabled != _directional_light.shadow_enabled:
+		_directional_light.shadow_enabled = _settings.shadows_enabled
+	if _settings.glow_enabled != _environment.glow_enabled:
+		_environment.glow_enabled = _settings.glow_enabled
+	if _settings.lens_flares_enabled != _lens_flare.enabled:
+		_lens_flare.enabled = _settings.lens_flares_enabled
+
 	# DEBUG
 	
 	if len(_bodies) > 0:
@@ -326,4 +355,26 @@ func _save_world():
 	for body in _bodies:
 		if body.volume != null:
 			body.volume.save_modified_blocks()
+
+
+func _on_PauseMenu_exit_to_menu_requested():
+	_save_world()
+	exit_to_menu_requested.emit()
+
+
+func _on_PauseMenu_exit_to_os_requested():
+	_save_world()
+	get_tree().quit()
+
+
+func _on_PauseMenu_resume_requested():
+	_pause_menu.hide()
+	_mouse_capture.capture()
+
+
+func _on_PauseMenu_settings_requested():
+	_settings_ui.show()
+	# The settings UI exists before the game is instanced so it might be behind.
+	# This makes sure it shows in front.
+	_settings_ui.move_to_front()
 
