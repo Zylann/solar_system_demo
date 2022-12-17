@@ -117,7 +117,7 @@ size = Vector2(0.3, 0.3)
 
 [node name="Ship" type="RigidBody3D"]
 gravity_scale = 0.0
-contacts_reported = 3
+max_contacts_reported = 3
 contact_monitor = true
 can_sleep = false
 linear_damp = 0.5
@@ -244,13 +244,10 @@ autoplay = true
 [node name="ShipIdle" type="AudioStreamPlayer3D" parent="ShipAudio"]
 
 [node name="Hit01" type="AudioStreamPlayer3D" parent="ShipAudio"]
-unit_db = 2.0
 
 [node name="Hit02" type="AudioStreamPlayer3D" parent="ShipAudio"]
-unit_db = 2.0
 
 [node name="Hit03" type="AudioStreamPlayer3D" parent="ShipAudio"]
-unit_db = 2.0
 
 [node name="On" type="AudioStreamPlayer" parent="ShipAudio"]
 stream = ExtResource("13")
@@ -273,7 +270,6 @@ autoplay = true
 
 [node name="Scrape" type="AudioStreamPlayer3D" parent="ShipAudio"]
 stream = ExtResource("18")
-unit_db = 3.0
 
 [connection signal="body_entered" from="." to="ShipAudio" method="_on_Ship_body_entered"]
 
