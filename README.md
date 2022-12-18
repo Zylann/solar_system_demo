@@ -29,10 +29,15 @@ Features
 Note:
 This is a demo project, so any lack of gameplay, placeholders or absence of roadmap is intentional. It is meant to showcase an example of how to start making a game like this. There is no plan to make it a fully-fledged space game, but bug-fixes or small improvements may be welcome.
 
-You need a computer with a powerful CPU to run this. It may run on low-end/mobile supporting GLES3 but it might have slow loading issues.
-
 Textures are from https://ambientcg.com/  
 Sound effects are partly from https://sonniss.com/gameaudiogdc
+
+
+Performance
+-------------
+
+You need a computer with a powerful CPU to run this. By default, Vulkan is required, but it might work in GLES3 if you turn off Vulkan-only features like GPU detail rendering.
+For reference, with an AMD Ryzen 5 2600 6-core CPU, an nVidia GeForce GTX 1060 6Gb graphics card and an optimized Godot build, this demo starts up in 5 seconds, uses about 1 Gb of RAM and should mostly sustain 60 FPS.
 
 
 Controls
