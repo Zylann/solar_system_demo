@@ -18,6 +18,7 @@ uniform float u_attenuation_distance = 0.0;
 // May be used over large distances to remove flickering, at the expense of less accuracy.void
 // This is because Godot's depth buffer is lacking precision. 32-bit option plz?
 uniform float u_sphere_depth_factor = 0.0;
+uniform sampler2D u_depth_texture : hint_depth_texture;
 
 varying vec3 v_planet_center_viewspace;
 varying vec3 v_sun_center_viewspace;
@@ -103,7 +104,7 @@ void vertex() {
 
 void fragment() {
 	// TODO Is depth texture really needed in the end?
-	float nonlinear_depth = texture(DEPTH_TEXTURE, SCREEN_UV).x;
+	float nonlinear_depth = texture(u_depth_texture, SCREEN_UV).x;
 	// Note, we assume Vulkan here, which has NDC in 0..1 (OpenGL is -1..1)
 	vec3 ndc = vec3(SCREEN_UV * 2.0 - 1.0, nonlinear_depth);
 	vec4 view_coords = INV_PROJECTION_MATRIX * vec4(ndc, 1.0);
