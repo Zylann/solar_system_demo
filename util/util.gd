@@ -6,7 +6,7 @@ static func get_sphere_volume(r: float) -> float:
 static func find_node_by_type(parent: Node, klass):
 	for i in parent.get_child_count():
 		var child = parent.get_child(i)
-		if child is klass:
+		if is_instance_of(child, klass):
 			return child
 		var res = find_node_by_type(child, klass)
 		if res != null:
@@ -17,7 +17,7 @@ static func find_node_by_type(parent: Node, klass):
 static func find_parent_by_type(node: Node, klass):
 	while node.get_parent() != null:
 		node = node.get_parent()
-		if node is klass:
+		if is_instance_of(node, klass):
 			return node
 	return null
 
