@@ -1,8 +1,8 @@
 shader_type spatial;
 
-#include "addons/zylann.voxel/shaders/transvoxel.gdshaderinc"
-#include "addons/zylann.voxel/shaders/lod_fade.gdshaderinc"
-#include "addons/zylann.voxel/shaders/virtual_texturing.gdshaderinc"
+#include "res://addons/zylann.voxel/shaders/transvoxel.gdshaderinc"
+#include "res://addons/zylann.voxel/shaders/lod_fade.gdshaderinc"
+#include "res://addons/zylann.voxel/shaders/virtual_texturing.gdshaderinc"
 
 uniform sampler2D u_top_albedo_texture : source_color;
 uniform sampler2D u_top_normal_texture;
