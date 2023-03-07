@@ -316,7 +316,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	instance_generator.noise.fractal_octaves = 2
 	instance_generator.noise_on_scale = 1
 	#instance_generator.noise.noise_type = FastNoiseLite.TYPE_PERLIN
-	var item = VoxelInstanceLibraryItem.new()
+	var item = VoxelInstanceLibraryMultiMeshItem.new()
 	
 	if body.name == "Earth":
 		var grass_mesh = GrassScene.instantiate()
@@ -348,7 +348,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	instance_generator.min_slope_degrees = 0
 	instance_generator.max_slope_degrees = 12
 	instance_generator.vertical_alignment = 0.0
-	item = VoxelInstanceLibraryItem.new()
+	item = VoxelInstanceLibraryMultiMeshItem.new()
 	var rock1_template = Rock1Scene.instantiate()
 	item.setup_from_template(rock1_template)
 	rock1_template.free()
@@ -365,7 +365,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	instance_generator.min_slope_degrees = 0
 	instance_generator.max_slope_degrees = 10
 	instance_generator.vertical_alignment = 0.0
-	item = VoxelInstanceLibraryItem.new()
+	item = VoxelInstanceLibraryMultiMeshItem.new()
 	item.set_mesh(BigRock1Mesh, 0)
 	item.generator = instance_generator
 	item.persistent = true
@@ -386,7 +386,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	instance_generator.max_slope_degrees = 180
 	instance_generator.vertical_alignment = 1.0
 	instance_generator.offset_along_normal = -0.5
-	item = VoxelInstanceLibraryItem.new()
+	item = VoxelInstanceLibraryMultiMeshItem.new()
 	var cone = CylinderMesh.new()
 	cone.radial_segments = 8
 	cone.rings = 0
