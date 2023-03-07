@@ -165,11 +165,30 @@ func _process(delta):
 	DDD.set_text("FPS", Engine.get_frames_per_second())
 	DDD.set_text("Static memory", _format_memory(OS.get_static_memory_usage()))
 
+	# Global stats
+
 	var global_stats = VoxelEngine.get_stats()
-	for stat_group_key in global_stats:
-		var stat_group = global_stats[stat_group_key]
-		for stat_key in stat_group:
-			DDD.set_text(str(stat_group_key, "_", stat_key), stat_group[stat_key])
+
+	for group_key in ["tasks", "memory_pools"]:
+		var stats = global_stats[group_key]
+		for key in stats:
+			DDD.set_text(str(group_key, "_", key), stats[key])
+
+	var thread_pools_stats = global_stats["thread_pools"]
+	for thread_pool_name in thread_pools_stats:
+		var thread_pool_stats = thread_pools_stats[thread_pool_name]
+		var prefix = str("thread_pool_", thread_pool_name)
+
+		DDD.set_text(str(prefix, "_tasks"), thread_pool_stats["tasks"])
+		DDD.set_text(str(prefix, "_threads"), 
+			str(thread_pool_stats["active_threads"], "/", thread_pool_stats["thread_count"]))
+
+		# var task_names = thread_pool_stats["task_names"]
+		# for i in len(task_names):
+		# 	var task_name = task_names[i]
+		# 	DDD.set_text(str(prefix, "_", i), task_name if task_name != null else "---")
+
+	# Planet stats
 
 	var current_planet = _solar_system.get_reference_stellar_body()
 	if current_planet != null and current_planet.volume != null:
