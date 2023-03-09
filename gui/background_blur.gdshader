@@ -1,6 +1,6 @@
 shader_type canvas_item;
 
-uniform sampler2D u_screen_texture : hint_screen_texture;
+uniform sampler2D u_screen_texture : hint_screen_texture, filter_linear_mipmap;
 
 void fragment() {
 	// UI uses shapes, not textures
