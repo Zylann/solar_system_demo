@@ -9,16 +9,16 @@
 [resource]
 render_priority = 0
 shader = ExtResource("1")
-shader_parameter/u_block_local_transform = null
+shader_parameter/u_transition_mask = null
 shader_parameter/u_lod_fade = null
+shader_parameter/u_voxel_virtual_texture_tile_size = null
+shader_parameter/u_voxel_virtual_texture_fade = null
+shader_parameter/u_voxel_cell_size = null
+shader_parameter/u_voxel_block_size = null
+shader_parameter/u_voxel_virtual_texture_offset_scale = null
 shader_parameter/u_mountain_height = 10000.0
-shader_parameter/u_side_albedo_texture = ExtResource("2_ylcsf")
-shader_parameter/u_side_normal_texture = ExtResource("3_780vy")
+shader_parameter/u_block_local_transform = null
 shader_parameter/u_top_albedo_texture = ExtResource("2")
 shader_parameter/u_top_normal_texture = ExtResource("4")
-shader_parameter/u_transition_mask = null
-shader_parameter/u_voxel_block_size = null
-shader_parameter/u_voxel_cell_size = null
-shader_parameter/u_voxel_virtual_texture_fade = null
-shader_parameter/u_voxel_virtual_texture_offset_scale = null
-shader_parameter/u_voxel_virtual_texture_tile_size = null
+shader_parameter/u_side_albedo_texture = ExtResource("2_ylcsf")
+shader_parameter/u_side_normal_texture = ExtResource("3_780vy")
