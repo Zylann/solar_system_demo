@@ -8,58 +8,6 @@
 
 config_version=5
 
-_global_script_classes=[{
-"base": "Node3D",
-"class": &"CameraRig",
-"language": &"GDScript",
-"path": "res://addons/gdquest.mannequin/src/Player/Camera/CameraRig.gd"
-}, {
-"base": "State",
-"class": &"CameraState",
-"language": &"GDScript",
-"path": "res://addons/gdquest.mannequin/src/Player/Camera/CameraState.gd"
-}, {
-"base": "Camera3D",
-"class": &"InterpolatedCamera3D",
-"language": &"GDScript",
-"path": "res://addons/interpolated_camera_3d/interpolated_camera_3d.gd"
-}, {
-"base": "Node3D",
-"class": &"Mannequiny",
-"language": &"GDScript",
-"path": "res://addons/gdquest.mannequin/src/Player/Mannequiny.gd"
-}, {
-"base": "CharacterBody3D",
-"class": &"Player",
-"language": &"GDScript",
-"path": "res://addons/gdquest.mannequin/src/Player/Player.gd"
-}, {
-"base": "State",
-"class": &"PlayerState",
-"language": &"GDScript",
-"path": "res://addons/gdquest.mannequin/src/Player/PlayerState.gd"
-}, {
-"base": "Node",
-"class": &"State",
-"language": &"GDScript",
-"path": "res://addons/gdquest.mannequin/src/Main/StateMachine/State.gd"
-}, {
-"base": "Node",
-"class": &"StateMachine",
-"language": &"GDScript",
-"path": "res://addons/gdquest.mannequin/src/Main/StateMachine/StateMachine.gd"
-}]
-_global_script_class_icons={
-"CameraRig": "",
-"CameraState": "",
-"InterpolatedCamera3D": "res://addons/interpolated_camera_3d/interpolated_camera_3d.svg",
-"Mannequiny": "",
-"Player": "",
-"PlayerState": "",
-"State": "",
-"StateMachine": ""
-}
-
 [application]
 
 config/name="Solar System"
