@@ -1,11 +1,15 @@
 
 const StellarBody = preload("./stellar_body.gd")
 const Settings = preload("res://settings.gd")
+const PlanetAtmosphere = preload("res://addons/zylann.atmosphere/planet_atmosphere.gd")
 
 const VolumetricAtmosphereScene = preload("res://addons/zylann.atmosphere/planet_atmosphere.tscn")
 const BigRock1Scene = preload("../props/big_rocks/big_rock1.tscn")
 const Rock1Scene = preload("../props/rocks/rock1.tscn")
 const GrassScene = preload("res://props/grass/grass.tscn")
+
+const AtmosphereShader = preload(
+	"res://addons/zylann.atmosphere/shaders/planet_atmosphere_v1_no_clouds.gdshader")
 
 const SunMaterial = preload("./materials/sun_yellow.tres")
 const PlanetRockyMaterial = preload("./materials/planet_material_rocky.tres")
@@ -151,7 +155,8 @@ static func _setup_sun(body: StellarBody, root: Node3D) -> DirectionalLight3D:
 
 
 static func _setup_atmosphere(body: StellarBody, root: Node3D, settings: Settings):
-	var atmo = VolumetricAtmosphereScene.instantiate()
+	var atmo : PlanetAtmosphere = VolumetricAtmosphereScene.instantiate()
+	atmo.custom_shader = AtmosphereShader
 	#atmo.scale = Vector3(1, 1, 1) * (0.99 * body.radius)
 	if settings.world_scale_x10:
 		atmo.planet_radius = body.radius * 1.0
@@ -163,19 +168,22 @@ static func _setup_atmosphere(body: StellarBody, root: Node3D, settings: Setting
 	atmo.sun_path = "/root/Main/GameWorld/Sun/DirectionalLight"
 	#atmo.day_color = body.atmosphere_color
 	#atmo.night_color = body.atmosphere_color.darkened(0.8)
-	var atmo_density = 0.001
+	var atmo_density := 0.001
 	if body.type == StellarBody.TYPE_GAS:
 		if settings.world_scale_x10:
 			# TODO Need to investigate this, atmosphere currently blows up HDR when large and dense
 			atmo_density /= LARGE_SCALE
 	atmo.set_shader_param("u_density", atmo_density)
-	atmo.set_shader_param("u_attenuation_distance", 50.0)
+
+#	atmo.set_shader_param("u_attenuation_distance", 50.0)
+
+	# Settings for the fake color atmospheres
 	atmo.set_shader_param("u_day_color0", body.atmosphere_color)
-	atmo.set_shader_param("u_day_color1", 
-		body.atmosphere_color.lerp(Color(1,1,1), 0.5))
+	atmo.set_shader_param("u_day_color1", body.atmosphere_color.lerp(Color(1,1,1), 0.5))
 	atmo.set_shader_param("u_night_color0", body.atmosphere_color.darkened(0.8))
 	atmo.set_shader_param("u_night_color1", 
 		body.atmosphere_color.darkened(0.8).lerp(Color(1,1,1), 0.0))
+
 	body.atmosphere = atmo
 	root.add_child(atmo)
 

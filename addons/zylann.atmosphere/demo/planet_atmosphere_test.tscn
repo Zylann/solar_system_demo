@@ -1,0 +1,163 @@
+[gd_scene load_steps=24 format=3 uid="uid://gc7xwxp74opt"]
+
+[ext_resource type="Texture2D" uid="uid://dtlptku1k7pm1" path="res://addons/zylann.atmosphere/demo/space_background.webp" id="1_j5n0u"]
+[ext_resource type="PackedScene" uid="uid://c36velgas3n3k" path="res://addons/zylann.atmosphere/planet_atmosphere.tscn" id="2"]
+[ext_resource type="Script" path="res://addons/zylann.atmosphere/demo/mouse_look.gd" id="3"]
+[ext_resource type="Shader" path="res://addons/zylann.atmosphere/shaders/planet_atmosphere_clouds.gdshader" id="3_ra2pw"]
+[ext_resource type="Texture2D" uid="uid://cvcg66612wjvw" path="res://tests/2k_earth_clouds.png" id="4"]
+[ext_resource type="Script" path="res://addons/zylann.atmosphere/noise_cubemap.gd" id="4_8lw7l"]
+[ext_resource type="Script" path="res://addons/zylann.atmosphere/demo/avatar.gd" id="5_mkng0"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jc6bi"]
+shading_mode = 0
+albedo_color = Color(2, 2, 2, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_rpf03"]
+material = SubResource("StandardMaterial3D_jc6bi")
+radius = 20.0
+height = 40.0
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_vdqjr"]
+panorama = ExtResource("1_j5n0u")
+
+[sub_resource type="Sky" id="Sky_mx20v"]
+sky_material = SubResource("PanoramaSkyMaterial_vdqjr")
+
+[sub_resource type="Environment" id="1"]
+background_mode = 2
+sky = SubResource("Sky_mx20v")
+glow_enabled = true
+glow_levels/3 = 0.0
+glow_levels/4 = 1.0
+glow_levels/6 = 1.0
+glow_intensity = 4.0
+glow_strength = 0.8
+glow_blend_mode = 0
+glow_hdr_scale = 1.0
+volumetric_fog_density = 0.0
+
+[sub_resource type="StandardMaterial3D" id="2"]
+albedo_color = Color(0.27451, 0.364706, 0.431373, 1)
+metallic_specular = 0.09
+roughness = 0.4
+
+[sub_resource type="SphereMesh" id="3"]
+radius = 100.0
+height = 200.0
+radial_segments = 128
+rings = 64
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_qkeui"]
+noise_type = 2
+frequency = 0.1
+fractal_type = 2
+fractal_octaves = 8
+fractal_gain = 0.665
+cellular_jitter = 1.0
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_8p07x"]
+seamless = true
+noise = SubResource("FastNoiseLite_qkeui")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_16ssy"]
+domain_warp_enabled = true
+domain_warp_amplitude = 90.0
+domain_warp_frequency = 0.01
+domain_warp_fractal_octaves = 3
+
+[sub_resource type="Cubemap" id="Cubemap_7kyfx"]
+script = ExtResource("4_8lw7l")
+noise = SubResource("FastNoiseLite_16ssy")
+resolution = 256
+scale = Vector3(100, 200, 100)
+
+[sub_resource type="Shader" id="4"]
+code = "shader_type spatial;
+render_mode blend_mix,depth_draw_opaque,cull_back,diffuse_burley,specular_schlick_ggx;
+uniform sampler2D texture_albedo : source_color;
+
+void fragment() {
+	vec2 base_uv = UV;
+	vec4 albedo_tex = texture(texture_albedo,base_uv);
+	ALBEDO = albedo_tex.rgb;
+	ALPHA = albedo_tex.r;
+	//EMISSION = vec3(0.2,0.2,0.2);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="5"]
+render_priority = 0
+shader = SubResource("4")
+shader_parameter/texture_albedo = ExtResource("4")
+
+[sub_resource type="SphereMesh" id="6"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ortma"]
+size = Vector3(10, 30, 10)
+
+[sub_resource type="SphereMesh" id="SphereMesh_6odie"]
+radius = 10.0
+height = 20.0
+
+[node name="Spatial" type="Node"]
+
+[node name="Sun" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 598.677)
+cast_shadow = 0
+mesh = SubResource("SphereMesh_rpf03")
+skeleton = NodePath("DirectionalLight")
+
+[node name="DirectionalLight" type="DirectionalLight3D" parent="Sun"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -120)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("1")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+material_override = SubResource("2")
+mesh = SubResource("3")
+
+[node name="PlanetAthmosphere" parent="." instance=ExtResource("2")]
+planet_radius = 100.0
+atmosphere_height = 8.0
+sun_path = NodePath("../Sun/DirectionalLight")
+custom_shader = ExtResource("3_ra2pw")
+shader_params/u_density = 0.105
+shader_params/u_scattering_strength = 20.0
+shader_params/u_scattering_wavelengths = Vector3(700, 550, 440)
+shader_params/u_atmosphere_modulate = Color(1, 0.980392, 0.964706, 1)
+shader_params/u_cloud_shape_invert = 1.0
+shader_params/u_cloud_coverage_bias = 0.0
+shader_params/u_cloud_shape_factor = 0.5
+shader_params/u_cloud_shape_scale = 0.1
+shader_params/u_cloud_density_scale = 2.0
+shader_params/u_cloud_bottom = 0.2
+shader_params/u_cloud_top = 0.6
+shader_params/u_cloud_blend = 0.2
+shader_params/u_cloud_shape_texture = SubResource("NoiseTexture3D_8p07x")
+shader_params/u_cloud_coverage_cubemap = SubResource("Cubemap_7kyfx")
+
+[node name="Avatar" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 213.345)
+script = ExtResource("5_mkng0")
+speed = 20.0
+
+[node name="Camera" type="Camera3D" parent="Avatar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.357289, 0.105603, 1.49554)
+near = 0.1
+far = 800.0
+script = ExtResource("3")
+
+[node name="Clouds" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.02, 0, 0, 0, 1.02, 0, 0, 0, 1.02, 0, 0, 0)
+visible = false
+material_override = SubResource("5")
+mesh = SubResource("6")
+
+[node name="Cube" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.737148, 0.662773, 0.131701, 2.23517e-08, 0.194902, -0.980823, -0.675732, 0.723011, 0.143672, 74.2016, 13.2348, 80.2044)
+mesh = SubResource("BoxMesh_ortma")
+
+[node name="Moon" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -188.991, -3.05176e-05, 192.584)
+mesh = SubResource("SphereMesh_6odie")
