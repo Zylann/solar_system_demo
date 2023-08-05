@@ -41,11 +41,11 @@ static func format_integer_with_commas(n: int) -> String:
 static func ray_intersects_sphere(
 	ray_origin: Vector3, ray_dir: Vector3, center: Vector3, radius: float) -> bool:
 	
-	var t = (center - ray_origin).dot(ray_dir)
+	var t := (center - ray_origin).dot(ray_dir)
 	if t < 0.0:
 		return false
-	var p = ray_origin + ray_dir * t
-	var y = (center - p).length()
+	var p := ray_origin + ray_dir * t
+	var y := (center - p).length()
 	return y <= radius
 
 

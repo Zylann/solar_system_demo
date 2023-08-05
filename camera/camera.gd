@@ -2,6 +2,7 @@ extends Camera3D
 
 const CameraHints = preload("./camera_hints.gd")
 const Util = preload("../util/util.gd")
+const ReferenceChangeInfo = preload("../solar_system/reference_change_info.gd")
 
 const HINTS_NODE_NAME = "CameraHints"
 
@@ -25,7 +26,7 @@ var _prev_target_pos := Vector3()
 var _max_target_speed := 50.0
 
 var _wait_for_fucking_physics := 0
-var _last_ref_change_info = null
+var _last_ref_change_info : ReferenceChangeInfo = null
 
 
 func _init():
@@ -43,7 +44,7 @@ func _ready():
 		get_parent().reference_body_changed.connect(_on_solar_system_reference_body_changed)
 
 
-func _on_solar_system_reference_body_changed(info):
+func _on_solar_system_reference_body_changed(info: ReferenceChangeInfo):
 	_last_ref_change_info = info
 	# If the camera follows a rigidbody, referential change is a PITA.
 	# We can wait 1 frame for a seamless experience, if the target is actually a separated visual
@@ -84,7 +85,7 @@ func set_target(target: Node3D):
 		target_height_modifier = _default_target_height_modifier
 		side_offset = _default_side_offset
 	
-	var tt = _get_target_transform()
+	var tt := _get_target_transform()
 	_prev_target_pos = tt.origin
 	# Not setting `global_transform` because Godot logs an annoyng error
 	# when the node is not in the tree, but the meaning is global here
@@ -94,14 +95,14 @@ func set_target(target: Node3D):
 
 
 func _get_ideal_transform(target_transform: Transform3D) -> Transform3D:
-	var ct = target_transform
+	var ct := target_transform
 	ct.origin += target_transform.basis * Vector3(
 		side_offset, distance_to_target * height_modifier, distance_to_target)
 	return ct
 
 
 func _get_target_transform() -> Transform3D:
-	var tt = _target.global_transform
+	var tt := _target.global_transform
 	if _wait_for_fucking_physics > 0:
 		# Simulate as if the target managed to switch its transform already (which it didnt)
 		tt = _last_ref_change_info.inverse_transform * tt
@@ -109,7 +110,7 @@ func _get_target_transform() -> Transform3D:
 
 
 func _physics_process(delta: float):
-	var prev_trans = transform
+	var prev_trans := transform
 	
 	# Get ideal transform
 	var tt := _get_target_transform()

@@ -2,11 +2,11 @@ extends Node
 
 const Settings = preload("res://settings.gd")
 
-@onready var _main_menu = $MainMenu
-@onready var _settings_ui = $SettingsUI
+@onready var _main_menu : Control = $MainMenu
+@onready var _settings_ui : Control = $SettingsUI
 
-var _settings = Settings.new()
-var _game
+var _settings := Settings.new()
+var _game : SolarSystem
 
 
 func _ready():
@@ -57,7 +57,7 @@ func _process(delta):
 		viewport.screen_space_aa = Viewport.SCREEN_SPACE_AA_FXAA
 
 
-func _unhandled_input(event):
+func _unhandled_input(event: InputEvent):
 	if _game != null:
 		# Let the game handle it
 		return

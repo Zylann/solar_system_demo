@@ -1,16 +1,17 @@
 extends Control
 
 const StellarBody = preload("../solar_system/stellar_body.gd")
+const WaypointHUD = preload("../waypoints/waypoint_hud.gd")
 const Util = preload("../util/util.gd")
 
-@onready var _solar_system = get_parent()
-@onready var _target_planet_label = $TargetPlanetLabel
-@onready var _target_label_rect = $TargetPlanetRect
-@onready var _waypoint_hud = $WaypointHUD
-@onready var _planet_hover_audio_player = $PlanetHoverSound
+@onready var _solar_system : SolarSystem = get_parent()
+@onready var _target_planet_label : Label = $TargetPlanetLabel
+@onready var _target_label_rect : Control = $TargetPlanetRect
+@onready var _waypoint_hud : WaypointHUD = $WaypointHUD
+@onready var _planet_hover_audio_player : AudioStreamPlayer = $PlanetHoverSound
 
 var _target_planet_screen_pos := Vector2()
-var _pointed_body = null
+var _pointed_body : StellarBody = null
 
 
 func _ready():
@@ -33,7 +34,7 @@ func _process(_delta: float):
 		var body_edge_pos := body_pos + right * pointed_body.radius
 		var screen_center := camera.unproject_position(body_pos)
 		var screen_edge_pos := camera.unproject_position(body_edge_pos)
-		var screen_radius : float = max(16.0, screen_center.distance_to(screen_edge_pos))
+		var screen_radius : float = maxf(16.0, screen_center.distance_to(screen_edge_pos))
 		
 		if screen_radius > get_viewport().size.x * 0.5:
 			# Too big to be worth displaying
@@ -68,7 +69,7 @@ func _process(_delta: float):
 func _get_stellar_body_type_name(body: StellarBody) -> String:
 	if body.type == StellarBody.TYPE_SUN:
 		return "Star"
-	var parent_body = _solar_system.get_stellar_body(body.parent_id)
+	var parent_body : StellarBody = _solar_system.get_stellar_body(body.parent_id)
 	if parent_body.type != StellarBody.TYPE_SUN:
 		return "Moon"
 	return "Planet"
@@ -76,16 +77,16 @@ func _get_stellar_body_type_name(body: StellarBody) -> String:
 
 func _find_pointed_planet(camera: Camera3D) -> StellarBody:
 	var camera_pos := camera.global_transform.origin
-	var mouse_pos = get_viewport().get_mouse_position()
-	var ray_origin = camera.project_ray_origin(mouse_pos)
-	var ray_normal = camera.project_ray_normal(mouse_pos)
-	var pointed_body = null
-	var closest_distance_squared = -1.0
+	var mouse_pos := get_viewport().get_mouse_position()
+	var ray_origin := camera.project_ray_origin(mouse_pos)
+	var ray_normal := camera.project_ray_normal(mouse_pos)
+	var pointed_body : StellarBody = null
+	var closest_distance_squared := -1.0
 	for i in _solar_system.get_stellar_body_count():
-		var body = _solar_system.get_stellar_body(i)
-		var body_pos = body.node.global_transform.origin
+		var body : StellarBody = _solar_system.get_stellar_body(i)
+		var body_pos := body.node.global_transform.origin
 		if Util.ray_intersects_sphere(ray_origin, ray_normal, body_pos, body.radius):
-			var d = body_pos.distance_squared_to(camera_pos)
+			var d := body_pos.distance_squared_to(camera_pos)
 			if d < closest_distance_squared or closest_distance_squared < 0.0:
 				pointed_body = body
 				closest_distance_squared = d

@@ -1,6 +1,7 @@
 
 const PlanetAtmosphere = preload("res://addons/zylann.atmosphere/planet_atmosphere.gd")
 const Settings = preload("res://settings.gd")
+const Waypoint = preload("res://waypoints/waypoint.gd")
 
 const TYPE_SUN = 0
 const TYPE_ROCKY = 1
@@ -33,14 +34,14 @@ var day_count := 0
 var year_count := 0
 var static_bodies_are_in_tree := false
 
-var waypoints = []
+var waypoints : Array[Waypoint] = []
 
 # Godot stuff
 var node : Node3D
 var volume : VoxelLodTerrain
 var instancer : VoxelInstancer
 var atmosphere : PlanetAtmosphere
-var static_bodies := []
+var static_bodies : Array[StaticBody3D] = []
 
 
 func _notification(what: int):

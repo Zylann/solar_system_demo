@@ -5,7 +5,7 @@ const MultiSound = preload("res://sounds/multisound.gd")
 const STEP_DISTANCE = 1.5
 const STEP_DISTANCE_RANDOMNESS = 0.05
 
-const _step_sounds = [
+const _step_sounds : Array[AudioStream] = [
 	preload("res://sounds/step_dirt_01.wav"),
 	preload("res://sounds/step_dirt_02.wav"),
 	preload("res://sounds/step_dirt_03.wav"),
@@ -18,7 +18,7 @@ const _step_sounds = [
 	preload("res://sounds/step_dirt_10.wav")
 ]
 
-const _dig_sounds = [
+const _dig_sounds : Array[AudioStream] = [
 	preload("res://sounds/dig_01.wav"),
 	preload("res://sounds/dig_02.wav"),
 	preload("res://sounds/dig_03.wav"),
@@ -26,25 +26,25 @@ const _dig_sounds = [
 	preload("res://sounds/dig_05.wav")
 ]
 
-@onready var _step_players = [
+@onready var _step_players : Array[AudioStreamPlayer] = [
 	$AudioStreamPlayer,
 	$AudioStreamPlayer2
 ]
 
-@onready var _dig_players = [
+@onready var _dig_players : Array[AudioStreamPlayer3D]= [
 	$Digs/AudioStreamPlayer3,
 	$Digs/AudioStreamPlayer4,
 	$Digs/AudioStreamPlayer5
 ]
 
-@onready var _waypoint_player = $Waypoint
-@onready var _light_on_player = $FlashLightOn
-@onready var _light_off_player = $FlashLightOff
+@onready var _waypoint_player : AudioStreamPlayer = $Waypoint
+@onready var _light_on_player : AudioStreamPlayer = $FlashLightOn
+@onready var _light_off_player : AudioStreamPlayer = $FlashLightOff
 
 var _last_step_position := Vector3()
 var _step_distance := 0.0
-var _step_multisound = MultiSound.new()
-var _dig_multisound = MultiSound.new()
+var _step_multisound := MultiSound.new()
+var _dig_multisound := MultiSound.new()
 
 
 func play_dig(pos: Vector3):
@@ -76,10 +76,10 @@ func _on_Character_jumped():
 
 
 func _process(delta):
-	var position = global_transform.origin
-	var landed = get_parent().is_on_floor()
-	if position.distance_to(_last_step_position) > _step_distance and landed:
-		_last_step_position = position
+	var rb : CharacterBody3D = get_parent()
+	var landed := rb.is_on_floor()
+	if global_position.distance_to(_last_step_position) > _step_distance and landed:
+		_last_step_position = global_position
 		_play_step()
 		_next_step_distance()
 

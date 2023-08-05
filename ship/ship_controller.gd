@@ -2,8 +2,9 @@ extends Node
 
 const StellarBody = preload("../solar_system/stellar_body.gd")
 var CharacterScene = load("res://character/character.tscn")
+const SS_Camera = preload("res://camera/camera.gd")
 
-@onready var _ship = get_parent()
+@onready var _ship : Ship = get_parent()
 @onready var _character_spawn_position_node : Node3D = get_node("../CharacterSpawnPosition")
 @onready var _ground_check_position_node : Node3D = get_node("../GroundCheckPosition")
 
@@ -46,12 +47,12 @@ func _process(delta: float):
 	
 	_ship.set_superspeed_cmd(Input.is_key_pressed(KEY_SPACE))
 	
-	_turn_cmd.x = clamp(_turn_cmd.x, -1.0, 1.0)
-	_turn_cmd.y = clamp(_turn_cmd.y, -1.0, 1.0)
-	_turn_cmd.z = clamp(_turn_cmd.z, -1.0, 1.0)
-	motor.x = clamp(motor.x, -1.0, 1.0)
-	motor.y = clamp(motor.y, -1.0, 1.0)
-	motor.z = clamp(motor.z, -1.0, 1.0)
+	_turn_cmd.x = clampf(_turn_cmd.x, -1.0, 1.0)
+	_turn_cmd.y = clampf(_turn_cmd.y, -1.0, 1.0)
+	_turn_cmd.z = clampf(_turn_cmd.z, -1.0, 1.0)
+	motor.x = clampf(motor.x, -1.0, 1.0)
+	motor.y = clampf(motor.y, -1.0, 1.0)
+	motor.z = clampf(motor.z, -1.0, 1.0)
 	
 	_ship.set_move_cmd(motor)
 	_ship.set_turn_cmd(_turn_cmd)
@@ -70,7 +71,7 @@ func _physics_process(_delta: float):
 		
 
 func _try_exit_ship():
-	var ship = get_parent()
+	var ship := _ship
 	if ship.linear_velocity.length() > 1.0:
 		# Still moving
 		print("Still moving")
@@ -115,10 +116,10 @@ func _try_exit_ship():
 		print("No ground under spawn position")
 		return
 	# Let's do this
-	var character = CharacterScene.instantiate()
+	var character : Node3D = CharacterScene.instantiate()
 	character.position = spawn_pos
 	ship.get_parent().add_child(character)
-	var camera = get_viewport().get_camera_3d()
+	var camera : SS_Camera = get_viewport().get_camera_3d()
 	camera.set_target(character)
 	ship.disable_controller()
 
@@ -126,14 +127,14 @@ func _try_exit_ship():
 # TODO I could not use `_unhandled_input`
 # because otherwise control is stuck for the duration of the pause menu animations
 # See https://github.com/godotengine/godot/issues/20234
-func _input(event):
+func _input(event: InputEvent):
 	if not Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		return
 	
 	if event is InputEventMouseMotion:
 		# Get mouse delta
-		var motion = -event.relative
-		var cmd = mouse_turn_sensitivity * motion
+		var motion : Vector2 = -event.relative
+		var cmd := mouse_turn_sensitivity * motion
 		_turn_cmd.x += cmd.x
 		_turn_cmd.y += cmd.y
 	
@@ -148,7 +149,7 @@ func _input(event):
 func _process_dig_actions():
 	var camera := get_viewport().get_camera_3d()
 	var front := -camera.global_transform.basis.z
-	var cam_pos = camera.global_transform.origin
+	var cam_pos := camera.global_transform.origin
 	var space_state := camera.get_world_3d().direct_space_state
 
 	var ray_query := PhysicsRayQueryParameters3D.new()
@@ -164,8 +165,9 @@ func _process_dig_actions():
 			var volume : VoxelLodTerrain = hit.collider
 			if dig_cmd:
 				var vt : VoxelTool = volume.get_voxel_tool()
-				var pos = volume.get_global_transform().affine_inverse() * hit.position
-				var sphere_size = 15.0
+				var hit_pos : Vector3 = hit.position
+				var pos := volume.get_global_transform().affine_inverse() * hit_pos
+				var sphere_size := 15.0
 				pos -= front * (sphere_size * 0.7)
 				vt.channel = VoxelBuffer.CHANNEL_SDF
 				vt.mode = VoxelTool.MODE_REMOVE

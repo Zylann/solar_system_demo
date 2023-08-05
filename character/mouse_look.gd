@@ -10,20 +10,20 @@ var _pitch := 0.0
 var _yaw := 0.0
 
 
-func _input(event):
+func _input(event: InputEvent):
 	if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
 		return
 	
 	if event is InputEventMouseMotion:
 		# Get mouse delta
-		var motion = event.relative
+		var motion : Vector2 = event.relative
 		
 		# Add to rotations
 		_yaw -= motion.x * MOUSE_TURN_SENSITIVITY
 		_pitch += motion.y * MOUSE_TURN_SENSITIVITY
 		
 		# Clamp pitch
-		var e = 0.001
+		var e := 0.001
 		if _pitch > MAX_ANGLE - e:
 			_pitch = MAX_ANGLE - e
 		elif _pitch < MIN_ANGLE + e:

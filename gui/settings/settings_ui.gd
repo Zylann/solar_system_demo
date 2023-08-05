@@ -3,21 +3,25 @@ extends CenterContainer
 const Settings = preload("res://settings.gd")
 const Binding = preload("res://binding.gd")
 
-@onready var _world_scale_x10_checkbox = $PC/MC/VB/TabContainer/Game/GC/VBoxContainer/WorldScaleX10
+@onready var _world_scale_x10_checkbox : CheckBox = \
+	$PC/MC/VB/TabContainer/Game/GC/VBoxContainer/WorldScaleX10
 
-@onready var _lens_flares_checkbox = $PC/MC/VB/TabContainer/Graphics/GC/LensFlares
-@onready var _glow_checkbox = $PC/MC/VB/TabContainer/Graphics/GC/Glow
-@onready var _shadows_checkbox = $PC/MC/VB/TabContainer/Graphics/GC/Shadows
-@onready var _detail_rendering_selector = $PC/MC/VB/TabContainer/Graphics/GC/DetailRenderingSelector
+@onready var _lens_flares_checkbox : CheckBox = $PC/MC/VB/TabContainer/Graphics/GC/LensFlares
+@onready var _glow_checkbox : CheckBox = $PC/MC/VB/TabContainer/Graphics/GC/Glow
+@onready var _shadows_checkbox : CheckBox = $PC/MC/VB/TabContainer/Graphics/GC/Shadows
+@onready var _detail_rendering_selector : OptionButton = \
+	$PC/MC/VB/TabContainer/Graphics/GC/DetailRenderingSelector
 
-@onready var _main_volume_slider = $PC/MC/VB/TabContainer/Sound/GridContainer/MainVolume
+@onready var _main_volume_slider : Slider = $PC/MC/VB/TabContainer/Sound/GridContainer/MainVolume
 
-@onready var _debug_text_checkbox = $PC/MC/VB/TabContainer/Debug/GC/ShowDebugText
-@onready var _show_octree_nodes_checkbox = $PC/MC/VB/TabContainer/Debug/GC/ShowOctreeNodes
-@onready var _show_mesh_updates_checkbox = $PC/MC/VB/TabContainer/Debug/GC/ShowMeshUpdates
-@onready var _show_edited_data_blocks_checkbox = \
+@onready var _debug_text_checkbox : CheckBox = $PC/MC/VB/TabContainer/Debug/GC/ShowDebugText
+@onready var _show_octree_nodes_checkbox : CheckBox = \
+	$PC/MC/VB/TabContainer/Debug/GC/ShowOctreeNodes
+@onready var _show_mesh_updates_checkbox : CheckBox = \
+	$PC/MC/VB/TabContainer/Debug/GC/ShowMeshUpdates
+@onready var _show_edited_data_blocks_checkbox : CheckBox = \
 	$PC/MC/VB/TabContainer/Debug/GC/ShowEditedDataBlocks
-@onready var _wireframe_checkbox = $PC/MC/VB/TabContainer/Debug/GC/Wireframe
+@onready var _wireframe_checkbox : CheckBox = $PC/MC/VB/TabContainer/Debug/GC/Wireframe
 @onready var _clouds_selector : OptionButton = $PC/MC/VB/TabContainer/Graphics/GC/CloudsSelector
 @onready var _antialias_selector : OptionButton = \
 	$PC/MC/VB/TabContainer/Graphics/GC/AntialiasSelector
@@ -25,7 +29,7 @@ const Binding = preload("res://binding.gd")
 
 var _settings : Settings
 var _updating_gui := false
-var _bindings = []
+var _bindings : Array[Binding.BindingBase] = []
 
 
 func _ready():

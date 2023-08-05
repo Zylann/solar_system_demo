@@ -1,7 +1,11 @@
 
+# Scripts
+
 const StellarBody = preload("./stellar_body.gd")
 const Settings = preload("res://settings.gd")
 const PlanetAtmosphere = preload("res://addons/zylann.atmosphere/planet_atmosphere.gd")
+
+# Assets 
 
 const VolumetricAtmosphereScene = preload("res://addons/zylann.atmosphere/planet_atmosphere.tscn")
 const BigRock1Scene = preload("../props/big_rocks/big_rock1.tscn")
@@ -39,10 +43,10 @@ const SAVE_FOLDER_PATH = "debug_data"
 const LARGE_SCALE = 10.0
 
 
-static func create_solar_system_data(settings: Settings) -> Array:
-	var bodies = []
+static func create_solar_system_data(settings: Settings) -> Array[StellarBody]:
+	var bodies : Array[StellarBody] = []
 	
-	var sun = StellarBody.new()
+	var sun := StellarBody.new()
 	sun.type = StellarBody.TYPE_SUN
 	sun.radius = 2000.0
 	sun.self_revolution_time = 60.0
@@ -50,7 +54,7 @@ static func create_solar_system_data(settings: Settings) -> Array:
 	sun.name = "Sun"
 	bodies.append(sun)
 	
-	var planet = StellarBody.new()
+	var planet := StellarBody.new()
 	planet.name = "Mercury"
 	planet.type = StellarBody.TYPE_ROCKY
 	planet.radius = 900.0
@@ -80,7 +84,7 @@ static func create_solar_system_data(settings: Settings) -> Array:
 	planet.clouds_coverage_bias = 0.0
 	planet.clouds_coverage_cubemap = CloudCoverageTextureEarth
 	planet.sea = true
-	var earth_id = len(bodies)
+	var earth_id := bodies.size()
 	bodies.append(planet)
 
 	planet = StellarBody.new()
@@ -132,13 +136,13 @@ static func create_solar_system_data(settings: Settings) -> Array:
 	planet.clouds_coverage_cubemap = CloudCoverageTextureGas
 	bodies.append(planet)
 	
-	var scale = 1.0
+	var scale := 1.0
 	if settings.world_scale_x10:
 		scale = LARGE_SCALE
 
 	for body in bodies:
 		body.radius *= scale
-		var speed = body.distance_to_parent * TAU / body.orbit_revolution_time
+		var speed := body.distance_to_parent * TAU / body.orbit_revolution_time
 		body.distance_to_parent *= scale
 		body.orbit_revolution_time = body.distance_to_parent * TAU / speed
 	
@@ -146,8 +150,8 @@ static func create_solar_system_data(settings: Settings) -> Array:
 
 
 static func _setup_sun(body: StellarBody, root: Node3D) -> DirectionalLight3D:
-	var mi = MeshInstance3D.new()
-	var mesh = SphereMesh.new()
+	var mi := MeshInstance3D.new()
+	var mesh := SphereMesh.new()
 	mesh.radius = body.radius
 	mesh.height = 2.0 * mesh.radius
 	mi.mesh = mesh
@@ -261,7 +265,7 @@ static func _setup_sea(body: StellarBody, root: Node3D):
 	var sea_mesh := SphereMesh.new()
 	sea_mesh.radius = body.radius * 0.985
 	sea_mesh.height = 2.0 * sea_mesh.radius
-	var sea_mesh_instance = MeshInstance3D.new()
+	var sea_mesh_instance := MeshInstance3D.new()
 	sea_mesh_instance.mesh = sea_mesh
 	sea_mesh_instance.material_override = WaterSeaMaterial
 	root.add_child(sea_mesh_instance)
@@ -292,7 +296,7 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D, settings: Setti
 	var cave_noise = graph.get_node_param(cave_noise_node_id, noise_param_id)
 	cave_noise.period = 900.0 / body.radius
 	var ravine_depth_multiplier_node_id := graph.find_node_by_name("ravine_depth_multiplier")
-	var ravine_depth = graph.get_node_default_input(ravine_depth_multiplier_node_id, 1)
+	var ravine_depth : float = graph.get_node_default_input(ravine_depth_multiplier_node_id, 1)
 	if settings.world_scale_x10:
 		ravine_depth *= LARGE_SCALE
 	graph.set_node_default_input(ravine_depth_multiplier_node_id, 1, ravine_depth)
@@ -315,17 +319,17 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D, settings: Setti
 	#var sphere_normalmap_tex = ImageTexture.create_from_image(sphere_normalmap)
 	#mat.set_shader_parameter("u_global_normalmap", sphere_normalmap_tex)
 
-	var stream = VoxelStreamSQLite.new()
+	var stream := VoxelStreamSQLite.new()
 	stream.database_path = str(SAVE_FOLDER_PATH, "/", body.name, ".sqlite")
 
-	var extra_lods = 0
+	var extra_lods := 0
 	if settings.world_scale_x10:
-		var temp = int(LARGE_SCALE)
+		var temp := int(LARGE_SCALE)
 		while temp > 1:
 			extra_lods += 1
 			temp /= 2
 
-	var pot = 1024
+	var pot := 1024
 	while body.radius >= pot:
 		pot *= 2
 
@@ -335,7 +339,7 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D, settings: Setti
 	volume.collision_lod_count = 2
 	volume.generator = generator
 	volume.stream = stream
-	var view_distance = 100000
+	var view_distance := 100000.0
 	if settings.world_scale_x10:
 		view_distance *= LARGE_SCALE
 	volume.view_distance = view_distance
@@ -371,14 +375,14 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	for mesh in [Pebble1Mesh, Rock1Mesh, BigRock1Mesh]:
 		mesh.surface_set_material(0, RockMaterial)
 
-	var instancer = VoxelInstancer.new()
+	var instancer := VoxelInstancer.new()
 	instancer.set_up_mode(VoxelInstancer.UP_MODE_SPHERE)
 
-	var library = VoxelInstanceLibrary.new()
+	var library := VoxelInstanceLibrary.new()
 	# Usually most of this is done in editor, but some features can only be setup by code atm.
 	# Also if we want to procedurally-generate some of this, we may need code anyways.
 
-	var instance_generator = VoxelInstanceGenerator.new()
+	var instance_generator := VoxelInstanceGenerator.new()
 	instance_generator.density = 0.15
 	instance_generator.min_scale = 0.2
 	instance_generator.max_scale = 0.4
@@ -393,10 +397,10 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	instance_generator.noise.fractal_octaves = 2
 	instance_generator.noise_on_scale = 1
 	#instance_generator.noise.noise_type = FastNoiseLite.TYPE_PERLIN
-	var item = VoxelInstanceLibraryMultiMeshItem.new()
+	var item := VoxelInstanceLibraryMultiMeshItem.new()
 	
 	if body.name == "Earth":
-		var grass_mesh = GrassScene.instantiate()
+		var grass_mesh : Node = GrassScene.instantiate()
 		item.setup_from_template(grass_mesh)
 		grass_mesh.free()
 
@@ -426,7 +430,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	instance_generator.max_slope_degrees = 12
 	instance_generator.vertical_alignment = 0.0
 	item = VoxelInstanceLibraryMultiMeshItem.new()
-	var rock1_template = Rock1Scene.instantiate()
+	var rock1_template : Node = Rock1Scene.instantiate()
 	item.setup_from_template(rock1_template)
 	rock1_template.free()
 	item.generator = instance_generator
@@ -464,7 +468,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	instance_generator.vertical_alignment = 1.0
 	instance_generator.offset_along_normal = -0.5
 	item = VoxelInstanceLibraryMultiMeshItem.new()
-	var cone = CylinderMesh.new()
+	var cone := CylinderMesh.new()
 	cone.radial_segments = 8
 	cone.rings = 0
 	cone.top_radius = 0.5

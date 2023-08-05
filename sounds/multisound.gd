@@ -1,11 +1,15 @@
 
-var _streams = []
-var _players = []
+var _streams : Array[AudioStream] = []
+
+# Array of AudioStreamPlayer*. For some reason there is no common base class,
+# so we can't type-hint this array
+var _players := []
+
 var _player_round_index := 0
 var _stream_round_index := 0
 
 
-func set_streams(streams: Array):
+func set_streams(streams: Array[AudioStream]):
 	_streams = streams
 
 
@@ -33,7 +37,7 @@ func play(pos := Vector3()):
 
 func _next_sound():
 	_stream_round_index += 1
-	if _stream_round_index == len(_streams):
+	if _stream_round_index == _streams.size():
 		_stream_round_index = 0
 
 

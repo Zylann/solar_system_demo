@@ -1,9 +1,14 @@
 extends RigidBody3D
+class_name Ship
 
 const StellarBody = preload("../solar_system/stellar_body.gd")
 const Util = preload("../util/util.gd")
 const SolarSystemSetup = preload("../solar_system/solar_system_setup.gd")
 const Settings = preload("res://settings.gd")
+const ShipController = preload("./ship_controller.gd")
+const ShipAudio = preload("./ship_audio.gd")
+const JetVFX = preload("./jet_vfx.gd")
+const ReferenceChangeInfo = preload("res://solar_system/reference_change_info.gd")
 
 const STATE_LANDED = 0
 const STATE_FLYING = 1
@@ -13,10 +18,10 @@ const STATE_FLYING = 1
 @export var speed_cap_on_planet := 40.0
 @export var speed_cap_in_space := 400.0
 
-@onready var _visual_root = $Visual/VisualRoot
-@onready var _controller = $Controller
+@onready var _visual_root : Node3D = $Visual/VisualRoot
+@onready var _controller : ShipController = $Controller
 # Nodes that should be enabled only when landed
-@onready var _landed_nodes = [
+@onready var _landed_nodes : Array[Node] = [
 	# TODO Godot4 now imports some nodes with unpredictable names if they collide instead of
 	# incrementing.
 	# The model has Interior and Interior-colonly but then the second was supposed to be named
@@ -25,26 +30,26 @@ const STATE_FLYING = 1
 	$Visual/VisualRoot/ship/HatchDown/KinematicBody,
 	$CommandPanel
 ]
-@onready var _landed_node_parents = []
-@onready var _flight_collision_shapes = [
+var _landed_node_parents : Array[Node] = []
+@onready var _flight_collision_shapes : Array[CollisionShape3D] = [
 	$FlightCollisionShape,
 	#$FlightCollisionShape2,
 	#$FlightCollisionShape3
 ]
-@onready var _animation_player = $AnimationPlayer
-@onready var _main_jets = [
+@onready var _animation_player : AnimationPlayer = $AnimationPlayer
+@onready var _main_jets : Array[JetVFX] = [
 	$Visual/VisualRoot/JetVFXMainLeft,
 	$Visual/VisualRoot/JetVFXMainRight,
 ]
-@onready var _left_roll_jets = [
+@onready var _left_roll_jets : Array[JetVFX] = [
 	$Visual/VisualRoot/JetVFXLeftWing1,
 	$Visual/VisualRoot/JetVFXLeftWing2
 ]
-@onready var _right_roll_jets = [
+@onready var _right_roll_jets : Array[JetVFX] = [
 	$Visual/VisualRoot/JetVFXRightWing1,
 	$Visual/VisualRoot/JetVFXRightWing2
 ]
-@onready var _audio = $ShipAudio
+@onready var _audio : ShipAudio = $ShipAudio
 
 var _move_cmd := Vector3()
 var _turn_cmd := Vector3()
@@ -52,19 +57,19 @@ var _superspeed_cmd := false
 var _exit_ship_cmd := false
 var _state := STATE_FLYING
 var _planet_damping_amount := 0.0 # TODO Doesnt need to be a member var
-var _ref_change_info = null
+var _ref_change_info : ReferenceChangeInfo
 var _was_superspeed := false
 var _last_contacts_count := 0
 
-var _speed_cap_in_space_superspeed_multiplier = 10.0
-var _linear_acceleration_superspeed_multiplier = 15.0
+var _speed_cap_in_space_superspeed_multiplier := 10.0
+var _linear_acceleration_superspeed_multiplier := 15.0
 
 
 func _ready():
 	# Workaround because these node names can easily be unreliable due to import issues
-	var visual_model_root = _visual_root.get_node("ship")
+	var visual_model_root := _visual_root.get_node("ship")
 	for i in visual_model_root.get_child_count():
-		var node = visual_model_root.get_child(i)
+		var node := visual_model_root.get_child(i)
 		if node is StaticBody3D:
 			_landed_nodes.append(node)
 
@@ -123,7 +128,7 @@ func _close_hatch():
 	_animation_player.play_backwards("hatch_open")
 
 
-func _on_solar_system_reference_body_changed(info):
+func _on_solar_system_reference_body_changed(info: ReferenceChangeInfo):
 	# We'll do that in `_integrate_forces`,
 	# because Godot can't be bothered to do such override for us.
 	# The camera following the ship will also needs to account for that delay...
@@ -132,7 +137,7 @@ func _on_solar_system_reference_body_changed(info):
 	#_linear_velocity = info.inverse_transform.basis * _linear_velocity
 
 
-func get_solar_system():
+func get_solar_system() -> SolarSystem:
 	return get_parent()
 
 
@@ -164,7 +169,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 	var linear_acceleration_mod := linear_acceleration
 	var speed_cap_in_space_mod := speed_cap_in_space
 	
-	var superspeed = false
+	var superspeed := false
 	if _superspeed_cmd and stellar_body.type == StellarBody.TYPE_SUN:
 		speed_cap_in_space_mod *= _speed_cap_in_space_superspeed_multiplier
 		linear_acceleration_mod *= _linear_acceleration_superspeed_multiplier
@@ -179,12 +184,12 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 
 	var speed_cap := speed_cap_in_space_mod
 	
-	var motor = _move_cmd.z * forward * linear_acceleration_mod
+	var motor := _move_cmd.z * forward * linear_acceleration_mod
 	state.apply_central_force(motor)
 
-	_turn_cmd.x = clamp(_turn_cmd.x, -1, 1)
-	_turn_cmd.y = clamp(_turn_cmd.y, -1, 1)
-	_turn_cmd.z = clamp(_turn_cmd.z, -1, 1)
+	_turn_cmd.x = clampf(_turn_cmd.x, -1.0, 1.0)
+	_turn_cmd.y = clampf(_turn_cmd.y, -1.0, 1.0)
+	_turn_cmd.z = clampf(_turn_cmd.z, -1.0, 1.0)
 	
 	state.apply_torque_impulse(up * _turn_cmd.x * angular_acceleration)
 	state.apply_torque_impulse(right * _turn_cmd.y * angular_acceleration)
@@ -203,7 +208,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 		# In case you dive into a stellar body, gravity actually reduces as you get closer to
 		# the core, because some mass is now behind you
 		# TODO Explicit typing should not be needed, there is a bug in GDScript2
-		var gd : float = abs(distance_to_core - stellar_body.radius) + stellar_body.radius
+		var gd : float = absf(distance_to_core - stellar_body.radius) + stellar_body.radius
 		var gravity_dir := (pull_center - gtrans.origin).normalized()
 		var stellar_mass := Util.get_sphere_volume(stellar_body.radius)
 		var f := 0.005 * stellar_mass / (gd * gd)
@@ -213,26 +218,26 @@ func _integrate_forces(state: PhysicsDirectBodyState3D):
 		# Near-planet damping
 		var distance_to_surface := distance_to_core - stellar_body.radius
 		_planet_damping_amount = \
-			1.0 - clamp((distance_to_surface - 50.0) / stellar_body.radius, 0.0, 1.0)
+			1.0 - clampf((distance_to_surface - 50.0) / stellar_body.radius, 0.0, 1.0)
 		DDD.set_text("Atmosphere damping amount", _planet_damping_amount)
-		speed_cap = lerp(speed_cap_in_space_mod, speed_cap_on_planet, _planet_damping_amount)
+		speed_cap = lerpf(speed_cap_in_space_mod, speed_cap_on_planet, _planet_damping_amount)
 	
 	var speed := state.linear_velocity.length()
 	if speed > speed_cap:
 		state.linear_velocity = state.linear_velocity.normalized() * speed_cap
 	
 	# Jets
-	var main_jet_power = _move_cmd.z
+	var main_jet_power := _move_cmd.z
 	for jet in _main_jets:
 		jet.set_power(main_jet_power)
-	var left_roll_jet_power = max(_turn_cmd.z, 0.0)
-	var right_roll_jet_power = max(-_turn_cmd.z, 0.0)
+	var left_roll_jet_power := maxf(_turn_cmd.z, 0.0)
+	var right_roll_jet_power := maxf(-_turn_cmd.z, 0.0)
 	for jet in _left_roll_jets:
 		jet.set_power(left_roll_jet_power)
 	for jet in _right_roll_jets:
 		jet.set_power(right_roll_jet_power)
-	_audio.set_main_jet_power(abs(_move_cmd.z))
-	_audio.set_secondary_jet_power(clamp(left_roll_jet_power + right_roll_jet_power, 0.0, 1.0))
+	_audio.set_main_jet_power(absf(_move_cmd.z))
+	_audio.set_secondary_jet_power(clampf(left_roll_jet_power + right_roll_jet_power, 0.0, 1.0))
 
 	DDD.set_text("Speed", state.linear_velocity.length())
 	DDD.set_text("X", gtrans.origin.x)

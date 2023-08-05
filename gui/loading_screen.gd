@@ -1,10 +1,12 @@
 extends ColorRect
 
-@onready var _label = $CC/PC/VB/Label
-@onready var _progress_bar = $CC/PC/VB/ProgressBar
+const LoadingProgress = preload("res://solar_system/loading_progress.gd")
+
+@onready var _label : Label = $CC/PC/VB/Label
+@onready var _progress_bar : ProgressBar = $CC/PC/VB/ProgressBar
 
 
-func _on_GameWorld_loading_progressed(info):
+func _on_GameWorld_loading_progressed(info: LoadingProgress):
 	if info.finished:
 		hide()
 	else:

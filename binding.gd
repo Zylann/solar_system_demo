@@ -1,5 +1,5 @@
 
-static func create(obj, var_name: String, control: Control) -> BindingBase:
+static func create(obj: Object, var_name: String, control: Control) -> BindingBase:
 	if control is CheckBox:
 		return CheckBoxBinding.new(obj, var_name, control as CheckBox)
 	if control is Range:
@@ -12,8 +12,8 @@ static func create(obj, var_name: String, control: Control) -> BindingBase:
 
 class BindingBase:
 	var _var_name := ""
-	var _obj
-	var _updating_ui = false
+	var _obj: Object
+	var _updating_ui := false
 	
 	func update_ui():
 		push_error("Unimplemented")
@@ -22,7 +22,7 @@ class BindingBase:
 class CheckBoxBinding extends BindingBase:
 	var _control : CheckBox
 	
-	func _init(obj, var_name: String, cb: CheckBox):
+	func _init(obj: Object, var_name: String, cb: CheckBox):
 		_var_name = var_name
 		_obj = obj
 		_control = cb
@@ -34,7 +34,7 @@ class CheckBoxBinding extends BindingBase:
 		_obj.set(_var_name, enabled)
 
 	func update_ui():
-		var v = _obj.get(_var_name)
+		var v : bool = _obj.get(_var_name)
 		_updating_ui = true
 		_control.button_pressed = v
 		_updating_ui = false
@@ -43,7 +43,7 @@ class CheckBoxBinding extends BindingBase:
 class RangeBinding extends BindingBase:
 	var _control : Range
 	
-	func _init(obj, var_name: String, r: Range):
+	func _init(obj: Object, var_name: String, r: Range):
 		_var_name = var_name
 		_obj = obj
 		_control = r
@@ -55,7 +55,7 @@ class RangeBinding extends BindingBase:
 		_obj.set(_var_name, new_value)
 
 	func update_ui():
-		var v = _obj.get(_var_name)
+		var v : float = _obj.get(_var_name)
 		_updating_ui = true
 		_control.value = v
 		_updating_ui = false
@@ -64,7 +64,7 @@ class RangeBinding extends BindingBase:
 class OptionBinding extends BindingBase:
 	var _control : OptionButton
 	
-	func _init(obj, var_name: String, ob: OptionButton):
+	func _init(obj: Object, var_name: String, ob: OptionButton):
 		_var_name = var_name
 		_obj = obj
 		_control = ob
@@ -76,9 +76,9 @@ class OptionBinding extends BindingBase:
 		_obj.set(_var_name, option)
 
 	func update_ui():
-		var v = _obj.get(_var_name)
+		var v : int = _obj.get(_var_name)
 		_updating_ui = true
-		var i = _control.get_item_index(v)
+		var i := _control.get_item_index(v)
 		_control.select(i)
 		_updating_ui = false
 

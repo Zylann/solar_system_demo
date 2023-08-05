@@ -5,7 +5,7 @@ extends Node
 @onready var _output_bg : TextureRect = $WorldOutput/BG
 @onready var _output_fg : TextureRect = $WorldOutput/FG
 
-var _far_viewport : Viewport
+var _far_viewport : SubViewport
 var _bg_camera : Camera3D
 
 
@@ -19,13 +19,13 @@ func _ready():
 	_world_viewport.size = get_viewport().size
 	_world_viewport.shadow_atlas_size = get_viewport().shadow_atlas_size
 	
-	_far_viewport = Viewport.new()
+	_far_viewport = SubViewport.new()
 	_far_viewport.size = _world_viewport.size
 	_far_viewport.world_3d = _world_viewport.world_3d
 	#_far_viewport.own_world = true
 	_far_viewport.transparent_bg = false
 	_far_viewport.render_target_v_flip = true
-	_far_viewport.render_target_update_mode = Viewport.UPDATE_ALWAYS
+	_far_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	_world_viewport.add_sibling(_far_viewport)
 	
 	_bg_camera = Camera3D.new()

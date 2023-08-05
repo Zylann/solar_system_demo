@@ -1,6 +1,6 @@
 extends Control
 
-@export var capture_mouse_in_ready = true
+@export var capture_mouse_in_ready := true
 
 signal escaped
 
@@ -20,7 +20,7 @@ func capture():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
-func _unhandled_input(event):
+func _unhandled_input(event: InputEvent):
 	if event is InputEventMouseButton:
 		if event.pressed and Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
 			capture()

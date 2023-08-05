@@ -1,7 +1,6 @@
 extends Node
 
 const StellarBody = preload("../solar_system/stellar_body.gd")
-const SolarSystem = preload("../solar_system/solar_system.gd")
 const Ship = preload("../ship/ship.gd")
 const Util = preload("../util/util.gd")
 const CollisionLayers = preload("../collision_layers.gd")
@@ -9,6 +8,8 @@ const CollisionLayers = preload("../collision_layers.gd")
 # It could be confusing to not realize this is actually from the project and not Godot
 const CharacterBody = preload("res://addons/zylann.3d_basics/character/character.gd")
 const SplitChunkRigidBodyComponent = preload("../solar_system/split_chunk_rigidbody_component.gd")
+const CharacterAudio = preload("./character_audio.gd")
+const Waypoint = preload("res://waypoints/waypoint.gd")
 
 const WaypointScene = preload("../waypoints/waypoint.tscn")
 
@@ -23,7 +24,7 @@ const JUMP_SPEED = 8.0
 #@onready var _visual_animated : Mannequiny = get_node("../Visual/Mannequiny")
 @onready var _visual_head : Node3D = get_node("../Visual/Head")
 @onready var _flashlight : SpotLight3D = get_node("../Visual/FlashLight")
-@onready var _audio = get_node("../Audio")
+@onready var _audio : CharacterAudio = get_node("../Audio")
 
 var _velocity := Vector3()
 var _dig_cmd := false
@@ -61,30 +62,30 @@ func _physics_process(delta):
 
 
 func _process_undig():
-	var solar_system = _get_solar_system()
+	var solar_system := _get_solar_system()
 	if solar_system == null:
 		# In testing scene?
 		return
-	var volume = solar_system.get_reference_stellar_body().volume
-	var vt = volume.get_voxel_tool()
-	var to_local = volume.global_transform.affine_inverse()
-	var character_body = _get_body()
-	var local_pos = to_local * character_body.global_transform.origin
+	var volume := solar_system.get_reference_stellar_body().volume
+	var vt : VoxelToolLodTerrain = volume.get_voxel_tool()
+	var to_local := volume.global_transform.affine_inverse()
+	var character_body := _get_body()
+	var local_pos := to_local * character_body.global_transform.origin
 	vt.channel = VoxelBuffer.CHANNEL_SDF
-	var sdf = vt.get_voxel_f_interpolated(local_pos)
+	var sdf := vt.get_voxel_f_interpolated(local_pos)
 	DDD.set_text("SDF at feet", sdf)
 	if sdf < -0.001:
 		# We got buried, teleport at nearest safe location
 		print("Character is buried, teleporting back to air")
-		var up = local_pos.normalized()
-		var offset_local_pos = local_pos
+		var up := local_pos.normalized()
+		var offset_local_pos := local_pos
 		for i in 10:
 			print("Undig attempt ", i)
 			offset_local_pos += 0.2 * up
 			sdf = vt.get_voxel_f_interpolated(offset_local_pos)
 			if sdf > 0.0005:
 				break
-		var gtrans = character_body.global_transform
+		var gtrans := character_body.global_transform
 		gtrans.origin = volume.get_global_transform() * offset_local_pos
 		character_body.global_transform = gtrans
 
@@ -98,7 +99,7 @@ func _process_actions():
 	
 	var camera := get_viewport().get_camera_3d()
 	var front := -camera.global_transform.basis.z
-	var cam_pos = camera.global_transform.origin
+	var cam_pos := camera.global_transform.origin
 	var space_state := character_body.get_world_3d().direct_space_state
 	
 	var ray_query := PhysicsRayQueryParameters3D.new()
@@ -115,30 +116,31 @@ func _process_actions():
 	if not hit.is_empty():
 		if hit.collider is VoxelLodTerrain:
 			var volume : VoxelLodTerrain = hit.collider
+			var hit_position : Vector3 = hit.position
 
 			if _dig_cmd:
 				_dig_cmd = false
-				var vt : VoxelTool = volume.get_voxel_tool()
-				var pos = volume.get_global_transform().affine_inverse() * hit.position
-				var sphere_size = 3.5
+				var vt : VoxelToolLodTerrain = volume.get_voxel_tool()
+				var pos := volume.get_global_transform().affine_inverse() * hit_position
+				var sphere_size := 3.5
 				#pos -= front * (sphere_size * 0.9)
 				vt.channel = VoxelBuffer.CHANNEL_SDF
 				vt.mode = VoxelTool.MODE_REMOVE
 				vt.do_sphere(pos, sphere_size)
 				_audio.play_dig(pos)
 
-				var splitter_aabb = AABB(pos, Vector3()).grow(16.0)
-				var bodies = vt.separate_floating_chunks(splitter_aabb, camera.get_parent())
+				var splitter_aabb := AABB(pos, Vector3()).grow(16.0)
+				var bodies := vt.separate_floating_chunks(splitter_aabb, camera.get_parent())
 				print("Created ", len(bodies), " bodies")
 				for body in bodies:
-					var cmp = SplitChunkRigidBodyComponent.new()
+					var cmp := SplitChunkRigidBodyComponent.new()
 					body.add_child(cmp)
 				DDD.draw_box_aabb(splitter_aabb, Color(0,1,0), 60)
 
 			if _build_cmd:
 				_build_cmd = false
 				var vt : VoxelTool = volume.get_voxel_tool()
-				var pos = volume.get_global_transform().affine_inverse() * hit.position
+				var pos := volume.get_global_transform().affine_inverse() * hit_position
 				vt.channel = VoxelBuffer.CHANNEL_SDF
 				vt.mode = VoxelTool.MODE_ADD
 				vt.do_sphere(pos, 3.5)
@@ -146,15 +148,15 @@ func _process_actions():
 			
 			if _waypoint_cmd:
 				_waypoint_cmd = false
-				var planet = _get_solar_system().get_reference_stellar_body()
-				var waypoint = WaypointScene.instantiate()
-				waypoint.transform = Transform3D(character_body.transform.basis, hit.position)
+				var planet := _get_solar_system().get_reference_stellar_body()
+				var waypoint : Waypoint = WaypointScene.instantiate()
+				waypoint.transform = Transform3D(character_body.transform.basis, hit_position)
 				planet.node.add_child(waypoint)
 				planet.waypoints.append(waypoint)
 				_audio.play_waypoint()
 
 
-func _unhandled_input(event):
+func _unhandled_input(event: InputEvent):
 	if event is InputEventKey:
 		if event.pressed and not event.is_echo():
 			match event.keycode:
@@ -186,7 +188,7 @@ func _interact():
 	var space_state := character_body.get_world_3d().direct_space_state
 	var camera := get_viewport().get_camera_3d()
 	var front := -camera.global_transform.basis.z
-	var pos = camera.global_transform.origin
+	var pos := camera.global_transform.origin
 
 	var ray_query := PhysicsRayQueryParameters3D.new()
 	ray_query.from = pos
@@ -194,11 +196,11 @@ func _interact():
 	ray_query.collision_mask = CollisionLayers.DEFAULT
 	ray_query.collide_with_bodies = false
 	ray_query.collide_with_areas = true
-	var hit = space_state.intersect_ray(ray_query)
+	var hit := space_state.intersect_ray(ray_query)
 
 	if not hit.is_empty():
 		if hit.collider.name == "CommandPanel":
-			var ship = Util.find_parent_by_type(hit.collider, Ship)
+			var ship : Ship = Util.find_parent_by_type(hit.collider, Ship)
 			if ship != null:
 				_enter_ship(ship)
 
