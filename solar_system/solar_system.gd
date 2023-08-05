@@ -188,7 +188,7 @@ func _physics_process(delta: float):
 		# so we must simulate its motion relative to us
 		_environment.sky_rotation = ref_trans_inverse.basis.get_euler()
 	else:
-		_environment.background_sky_orientation = Basis()
+		_environment.sky_rotation = Vector3()
 	
 	_process_setting_changes()
 	
