@@ -47,8 +47,7 @@ func _reset():
 	_cell_size = BASE_CELL_SIZE
 	if _image == null or _image.get_size() != Vector2i(size):
 		print("Creating image ", size)
-		_image = Image.new()
-		_image.create(size.x, size.y, false, Image.FORMAT_RGB8)
+		_image = Image.create(size.x, size.y, false, Image.FORMAT_RGB8)
 	_image.fill(Color(0, 0, 0))
 	if _texture == null:
 		_texture = ImageTexture.new()

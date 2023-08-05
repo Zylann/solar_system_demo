@@ -13,6 +13,7 @@ func _enter_tree():
 		print("Could not find 3D viewport container")
 		return
 	_overlay = CollisionOverlay.instantiate()
+	_overlay.modulate = Color(1,1,1,0.9)
 	parent.add_child(_overlay)
 	parent.move_child(_overlay, 1)
 	# As per https://github.com/godotengine/godot/issues/6869
@@ -28,15 +29,15 @@ func handles(obj):
 	return true
 
 
-func forward_spatial_gui_input(camera, event):
+func _forward_3d_gui_input(viewport_camera, event):
 	if _overlay != null:
-		_overlay.set_camera(camera)
+		_overlay.set_camera(viewport_camera)
 	return false
 
 
 func get_3d_viewport_container() -> Control:
 	# Yes, this is a VBoxContainer, and it covers more than the actual 3D view
-	var vb = get_editor_interface().get_editor_main_control()
+	var vb = get_editor_interface().get_editor_main_screen()
 	# So we have to dig for a non-exposed node type...
 	return find_first_node(vb, "Node3DEditorViewport") as Control
 
