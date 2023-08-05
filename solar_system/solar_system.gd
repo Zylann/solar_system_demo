@@ -42,6 +42,7 @@ var _physics_count_on_last_reference_change = 0
 # It will be overriden in the normal flow.
 var _settings := Settings.new()
 var _settings_ui : Control
+var _last_clouds_quality := -1
 
 
 func _ready():
@@ -83,6 +84,8 @@ func _ready():
 
 	progress_info.finished = true
 	loading_progressed.emit(progress_info)
+	
+	_last_clouds_quality = _settings.clouds_quality
 
 
 func set_settings(s: Settings):
@@ -187,6 +190,17 @@ func _physics_process(delta: float):
 	else:
 		_environment.background_sky_orientation = Basis()
 	
+	_process_setting_changes()
+	
+	_physics_count += 1
+	
+	_process_debug()
+
+	if _settings.world_scale_x10:
+		_process_atmosphere_large_distance_hack()
+
+
+func _process_setting_changes():
 	# Update graphics settings
 	if _settings.shadows_enabled != _directional_light.shadow_enabled:
 		_directional_light.shadow_enabled = _settings.shadows_enabled
@@ -194,11 +208,15 @@ func _physics_process(delta: float):
 		_environment.glow_enabled = _settings.glow_enabled
 	if _settings.lens_flares_enabled != _lens_flare.enabled:
 		_lens_flare.enabled = _settings.lens_flares_enabled
-	
-	_physics_count += 1
-	
-	# Debug
-	
+
+	if _settings.clouds_quality != _last_clouds_quality:
+		_last_clouds_quality = _settings.clouds_quality
+		for body in _bodies:
+			if body.atmosphere != null:
+				SolarSystemSetup.update_atmosphere_settings(body, _settings)
+
+
+func _process_debug():
 	for body in _bodies:
 		var volume : VoxelLodTerrain = body.volume
 		if body.volume == null:
@@ -237,9 +255,6 @@ func _physics_process(delta: float):
 		#			DDD.set_text(str("!! ", body.name, " ", k), t)
 		#if stats.blocked_lods > 0:
 		#	DDD.set_text(str("!! blocked lods on ", body.name), stats.blocked_lods)
-
-	if _settings.world_scale_x10:
-		_process_atmosphere_large_distance_hack()
 
 
 func _process_directional_shadow_distance():

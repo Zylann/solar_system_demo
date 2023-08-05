@@ -1,5 +1,6 @@
 
 const PlanetAtmosphere = preload("res://addons/zylann.atmosphere/planet_atmosphere.gd")
+const Settings = preload("res://settings.gd")
 
 const TYPE_SUN = 0
 const TYPE_ROCKY = 1
@@ -15,10 +16,15 @@ var orbit_revolution_time := 0.0
 var self_revolution_time := 0.0
 var orbit_tilt := 0.0
 var self_tilt := 0.0
+# Color used for fake color atmosphere shader
 var atmosphere_color := Color(0.5, 0.7, 1.0)
+# Color used for scattering atmosphere shader.
+var atmosphere_color_for_scattering := Color(1.0, 1.0, 1.0)
 var sea := false
 var day_ambient_sound : AudioStream
 var night_ambient_sound : AudioStream
+var clouds_coverage_cubemap : Cubemap
+var clouds_coverage_bias := 0.0
 
 # State values
 var orbit_revolution_progress := 0.0

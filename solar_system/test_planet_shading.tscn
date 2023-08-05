@@ -1,7 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://drwudkqcpqr7u"]
+[gd_scene load_steps=12 format=3 uid="uid://drwudkqcpqr7u"]
 
 [ext_resource type="Material" uid="uid://cp754ky7maqj2" path="res://solar_system/materials/planet_material_grassy.tres" id="1"]
+[ext_resource type="PackedScene" uid="uid://c36velgas3n3k" path="res://addons/zylann.atmosphere/planet_atmosphere.tscn" id="3_j5ksx"]
 [ext_resource type="VoxelGeneratorGraph" uid="uid://b4umpxnew5cgx" path="res://solar_system/voxel_graph_planet_v4.tres" id="4"]
+[ext_resource type="Shader" path="res://addons/zylann.atmosphere/shaders/planet_atmosphere_v1_clouds.gdshader" id="4_3o5ts"]
+[ext_resource type="NoiseTexture3D" uid="uid://cudqtkcf6wrj2" path="res://solar_system/atmosphere/noise_texture_3d.res" id="5_mft80"]
+[ext_resource type="Cubemap" uid="uid://ghi3h7wjp2ep" path="res://solar_system/atmosphere/cloud_coverage_mars.tres" id="6_ei3xl"]
 
 [sub_resource type="VoxelMesherTransvoxel" id="1"]
 
@@ -71,16 +75,16 @@ void fragment() {
 render_priority = 0
 shader = SubResource("3")
 shader_parameter/albedo = null
-shader_parameter/metallic = null
-shader_parameter/normal_scale = null
-shader_parameter/point_size = null
-shader_parameter/roughness = null
 shader_parameter/specular = null
+shader_parameter/metallic = null
+shader_parameter/roughness = null
+shader_parameter/point_size = null
+shader_parameter/normal_scale = null
 shader_parameter/uv1_blend_sharpness = null
-shader_parameter/uv1_offset = null
 shader_parameter/uv1_scale = null
-shader_parameter/uv2_offset = null
+shader_parameter/uv1_offset = null
 shader_parameter/uv2_scale = null
+shader_parameter/uv2_offset = null
 
 [sub_resource type="SphereMesh" id="5"]
 radius = 200.0
@@ -97,14 +101,14 @@ lod_count = 7
 material = ExtResource("1")
 
 [node name="DirectionalLight" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.719679, 0.694307, 0, -0.694307, 0.719679, 0, 538.943, 0)
+transform = Transform3D(0.170038, -0.0201907, 0.985231, 0, 0.99979, 0.020489, -0.985438, -0.0034839, 0.170002, 3502.13, 538.943, 0)
 shadow_enabled = true
 directional_shadow_max_distance = 2000.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("2")
 
-[node name="Spatial" type="Position3D" parent="."]
+[node name="Spatial" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1024, 31.31, 0)
 
 [node name="MeshInstance" type="MeshInstance3D" parent="."]
@@ -112,3 +116,25 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 739.203)
 visible = false
 material_override = SubResource("4")
 mesh = SubResource("5")
+
+[node name="PlanetAthmosphere" parent="." instance=ExtResource("3_j5ksx")]
+planet_radius = 1600.0
+atmosphere_height = 320.0
+sun_path = NodePath("../DirectionalLight")
+custom_shader = ExtResource("4_3o5ts")
+shader_params/u_density = 0.001
+shader_params/u_day_color0 = Color(0.5, 0.8, 1, 1)
+shader_params/u_day_color1 = Color(0.5, 0.8, 1, 1)
+shader_params/u_night_color0 = Color(0.2, 0.4, 0.8, 1)
+shader_params/u_night_color1 = Color(0.2, 0.4, 0.8, 1)
+shader_params/u_day_night_transition_scale = 2.0
+shader_params/u_cloud_shape_invert = 1.0
+shader_params/u_cloud_coverage_bias = 0.05
+shader_params/u_cloud_shape_factor = 0.4
+shader_params/u_cloud_shape_scale = 0.002
+shader_params/u_cloud_density_scale = 0.005
+shader_params/u_cloud_bottom = 0.2
+shader_params/u_cloud_top = 0.5
+shader_params/u_cloud_blend = 0.5
+shader_params/u_cloud_shape_texture = ExtResource("5_mft80")
+shader_params/u_cloud_coverage_cubemap = ExtResource("6_ei3xl")

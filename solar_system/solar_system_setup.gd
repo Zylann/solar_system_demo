@@ -8,8 +8,16 @@ const BigRock1Scene = preload("../props/big_rocks/big_rock1.tscn")
 const Rock1Scene = preload("../props/rocks/rock1.tscn")
 const GrassScene = preload("res://props/grass/grass.tscn")
 
-const AtmosphereShader = preload(
+const AtmosphereNoCloudsShader = preload(
 	"res://addons/zylann.atmosphere/shaders/planet_atmosphere_v1_no_clouds.gdshader")
+const AtmosphereCloudsShader = preload(
+	"res://addons/zylann.atmosphere/shaders/planet_atmosphere_v1_clouds.gdshader")
+const AtmosphereScatteredCloudsShader = preload(
+	"res://addons/zylann.atmosphere/shaders/planet_atmosphere_clouds.gdshader")
+const CloudShapeTexture3D = preload("./atmosphere/noise_texture_3d.res")
+const CloudCoverageTextureEarth = preload("./atmosphere/cloud_coverage_earth.tres")
+const CloudCoverageTextureMars = preload("./atmosphere/cloud_coverage_mars.tres")
+const CloudCoverageTextureGas = preload("./atmosphere/cloud_coverage_gas.tres")
 
 const SunMaterial = preload("./materials/sun_yellow.tres")
 const PlanetRockyMaterial = preload("./materials/planet_material_rocky.tres")
@@ -51,6 +59,7 @@ static func create_solar_system_data(settings: Settings) -> Array:
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 50.0 * 60.0
 	planet.atmosphere_color = Color(1.0, 0.4, 0.1)
+	planet.atmosphere_color_for_scattering = Color(1.0, 0.5, 0.2)
 	planet.orbit_revolution_progress = -0.1
 	planet.day_ambient_sound = WindSound
 	bodies.append(planet)
@@ -64,9 +73,12 @@ static func create_solar_system_data(settings: Settings) -> Array:
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 150.0 * 60.0
 	planet.atmosphere_color = Color(0.3, 0.5, 1.0)
+	planet.atmosphere_color_for_scattering = Color(1.0, 1.0, 1.0)
 	planet.orbit_revolution_progress = 0.0
 	planet.day_ambient_sound = EarthDaySound
 	planet.night_ambient_sound = EarthNightSound
+	planet.clouds_coverage_bias = 0.0
+	planet.clouds_coverage_cubemap = CloudCoverageTextureEarth
 	planet.sea = true
 	var earth_id = len(bodies)
 	bodies.append(planet)
@@ -83,7 +95,9 @@ static func create_solar_system_data(settings: Settings) -> Array:
 	planet.distance_to_parent = 7500.0
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 10.0 * 60.0
+	# TODO The moon should just have no atmosphere
 	planet.atmosphere_color = Color(0.2, 0.2, 0.2)
+	planet.atmosphere_color_for_scattering = Color(1.0, 1.0, 1.0)
 	planet.orbit_revolution_progress = 0.25
 	planet.day_ambient_sound = WindSound
 	bodies.append(planet)
@@ -97,8 +111,11 @@ static func create_solar_system_data(settings: Settings) -> Array:
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 100.0 * 60.0
 	planet.atmosphere_color = Color(1.2, 0.8, 0.5)
+	planet.atmosphere_color_for_scattering = Color(1.0, 0.8, 0.5)
 	planet.orbit_revolution_progress = 0.1
 	planet.day_ambient_sound = WindSound
+	planet.clouds_coverage_bias = -0.1
+	planet.clouds_coverage_cubemap = CloudCoverageTextureMars
 	bodies.append(planet)
 
 	planet = StellarBody.new()
@@ -111,6 +128,8 @@ static func create_solar_system_data(settings: Settings) -> Array:
 	planet.orbit_revolution_time = 300.0 * 60.0
 	planet.atmosphere_color = Color(0.8, 0.6, 0.4)
 	planet.day_ambient_sound = WindSound
+	planet.clouds_coverage_bias = 0.2
+	planet.clouds_coverage_cubemap = CloudCoverageTextureGas
 	bodies.append(planet)
 	
 	var scale = 1.0
@@ -154,27 +173,48 @@ static func _setup_sun(body: StellarBody, root: Node3D) -> DirectionalLight3D:
 	return directional_light
 
 
-static func _setup_atmosphere(body: StellarBody, root: Node3D, settings: Settings):
-	var atmo : PlanetAtmosphere = VolumetricAtmosphereScene.instantiate()
-	atmo.custom_shader = AtmosphereShader
+static func update_atmosphere_settings(body: StellarBody, settings: Settings):
+	var atmo : PlanetAtmosphere = body.atmosphere
+	
+	var has_clouds := (body.clouds_coverage_cubemap != null 
+		and settings.clouds_quality != Settings.CLOUDS_DISABLED)
+
+	var use_scattering := false
+	
+	if has_clouds:
+		if body.type == StellarBody.TYPE_GAS:
+			# Using scattering atmosphere for gas giant because it looks a bit better
+			atmo.custom_shader = AtmosphereScatteredCloudsShader
+			use_scattering = true
+		else:
+			# Not using the fancy scattered one for now, the demo is better tuned for the fake one.
+			# No fiery sunsets tho...
+			atmo.custom_shader = AtmosphereCloudsShader
+	else:
+		atmo.custom_shader = AtmosphereNoCloudsShader
+	
 	#atmo.scale = Vector3(1, 1, 1) * (0.99 * body.radius)
 	if settings.world_scale_x10:
 		atmo.planet_radius = body.radius * 1.0
 		atmo.atmosphere_height = 125.0 * LARGE_SCALE
 	else:
 		atmo.planet_radius = body.radius * 1.03
-		atmo.atmosphere_height = 0.12 * body.radius
-	# TODO This is kinda bad to hardcode the path, need to find another robust way
-	atmo.sun_path = "/root/Main/GameWorld/Sun/DirectionalLight"
-	#atmo.day_color = body.atmosphere_color
-	#atmo.night_color = body.atmosphere_color.darkened(0.8)
+		atmo.atmosphere_height = 0.15 * body.radius
+
+	# Fake atmosphere density
 	var atmo_density := 0.001
 	if body.type == StellarBody.TYPE_GAS:
 		if settings.world_scale_x10:
 			# TODO Need to investigate this, atmosphere currently blows up HDR when large and dense
 			atmo_density /= LARGE_SCALE
-	atmo.set_shader_param("u_density", atmo_density)
 
+	if use_scattering:
+		# Scattered atmosphere settings
+		atmo_density = 0.11
+#		atmo.set_shader_param("u_atmosphere_modulate", body.atmosphere_color_for_scattering)
+		atmo.set_shader_param("u_scattering_strength", 0.5)
+
+	atmo.set_shader_param("u_density", atmo_density)
 #	atmo.set_shader_param("u_attenuation_distance", 50.0)
 
 	# Settings for the fake color atmospheres
@@ -183,8 +223,37 @@ static func _setup_atmosphere(body: StellarBody, root: Node3D, settings: Setting
 	atmo.set_shader_param("u_night_color0", body.atmosphere_color.darkened(0.8))
 	atmo.set_shader_param("u_night_color1", 
 		body.atmosphere_color.darkened(0.8).lerp(Color(1,1,1), 0.0))
+	
+	if has_clouds:
+		atmo.set_shader_param("u_cloud_density_scale", 0.02)
+		atmo.set_shader_param("u_cloud_shape_texture", CloudShapeTexture3D)
+		atmo.set_shader_param("u_cloud_coverage_cubemap", body.clouds_coverage_cubemap)
+		atmo.set_shader_param("u_cloud_shape_factor", 0.4)
+		atmo.set_shader_param("u_cloud_shape_scale", 0.001 if settings.world_scale_x10 else 0.005)
+		atmo.set_shader_param("u_cloud_coverage_bias", body.clouds_coverage_bias)
+		atmo.set_shader_param("u_cloud_shape_invert", 1.0)
+		atmo.clouds_rotation_speed = 0.05 if settings.world_scale_x10 else 0.5
 
+
+static func _setup_atmosphere(body: StellarBody, root: Node3D, settings: Settings):
+	var atmo : PlanetAtmosphere = VolumetricAtmosphereScene.instantiate()
 	body.atmosphere = atmo
+	
+	# TODO This is kinda bad to hardcode the path, need to find another robust way
+	atmo.sun_path = "/root/Main/GameWorld/Sun/DirectionalLight"
+
+	update_atmosphere_settings(body, settings)
+
+	# This is clunky, can't save as .tres, FLAG_BUNDLE_RESOURCES doesn't save anything,
+	# and Godot throws lots of errors when inspecting the resulting scene...	
+#	var debug_packed_scene := PackedScene.new()
+#	var pack_result := debug_packed_scene.pack(atmo)
+#	print("Pack: ", pack_result)
+#	var debug_packed_scene_fpath := str("debug_dump_atmosphere_", body.name, ".res")
+#	var save_result := ResourceSaver.save(debug_packed_scene, 
+#		debug_packed_scene_fpath)
+#	print("Save ", debug_packed_scene_fpath, ": ", save_result)
+	
 	root.add_child(atmo)
 
 

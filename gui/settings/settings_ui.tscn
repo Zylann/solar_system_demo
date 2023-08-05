@@ -120,6 +120,19 @@ popup/item_1/id = 1
 popup/item_2/text = "Disabled"
 popup/item_2/id = 2
 
+[node name="Label5" type="Label" parent="PC/MC/VB/TabContainer/Graphics/GC"]
+layout_mode = 2
+text = "Clouds"
+
+[node name="CloudsSelector" type="OptionButton" parent="PC/MC/VB/TabContainer/Graphics/GC"]
+layout_mode = 2
+item_count = 2
+selected = 1
+popup/item_0/text = "Disabled"
+popup/item_0/id = 0
+popup/item_1/text = "Low"
+popup/item_1/id = 1
+
 [node name="Sound" type="MarginContainer" parent="PC/MC/VB/TabContainer"]
 visible = false
 layout_mode = 2

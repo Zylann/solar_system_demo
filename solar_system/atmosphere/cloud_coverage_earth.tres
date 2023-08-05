@@ -1,0 +1,15 @@
+[gd_resource type="Cubemap" script_class="NoiseCubemap" load_steps=3 format=3 uid="uid://dxg8ujayqjxyo"]
+
+[ext_resource type="Script" path="res://addons/zylann.atmosphere/noise_cubemap.gd" id="1_rrjhd"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_p3aaq"]
+domain_warp_enabled = true
+domain_warp_amplitude = 50.0
+domain_warp_frequency = 0.02
+domain_warp_fractal_octaves = 2
+
+[resource]
+script = ExtResource("1_rrjhd")
+noise = SubResource("FastNoiseLite_p3aaq")
+resolution = 256
+scale = Vector3(100, 200, 100)

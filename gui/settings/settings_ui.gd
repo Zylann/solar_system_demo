@@ -18,6 +18,7 @@ const Binding = preload("res://binding.gd")
 @onready var _show_edited_data_blocks_checkbox = \
 	$PC/MC/VB/TabContainer/Debug/GC/ShowEditedDataBlocks
 @onready var _wireframe_checkbox = $PC/MC/VB/TabContainer/Debug/GC/Wireframe
+@onready var _clouds_selector : OptionButton = $PC/MC/VB/TabContainer/Graphics/GC/CloudsSelector
 
 
 var _settings : Settings
@@ -43,6 +44,7 @@ func set_settings(s: Settings):
 	_bindings.append(Binding.create(_settings, "lens_flares_enabled", _lens_flares_checkbox))
 	_bindings.append(Binding.create(_settings, "glow_enabled", _glow_checkbox))
 	_bindings.append(Binding.create(_settings, "detail_rendering_mode", _detail_rendering_selector))
+	# TODO Setting to toggle GPU generation
 	_bindings.append(Binding.create(_settings, "main_volume_linear", _main_volume_slider))
 	_bindings.append(Binding.create(_settings, "debug_text", _debug_text_checkbox))
 	_bindings.append(Binding.create(_settings, "show_octree_nodes", _show_octree_nodes_checkbox))
@@ -50,6 +52,8 @@ func set_settings(s: Settings):
 	_bindings.append(Binding.create(_settings, "show_edited_data_blocks", 
 		_show_edited_data_blocks_checkbox))
 	_bindings.append(Binding.create(_settings, "wireframe", _wireframe_checkbox))
+	_bindings.append(Binding.create(_settings, "clouds_quality", _clouds_selector))
+	# TODO FXAA setting
 	
 	_update_ui()
 
