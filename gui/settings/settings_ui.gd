@@ -19,6 +19,8 @@ const Binding = preload("res://binding.gd")
 	$PC/MC/VB/TabContainer/Debug/GC/ShowEditedDataBlocks
 @onready var _wireframe_checkbox = $PC/MC/VB/TabContainer/Debug/GC/Wireframe
 @onready var _clouds_selector : OptionButton = $PC/MC/VB/TabContainer/Graphics/GC/CloudsSelector
+@onready var _antialias_selector : OptionButton = \
+	$PC/MC/VB/TabContainer/Graphics/GC/AntialiasSelector
 
 
 var _settings : Settings
@@ -53,7 +55,7 @@ func set_settings(s: Settings):
 		_show_edited_data_blocks_checkbox))
 	_bindings.append(Binding.create(_settings, "wireframe", _wireframe_checkbox))
 	_bindings.append(Binding.create(_settings, "clouds_quality", _clouds_selector))
-	# TODO FXAA setting
+	_bindings.append(Binding.create(_settings, "antialias", _antialias_selector))
 	
 	_update_ui()
 

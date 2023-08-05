@@ -40,14 +40,21 @@ func _on_game_exit_to_menu_requested():
 
 func _process(delta):
 	AudioServer.set_bus_volume_db(0, linear_to_db(_settings.main_volume_linear))
+
 	DDD.visible = _settings.debug_text
-	var viewport = get_viewport()
+
+	var viewport := get_viewport()
 	if _settings.wireframe != (viewport.debug_draw == Viewport.DEBUG_DRAW_WIREFRAME):
 		if _settings.wireframe:
 			viewport.debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
 		else:
 			viewport.debug_draw = Viewport.DEBUG_DRAW_DISABLED
 		print("Setting viewport draw mode to ", viewport.debug_draw)
+	
+	if _settings.antialias == Settings.ANTIALIAS_DISABLED:
+		viewport.screen_space_aa = Viewport.SCREEN_SPACE_AA_DISABLED
+	elif _settings.antialias == Settings.ANTIALIAS_FXAA:
+		viewport.screen_space_aa = Viewport.SCREEN_SPACE_AA_FXAA
 
 
 func _unhandled_input(event):
