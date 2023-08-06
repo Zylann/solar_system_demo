@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://hh0mump0swlx"]
+[gd_scene load_steps=14 format=3 uid="uid://hh0mump0swlx"]
 
 [ext_resource type="Script" path="res://addons/zylann.3d_basics/character/character.gd" id="1"]
 [ext_resource type="Script" path="res://character/mouse_look.gd" id="2"]
@@ -21,6 +21,9 @@ size = Vector3(0.5, 0.5, 0.5)
 
 [sub_resource type="BoxMesh" id="4"]
 size = Vector3(8, 0.5, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_07wl3"]
+size = Vector3(200, 1, 200)
 
 [node name="Character" type="CharacterBody3D"]
 script = ExtResource("1")
@@ -50,26 +53,28 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.876689, 0)
 
 [node name="FlashLight" type="SpotLight3D" parent="Visual"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34576, -0.396333)
-light_energy = 2.0
-spot_range = 60.0
-spot_attenuation = 1.93187
-spot_angle_attenuation = 0.732043
 visible = false
+light_energy = 10.0
+spot_range = 60.0
+spot_attenuation = 0.965935
+spot_angle_attenuation = 0.732043
 
 [node name="Body" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.272492, 0)
 mesh = SubResource("2")
-surface_material_override/0 = null
 
 [node name="Head" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.676365, 0)
 mesh = SubResource("3")
-surface_material_override/0 = null
 
 [node name="Arms" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(0.237608, 0, 0, 0, 0.237608, 0, 0, 0, 0.237608, 0, 0.226605, 0.0591713)
 mesh = SubResource("4")
-surface_material_override/0 = null
+
+[node name="LightingTestsBox" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.36335, 0)
+visible = false
+mesh = SubResource("BoxMesh_07wl3")
 
 [node name="Audio" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.86435, -0.796673, 0)
