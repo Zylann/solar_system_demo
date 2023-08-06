@@ -8,6 +8,7 @@ uniform sampler2D u_optical_depth_texture : repeat_disable;
 uniform float u_scattering_strength = 20.0;
 uniform vec3 u_scattering_wavelengths = vec3(700.0, 530.0, 440.0);
 uniform vec3 u_atmosphere_modulate : source_color = vec3(1.0);
+uniform vec3 u_atmosphere_ambient_color : source_color = vec3(0.0, 0.0, 0.002);
 
 
 float get_baked_optical_depth(
@@ -38,6 +39,8 @@ vec4 compute_atmosphere_v2(
 	vec3 sun_dir,
 	float jitter
 ) {
+	// Rocky planets don't need many steps (8 can be enough).
+	// However gas giants need a lot more (64?) since rays traverse it fully.
 	const int steps = ATMOSPHERE_RAYMARCH_STEPS;
 	
 	// TODO Compute this in script?
@@ -70,24 +73,27 @@ vec4 compute_atmosphere_v2(
 			* scattering_coefficients);
 		
 		total_light += local_density * step_len * transmittance * scattering_coefficients;
-//		alpha += (1.0 - vtransmittance) * (1.0 - alpha);
+		
+		// Alpha depends on the amount of stuff the ray goes through
+		float vtransmittance = exp(-local_density * step_len);
+		alpha += (1.0 - vtransmittance) * (1.0 - alpha);
 		
 		pos += ray_dir * step_len;
 	}
 	
-	total_light = clamp(total_light, vec3(0.0), vec3(1.0));
+//	float sunp = dot(ray_dir, sun_dir);
+//	total_light += vec3(1.0) * pow(max(sunp, 0.0), 20.0);
+	
+	// Former alpha calculation, causing the atmosphere to stop drawing the darker it gets
+//	alpha = clamp(max(max(total_light.r, total_light.g), total_light.b), 0.0, 1.0);
+//	alpha = sqrt(alpha);
 
-	// TODO As in Seb's shader and ports, the blending part is tricky...
-	// My design goal was to use alpha blending and not depend on the source
-	// color, so here is the hack I came up with... no particular reason, other
-	// than "it looks good enough"
-//	alpha = 1.0-exp(-view_ray_optical_depth); // Didn't work as well as I expected
-	alpha = max(max(total_light.r, total_light.g), total_light.b);
-	alpha = sqrt(alpha);
-//	alpha = 1.0;
+	total_light = clamp(total_light + u_atmosphere_ambient_color, vec3(0.0), vec3(1.0));
 
-	// Get rid of color banding
-	alpha += jitter * 0.02;
+	// Get rid of color banding.
+	// Make sure it doesn't go out of bounds.
+	// Also for some reason clamping to 1.0 caused HDR sunsets to be noisy
+	alpha = clamp(alpha + jitter * 0.02, 0.0, 0.99);
 	
 	total_light *= u_atmosphere_modulate;
 

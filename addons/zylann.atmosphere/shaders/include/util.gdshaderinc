@@ -57,6 +57,16 @@ float pow2(float x) {
 	return x * x;
 }
 
+vec4 blend_colors(vec4 self, vec4 over) {
+	float sa = 1.0 - over.a;
+	float a = self.a * sa + over.a;
+	if (a == 0.0) {
+		return vec4(0.0);
+	} else {
+		return vec4((self.rgb * self.a * sa + over.rgb * over.a) / a, a);
+	}
+}
+
 //float hash(vec2 uv) {
 //    return fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
 //}

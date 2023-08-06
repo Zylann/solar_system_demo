@@ -10,7 +10,7 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jc6bi"]
 shading_mode = 0
-albedo_color = Color(2, 2, 2, 1)
+albedo_color = Color(4, 4, 4, 1)
 
 [sub_resource type="SphereMesh" id="SphereMesh_rpf03"]
 material = SubResource("StandardMaterial3D_jc6bi")
@@ -122,10 +122,10 @@ planet_radius = 100.0
 atmosphere_height = 8.0
 sun_path = NodePath("../Sun/DirectionalLight")
 custom_shader = ExtResource("3_ra2pw")
-shader_params/u_density = 0.105
-shader_params/u_scattering_strength = 20.0
-shader_params/u_scattering_wavelengths = Vector3(700, 550, 440)
+shader_params/u_density = 0.5
+shader_params/u_scattering_strength = 1.0
 shader_params/u_atmosphere_modulate = Color(1, 0.980392, 0.964706, 1)
+shader_params/u_atmosphere_ambient_color = Color(0.0196078, 0.0196078, 0.0431373, 1)
 shader_params/u_cloud_shape_invert = 1.0
 shader_params/u_cloud_coverage_bias = 0.0
 shader_params/u_cloud_shape_factor = 0.5
@@ -133,7 +133,7 @@ shader_params/u_cloud_shape_scale = 0.1
 shader_params/u_cloud_density_scale = 2.0
 shader_params/u_cloud_bottom = 0.2
 shader_params/u_cloud_top = 0.6
-shader_params/u_cloud_blend = 0.2
+shader_params/u_cloud_blend = 0.5
 shader_params/u_cloud_shape_texture = SubResource("NoiseTexture3D_8p07x")
 shader_params/u_cloud_coverage_cubemap = SubResource("Cubemap_7kyfx")
 

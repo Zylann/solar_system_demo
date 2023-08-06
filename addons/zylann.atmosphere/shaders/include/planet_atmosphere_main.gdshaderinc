@@ -215,11 +215,31 @@ void atmosphere_fragment(
 				// Experimental blend between atmosphere and clouds...
 				// Ideally we could raymarch both at once, but might be more expensive?
 //				ALBEDO = mix(ALBEDO, cloud_albedo, cloud_alpha);
-				out_albedo = mix(
-					mix(out_albedo, cloud_albedo, cloud_alpha),
+//				out_albedo = mix(
+//					mix(out_albedo, cloud_albedo, cloud_alpha),
+//					out_albedo + cloud_albedo * cloud_alpha,
+//					u_cloud_blend);
+//				out_alpha = max(out_alpha, cloud_alpha);
+				
+				vec4 alpha_blended = blend_colors(
+					vec4(out_albedo, out_alpha),
+					vec4(cloud_albedo, cloud_alpha)
+				);
+				
+				vec4 add_blended = vec4(
 					out_albedo + cloud_albedo * cloud_alpha,
-					u_cloud_blend);
-				out_alpha = max(out_alpha, cloud_alpha);
+					max(out_alpha, cloud_alpha));
+				
+				// This could be used in a script to workaround the fact cloud opacity doesn't take
+				// atmosphere opacity into account when raymarching
+//				float height_ratio = clamp(
+//					(length(ray_origin_world) - u_planet_radius) / u_atmosphere_height, 0.0, 1.0);
+//				float cloud_blend = mix(0.6, 0.2, hr);
+				
+				vec4 result = mix(alpha_blended, add_blended, u_cloud_blend);
+				
+				out_albedo = result.rgb;
+				out_alpha = result.a;
 			}
 			// TODO
 		}

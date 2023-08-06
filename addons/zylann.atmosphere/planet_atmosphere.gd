@@ -51,6 +51,8 @@ var _custom_shader : Shader
 # In degrees per second
 @export var clouds_rotation_speed : float = 1.0
 
+@export var force_fullscreen := false
+
 var _far_mesh : BoxMesh
 var _near_mesh : QuadMesh
 var _mode := MODE_FAR
@@ -115,6 +117,7 @@ func _ready():
 
 func set_custom_shader(shader: Shader):
 	_custom_shader = shader
+	
 	var mat := _get_material()
 	if _custom_shader == null:
 		mat.shader = DefaultShader
@@ -134,6 +137,8 @@ func set_custom_shader(shader: Shader):
 	
 	if _uses_baked_optical_depth:
 		_request_bake_optical_depth()
+
+	notify_property_list_changed()
 
 
 func _request_bake_optical_depth():
@@ -155,11 +160,23 @@ func _get_material() -> ShaderMaterial:
 	return _mesh_instance.material_override as ShaderMaterial
 
 
+# TODO Obsolete
 func set_shader_param(param_name: String, value):
+	push_warning("set_shader_param is deprecated, use set_shader_parameter")
+	set_shader_parameter(param_name, value)
+
+
+# TODO Obsolete
+func get_shader_param(param_name: String):
+	push_warning("get_shader_param is deprecated, use get_shader_parameter")
+	return get_shader_parameter(param_name)
+
+
+func set_shader_parameter(param_name: StringName, value):
 	_get_material().set_shader_parameter(param_name, value)
 
 
-func get_shader_param(param_name: String):
+func get_shader_parameter(param_name: StringName):
 	return _get_material().get_shader_parameter(param_name)
 
 
@@ -289,7 +306,7 @@ func _process(_delta):
 	# we always switch modes while already being slightly away from the quad, to avoid flickering
 	var d := global_transform.origin.distance_to(cam_pos)
 	var is_near := d < atmo_clip_distance
-	if is_near:
+	if is_near or force_fullscreen:
 		_set_mode(MODE_NEAR)
 	else:
 		_set_mode(MODE_FAR)
