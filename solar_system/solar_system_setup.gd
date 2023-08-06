@@ -163,8 +163,9 @@ static func _setup_sun(body: StellarBody, root: Node3D) -> DirectionalLight3D:
 	directional_light.shadow_enabled = true
 	# The environment in this game is a space background so it's very dark. Sky is actually a post
 	# effect because you can fly out and it's a planet... And still you can also have shadows while
-	# in your ship!
-	directional_light.shadow_opacity = 0.9
+	# in your ship. We workaround this by making shadows not 100% opaque, and by adding a very
+	# faint ambient light to the environment
+	directional_light.shadow_opacity = 0.99
 	directional_light.shadow_normal_bias = 0.2
 	directional_light.directional_shadow_split_1 = 0.1
 	directional_light.directional_shadow_split_2 = 0.2

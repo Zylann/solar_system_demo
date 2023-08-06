@@ -336,9 +336,9 @@ func set_reference_body(ref_id: int):
 	# TODO Shadow opacity was removed in Godot 4, need it back because it's too dark now.
 	# See https://github.com/godotengine/godot/pull/61893
 	#_directional_light.shadow_color = body.atmosphere_color.darkened(0.8)
-	var environment := get_viewport().world_3d.environment
-	environment.ambient_light_color = body.atmosphere_color
-	environment.ambient_light_energy = 20
+#	var environment := get_viewport().world_3d.environment
+#	environment.ambient_light_color = body.atmosphere_color
+#	environment.ambient_light_energy = 20
 	
 	reference_body_changed.emit(info)
 

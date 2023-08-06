@@ -25,8 +25,9 @@ sky_material = SubResource("PanoramaSkyMaterial_cmlyd")
 [sub_resource type="Environment" id="2"]
 background_mode = 2
 sky = SubResource("1")
-ambient_light_color = Color(1, 1, 1, 1)
-ambient_light_energy = 18.0
+ambient_light_color = Color(0.717647, 0.760784, 1, 1)
+ambient_light_sky_contribution = 0.98
+ambient_light_energy = 0.7
 glow_enabled = true
 glow_levels/5 = 0.0
 glow_levels/6 = 1.0
@@ -55,11 +56,13 @@ mouse_filter = 2
 script = ExtResource("3_rlxpp")
 
 [node name="TargetPlanetLabel" type="Label" parent="HUD"]
+layout_mode = 0
 theme_override_fonts/font = ExtResource("4_5b8os")
 text = "Hello world"
 
 [node name="TargetPlanetRect" type="NinePatchRect" parent="HUD"]
 modulate = Color(1, 1, 1, 0.784314)
+layout_mode = 0
 texture = ExtResource("5_hq7jk")
 patch_margin_left = 15
 patch_margin_top = 15
@@ -67,7 +70,7 @@ patch_margin_right = 16
 patch_margin_bottom = 16
 
 [node name="Crosshair" type="CenterContainer" parent="HUD"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -75,16 +78,13 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="TextureRect" type="TextureRect" parent="HUD/Crosshair"]
-offset_left = 560.0
-offset_top = 308.0
-offset_right = 592.0
-offset_bottom = 340.0
+layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("6_rc6j7")
 stretch_mode = 4
 
 [node name="WaypointHUD" parent="HUD" instance=ExtResource("7_b4x6s")]
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 15
 grow_horizontal = 2
 grow_vertical = 2
@@ -115,7 +115,7 @@ color = Color(0, 0, 0, 0.65098)
 script = ExtResource("11_vsdyb")
 
 [node name="CC" type="CenterContainer" parent="LoadingScreen"]
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -123,25 +123,18 @@ grow_vertical = 2
 
 [node name="PC" type="PanelContainer" parent="LoadingScreen/CC"]
 custom_minimum_size = Vector2(200, 0)
-offset_left = 476.0
-offset_top = 295.0
-offset_right = 676.0
-offset_bottom = 352.0
+layout_mode = 2
 
 [node name="VB" type="VBoxContainer" parent="LoadingScreen/CC/PC"]
-offset_right = 200.0
-offset_bottom = 57.0
+layout_mode = 2
 
 [node name="Label" type="Label" parent="LoadingScreen/CC/PC/VB"]
-offset_right = 200.0
-offset_bottom = 26.0
+layout_mode = 2
 text = "Loading..."
 horizontal_alignment = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="LoadingScreen/CC/PC/VB"]
-offset_top = 30.0
-offset_right = 200.0
-offset_bottom = 57.0
+layout_mode = 2
 max_value = 1.0
 
 [node name="PauseMenu" parent="." instance=ExtResource("12_cuwn3")]
