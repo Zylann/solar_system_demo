@@ -10,6 +10,7 @@ uniform sampler2D u_side_albedo_texture : source_color;
 uniform sampler2D u_side_normal_texture;
 uniform sampler2D u_global_normalmap;// : hint_normal;
 uniform float u_mountain_height;
+uniform vec3 u_top_modulate : source_color = vec3(1.0);
 
 // From Voxel Tools API
 // TODO Switch to instance uniforms when they work, see Godot issue #54897
@@ -103,7 +104,7 @@ void fragment() {
 	triplanar_power_normal /= dot(triplanar_power_normal, vec3(1.0));
 
 	vec3 top_col = triplanar_texture(
-		u_top_albedo_texture, triplanar_power_normal, v_triplanar_uv * 2.0).rgb;
+		u_top_albedo_texture, triplanar_power_normal, v_triplanar_uv * 2.0).rgb * u_top_modulate;
 	vec3 top_norm = triplanar_texture(
 		u_top_normal_texture, triplanar_power_normal, v_triplanar_uv * 2.0).rgb;
 

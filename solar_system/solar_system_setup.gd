@@ -298,7 +298,10 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D, settings: Setti
 		mat = PlanetGrassyMaterial.duplicate()
 	else:
 		mat = PlanetRockyMaterial.duplicate()
-	mat.set_shader_parameter("u_mountain_height", body.radius + 80.0)
+	mat.set_shader_parameter(&"u_mountain_height", body.radius + 80.0)
+	
+	if body.name == "Mars":
+		mat.set_shader_parameter(&"u_top_modulate", Color(1.0, 0.6, 0.3))
 	
 	var generator : VoxelGeneratorGraph = BasePlanetVoxelGraph.duplicate(true)
 	var graph : VoxelGraphFunction = generator.get_main_function()

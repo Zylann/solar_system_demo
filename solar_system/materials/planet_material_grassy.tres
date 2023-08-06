@@ -17,6 +17,7 @@ shader_parameter/u_voxel_cell_size = null
 shader_parameter/u_voxel_block_size = null
 shader_parameter/u_voxel_virtual_texture_offset_scale = null
 shader_parameter/u_mountain_height = 10000.0
+shader_parameter/u_top_modulate = Color(1, 1, 1, 1)
 shader_parameter/u_block_local_transform = null
 shader_parameter/u_top_albedo_texture = ExtResource("2")
 shader_parameter/u_top_normal_texture = ExtResource("4")
