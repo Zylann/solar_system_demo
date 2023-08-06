@@ -87,7 +87,7 @@ static func create_solar_system_data(settings: Settings) -> Array[StellarBody]:
 	planet.orbit_revolution_time = 150.0 * 60.0
 	planet.atmosphere_mode = StellarBody.ATMOSPHERE_WITH_SCATTERING
 #	planet.atmosphere_color = Color(0.3, 0.5, 1.0)
-	planet.atmosphere_color = Color(1.0, 1.0, 1.0)
+	planet.atmosphere_color = Color(0.75, 0.83, 1.0)
 	planet.atmosphere_ambient_color = Color(0.02, 0.02, 0.1)
 	planet.orbit_revolution_progress = 0.0
 	planet.day_ambient_sound = EarthDaySound
