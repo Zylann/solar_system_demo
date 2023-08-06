@@ -305,7 +305,7 @@ func _process_atmosphere_large_distance_hack():
 				clampf((distance - transition_distance_start) / transition_length, 0.0, 1.0)
 			# DDD.set_text(str("Sphere atmo factor in ", body.name), sphere_factor)
 			# DDD.set_text(str("Atmo mode in ", body.name), body.atmosphere._mode)
-			body.atmosphere.set_shader_param("u_sphere_depth_factor", sphere_factor)
+			body.atmosphere.set_shader_parameter(&"u_sphere_depth_factor", sphere_factor)
 
 
 func set_reference_body(ref_id: int):

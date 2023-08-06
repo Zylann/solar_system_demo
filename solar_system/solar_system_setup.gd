@@ -12,12 +12,19 @@ const BigRock1Scene = preload("../props/big_rocks/big_rock1.tscn")
 const Rock1Scene = preload("../props/rocks/rock1.tscn")
 const GrassScene = preload("res://props/grass/grass.tscn")
 
-const AtmosphereNoCloudsShader = preload(
-	"res://addons/zylann.atmosphere/shaders/planet_atmosphere_v1_no_clouds.gdshader")
+const AtmosphereCloudsHighShader = preload(
+	"res://addons/zylann.atmosphere/shaders/planet_atmosphere_v1_clouds_high.gdshader")
 const AtmosphereCloudsShader = preload(
 	"res://addons/zylann.atmosphere/shaders/planet_atmosphere_v1_clouds.gdshader")
+const AtmosphereNoCloudsShader = preload(
+	"res://addons/zylann.atmosphere/shaders/planet_atmosphere_v1_no_clouds.gdshader")
+const AtmosphereScatteredCloudsHighShader = preload(
+	"res://addons/zylann.atmosphere/shaders/planet_atmosphere_clouds_high.gdshader")
 const AtmosphereScatteredCloudsShader = preload(
 	"res://addons/zylann.atmosphere/shaders/planet_atmosphere_clouds.gdshader")
+const AtmosphereScatteredNoCloudsShader = preload(
+	"res://addons/zylann.atmosphere/shaders/planet_atmosphere_no_clouds.gdshader")
+
 const CloudShapeTexture3D = preload("./atmosphere/noise_texture_3d.res")
 const CloudCoverageTextureEarth = preload("./atmosphere/cloud_coverage_earth.tres")
 const CloudCoverageTextureMars = preload("./atmosphere/cloud_coverage_mars.tres")
@@ -40,6 +47,8 @@ const EarthNightSound = preload("res://sounds/earth_surface_night.ogg")
 const WindSound = preload("res://sounds/wind.ogg")
 
 const SAVE_FOLDER_PATH = "debug_data"
+
+# Scale used when the large world setting is enabled
 const LARGE_SCALE = 10.0
 
 
@@ -62,8 +71,8 @@ static func create_solar_system_data(settings: Settings) -> Array[StellarBody]:
 	planet.distance_to_parent = 14400.0
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 50.0 * 60.0
+	planet.atmosphere_mode = StellarBody.ATMOSPHERE_MONOCHROME
 	planet.atmosphere_color = Color(1.0, 0.4, 0.1)
-	planet.atmosphere_color_for_scattering = Color(1.0, 0.5, 0.2)
 	planet.orbit_revolution_progress = -0.1
 	planet.day_ambient_sound = WindSound
 	bodies.append(planet)
@@ -76,8 +85,10 @@ static func create_solar_system_data(settings: Settings) -> Array[StellarBody]:
 	planet.distance_to_parent = 25600.0
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 150.0 * 60.0
-	planet.atmosphere_color = Color(0.3, 0.5, 1.0)
-	planet.atmosphere_color_for_scattering = Color(1.0, 1.0, 1.0)
+	planet.atmosphere_mode = StellarBody.ATMOSPHERE_WITH_SCATTERING
+#	planet.atmosphere_color = Color(0.3, 0.5, 1.0)
+	planet.atmosphere_color = Color(1.0, 1.0, 1.0)
+	planet.atmosphere_ambient_color = Color(0.02, 0.02, 0.1)
 	planet.orbit_revolution_progress = 0.0
 	planet.day_ambient_sound = EarthDaySound
 	planet.night_ambient_sound = EarthNightSound
@@ -99,9 +110,9 @@ static func create_solar_system_data(settings: Settings) -> Array[StellarBody]:
 	planet.distance_to_parent = 7500.0
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 10.0 * 60.0
-	# TODO The moon should just have no atmosphere
-	planet.atmosphere_color = Color(0.2, 0.2, 0.2)
-	planet.atmosphere_color_for_scattering = Color(1.0, 1.0, 1.0)
+	planet.atmosphere_mode = StellarBody.ATMOSPHERE_DISABLED
+#	planet.atmosphere_color = Color(0.2, 0.2, 0.2)
+#	planet.atmosphere_color_for_scattering = Color(1.0, 1.0, 1.0)
 	planet.orbit_revolution_progress = 0.25
 	planet.day_ambient_sound = WindSound
 	bodies.append(planet)
@@ -114,8 +125,9 @@ static func create_solar_system_data(settings: Settings) -> Array[StellarBody]:
 	planet.distance_to_parent = 48000.0
 	planet.self_revolution_time = 10.0 * 60.0
 	planet.orbit_revolution_time = 100.0 * 60.0
-	planet.atmosphere_color = Color(1.2, 0.8, 0.5)
-	planet.atmosphere_color_for_scattering = Color(1.0, 0.8, 0.5)
+	planet.atmosphere_mode = StellarBody.ATMOSPHERE_WITH_SCATTERING
+#	planet.atmosphere_color = Color(1.2, 0.8, 0.5)
+	planet.atmosphere_color = Color(1.0, 0.8, 0.5)
 	planet.orbit_revolution_progress = 0.1
 	planet.day_ambient_sound = WindSound
 	planet.clouds_coverage_bias = -0.1
@@ -130,7 +142,8 @@ static func create_solar_system_data(settings: Settings) -> Array[StellarBody]:
 	planet.distance_to_parent = 70400.0
 	planet.self_revolution_time = 8.0 * 60.0
 	planet.orbit_revolution_time = 300.0 * 60.0
-	planet.atmosphere_color = Color(0.8, 0.6, 0.4)
+	planet.atmosphere_mode = StellarBody.ATMOSPHERE_WITH_SCATTERING
+#	planet.atmosphere_color = Color(0.8, 0.6, 0.4)
 	planet.day_ambient_sound = WindSound
 	planet.clouds_coverage_bias = 0.2
 	planet.clouds_coverage_cubemap = CloudCoverageTextureGas
@@ -184,19 +197,22 @@ static func update_atmosphere_settings(body: StellarBody, settings: Settings):
 	var has_clouds := (body.clouds_coverage_cubemap != null 
 		and settings.clouds_quality != Settings.CLOUDS_DISABLED)
 
-	var use_scattering := false
-	
 	if has_clouds:
-		if body.type == StellarBody.TYPE_GAS:
-			# Using scattering atmosphere for gas giant because it looks a bit better
-			atmo.custom_shader = AtmosphereScatteredCloudsShader
-			use_scattering = true
+		if body.atmosphere_mode == StellarBody.ATMOSPHERE_WITH_SCATTERING:
+			if settings.clouds_quality == Settings.CLOUDS_HIGH:
+				atmo.custom_shader = AtmosphereScatteredCloudsHighShader
+			else:
+				atmo.custom_shader = AtmosphereScatteredCloudsShader
 		else:
-			# Not using the fancy scattered one for now, the demo is better tuned for the fake one.
-			# No fiery sunsets tho...
-			atmo.custom_shader = AtmosphereCloudsShader
+			if settings.clouds_quality == Settings.CLOUDS_HIGH:
+				atmo.custom_shader = AtmosphereCloudsHighShader
+			else:
+				atmo.custom_shader = AtmosphereCloudsShader
 	else:
-		atmo.custom_shader = AtmosphereNoCloudsShader
+		if body.atmosphere_mode == StellarBody.ATMOSPHERE_WITH_SCATTERING:
+			atmo.custom_shader = AtmosphereScatteredNoCloudsShader
+		else:
+			atmo.custom_shader = AtmosphereNoCloudsShader
 	
 	#atmo.scale = Vector3(1, 1, 1) * (0.99 * body.radius)
 	if settings.world_scale_x10:
@@ -206,37 +222,40 @@ static func update_atmosphere_settings(body: StellarBody, settings: Settings):
 		atmo.planet_radius = body.radius * 1.03
 		atmo.atmosphere_height = 0.15 * body.radius
 
-	# Fake atmosphere density
 	var atmo_density := 0.001
-	if body.type == StellarBody.TYPE_GAS:
-		if settings.world_scale_x10:
-			# TODO Need to investigate this, atmosphere currently blows up HDR when large and dense
-			atmo_density /= LARGE_SCALE
 
-	if use_scattering:
+	if body.atmosphere_mode == StellarBody.ATMOSPHERE_WITH_SCATTERING:
 		# Scattered atmosphere settings
-		atmo_density = 0.11
-#		atmo.set_shader_param("u_atmosphere_modulate", body.atmosphere_color_for_scattering)
-		atmo.set_shader_param("u_scattering_strength", 0.5)
+		atmo_density = 0.04 if settings.world_scale_x10 else 0.05
+		atmo.set_shader_parameter(&"u_atmosphere_modulate", body.atmosphere_color)
+		atmo.set_shader_parameter(&"u_scattering_strength", 
+			1.0 if settings.world_scale_x10 else 6.0)
+		atmo.set_shader_parameter(&"u_atmosphere_ambient_color", body.atmosphere_ambient_color)
+	else:
+		if body.type == StellarBody.TYPE_GAS:
+			if settings.world_scale_x10:
+				# TODO Need to investigate this, atmosphere currently blows up HDR when large and dense
+				atmo_density /= LARGE_SCALE
+		# Settings for the fake color atmospheres
+		atmo.set_shader_parameter(&"u_day_color0", body.atmosphere_color)
+		atmo.set_shader_parameter(&"u_day_color1", body.atmosphere_color.lerp(Color(1,1,1), 0.5))
+		atmo.set_shader_parameter(&"u_night_color0", body.atmosphere_color.darkened(0.8))
+		atmo.set_shader_parameter(&"u_night_color1", 
+			body.atmosphere_color.darkened(0.8).lerp(Color(1,1,1), 0.0))
 
-	atmo.set_shader_param("u_density", atmo_density)
+	atmo.set_shader_parameter(&"u_density", atmo_density)
 #	atmo.set_shader_param("u_attenuation_distance", 50.0)
 
-	# Settings for the fake color atmospheres
-	atmo.set_shader_param("u_day_color0", body.atmosphere_color)
-	atmo.set_shader_param("u_day_color1", body.atmosphere_color.lerp(Color(1,1,1), 0.5))
-	atmo.set_shader_param("u_night_color0", body.atmosphere_color.darkened(0.8))
-	atmo.set_shader_param("u_night_color1", 
-		body.atmosphere_color.darkened(0.8).lerp(Color(1,1,1), 0.0))
-	
 	if has_clouds:
-		atmo.set_shader_param("u_cloud_density_scale", 0.02)
-		atmo.set_shader_param("u_cloud_shape_texture", CloudShapeTexture3D)
-		atmo.set_shader_param("u_cloud_coverage_cubemap", body.clouds_coverage_cubemap)
-		atmo.set_shader_param("u_cloud_shape_factor", 0.4)
-		atmo.set_shader_param("u_cloud_shape_scale", 0.001 if settings.world_scale_x10 else 0.005)
-		atmo.set_shader_param("u_cloud_coverage_bias", body.clouds_coverage_bias)
-		atmo.set_shader_param("u_cloud_shape_invert", 1.0)
+		atmo.set_shader_parameter(&"u_cloud_density_scale", 
+			0.01 if settings.world_scale_x10 else 0.02)
+		atmo.set_shader_parameter(&"u_cloud_shape_texture", CloudShapeTexture3D)
+		atmo.set_shader_parameter(&"u_cloud_coverage_cubemap", body.clouds_coverage_cubemap)
+		atmo.set_shader_parameter(&"u_cloud_shape_factor", 0.4)
+		atmo.set_shader_parameter(&"u_cloud_shape_scale", 
+			0.001 if settings.world_scale_x10 else 0.005)
+		atmo.set_shader_parameter(&"u_cloud_coverage_bias", body.clouds_coverage_bias)
+		atmo.set_shader_parameter(&"u_cloud_shape_invert", 1.0)
 		atmo.clouds_rotation_speed = 0.05 if settings.world_scale_x10 else 0.5
 
 
@@ -508,7 +527,7 @@ static func setup_stellar_body(body: StellarBody, parent: Node,
 	if body.sea:
 		_setup_sea(body, root)
 	
-	if body.type != StellarBody.TYPE_SUN:
+	if body.atmosphere_mode != StellarBody.ATMOSPHERE_DISABLED:
 		_setup_atmosphere(body, root, settings)
 	
 	return sun_light
