@@ -85,6 +85,7 @@ func _ready():
 func apply_game_settings(s: Settings):
 	if s.world_scale_x10:
 		speed_cap_in_space *= SolarSystemSetup.LARGE_SCALE
+		speed_cap_on_planet *= 0.25 * SolarSystemSetup.LARGE_SCALE
 		_speed_cap_in_space_superspeed_multiplier *= SolarSystemSetup.LARGE_SCALE
 		_linear_acceleration_superspeed_multiplier *= SolarSystemSetup.LARGE_SCALE
 
