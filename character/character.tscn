@@ -23,23 +23,23 @@ size = Vector3(0.5, 0.5, 0.5)
 size = Vector3(8, 0.5, 0.5)
 
 [node name="Character" type="CharacterBody3D"]
-script = ExtResource( "1" )
+script = ExtResource("1")
 
 [node name="CollisionShape" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875292, 0)
-shape = SubResource( "1" )
+shape = SubResource("1")
 
 [node name="Controller" type="Node" parent="."]
-script = ExtResource( "4" )
+script = ExtResource("4")
 
 [node name="MouseLook" type="Node" parent="."]
-script = ExtResource( "2" )
+script = ExtResource("2")
 
 [node name="Head" type="Node3D" parent="."]
 transform = Transform3D(0.999725, 0.0234551, 0, -0.0234551, 0.999725, 0, 0, 0, 1, 0, 1.5976, 0)
 
 [node name="CameraHints" type="Node" parent="Head"]
-script = ExtResource( "3" )
+script = ExtResource("3")
 distance_to_target = 2.0
 height_modifier = 0.0
 target_height_modifier = 0.2
@@ -58,22 +58,22 @@ visible = false
 
 [node name="Body" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.272492, 0)
-mesh = SubResource( "2" )
+mesh = SubResource("2")
 surface_material_override/0 = null
 
 [node name="Head" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.676365, 0)
-mesh = SubResource( "3" )
+mesh = SubResource("3")
 surface_material_override/0 = null
 
 [node name="Arms" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(0.237608, 0, 0, 0, 0.237608, 0, 0, 0, 0.237608, 0, 0.226605, 0.0591713)
-mesh = SubResource( "4" )
+mesh = SubResource("4")
 surface_material_override/0 = null
 
 [node name="Audio" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.86435, -0.796673, 0)
-script = ExtResource( "5" )
+script = ExtResource("5")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Audio"]
 volume_db = -4.0
@@ -96,12 +96,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.86435, -0.796673, 0)
 unit_size = 5.0
 
 [node name="Waypoint" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource( "6" )
+stream = ExtResource("6")
 
 [node name="FlashLightOn" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource( "7" )
+stream = ExtResource("7")
 
 [node name="FlashLightOff" type="AudioStreamPlayer" parent="Audio"]
-stream = ExtResource( "8" )
+stream = ExtResource("8")
 
 [connection signal="jumped" from="." to="Audio" method="_on_Character_jumped"]
