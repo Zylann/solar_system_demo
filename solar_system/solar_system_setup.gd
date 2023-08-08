@@ -57,7 +57,7 @@ static func create_solar_system_data(settings: Settings) -> Array[StellarBody]:
 	
 	var sun := StellarBody.new()
 	sun.type = StellarBody.TYPE_SUN
-	sun.radius = 2000.0
+	sun.radius = 1500.0
 	sun.self_revolution_time = 60.0
 	sun.orbit_revolution_time = 60.0
 	sun.name = "Sun"
