@@ -1,6 +1,8 @@
 shader_type spatial;
 render_mode skip_vertex_transform, unshaded, blend_add;
 
+#define REVERSE_Z
+
 uniform float lod = 0.0;
 uniform float stretch_to_aspect = 0.5;
 
@@ -22,8 +24,12 @@ uniform sampler2D starburst;
 uniform sampler2D SCREEN_TEXTURE : hint_screen_texture;
 
 void vertex() {
+#ifdef REVERSE_Z
+	// https://godotengine.org/article/introducing-reverse-z/
+	POSITION = vec4(VERTEX.xy, 1.0, 1.0);
+#else
 	POSITION = vec4(VERTEX, 1.0);
-	//POSITION.z = -1.0;
+#endif
 }
 
 float weight(vec2 pos) {
