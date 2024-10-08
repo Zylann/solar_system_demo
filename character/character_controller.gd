@@ -225,19 +225,18 @@ func _process(delta: float):
 	var gtrans := character_body.global_transform
 
 	# We want to rotate only along local Y
-	var plane := Plane(_visual_root.global_transform.basis.y, 0)
 	var head_basis := _head.global_transform.basis
-	var forward := plane.project(-head_basis.z)
-	if forward == Vector3():
-		forward = Vector3(0, 1, 0)
+	var forward_projected := get_flat_forward_not_normalized(head_basis, _visual_root.global_transform.basis.y)
+
 	var up := gtrans.basis.y
 	
 	# Visual can be offset.
 	# We need global transfotm tho cuz look_at wants a global position
 	gtrans.origin = _visual_root.global_transform.origin
 	
-	var old_root_basis = _visual_root.transform.basis.orthonormalized()
-	_visual_root.look_at(gtrans.origin + forward, up)
+	var old_root_basis := _visual_root.transform.basis.orthonormalized()
+	_visual_root.transform.basis = old_root_basis
+	_visual_root.look_at(gtrans.origin + forward_projected, up)
 	_visual_root.transform.basis = old_root_basis.slerp(_visual_root.transform.basis, delta * 8.0)
 	
 	# TODO Temporarily removed Mannequinny, it did not port well to Godot4
@@ -268,3 +267,22 @@ func _get_solar_system() -> SolarSystem:
 
 func _get_body() -> CharacterBody:
 	return get_parent() as CharacterBody
+
+
+# Gets a vector pointing forwards from the specified basis, projected along the ground plane with specified normal.
+# That vector's direction is unaffected by the vertical angle of the basis relative to the ground plane,
+# so it may be used to orient a character's body based on its head rotation.
+static func get_flat_forward_not_normalized(basis: Basis, ground_up: Vector3) -> Vector3:
+	var plane := Plane(ground_up, 0)
+	var forward_projected := plane.project(-basis.z)
+	# Godot math functions are very sensitive so we have to handle fallbacks otherwise we get lots of warnings
+	if forward_projected.length_squared() < 0.01:
+		if basis.z.dot(ground_up) > 0:
+			# Looking down (z points back)
+			forward_projected = plane.project(basis.y)
+		else:
+			# Looking up
+			forward_projected = plane.project(-basis.y)
+	# Output is not normalized because it is not always necessary depending on usage
+	return forward_projected
+
