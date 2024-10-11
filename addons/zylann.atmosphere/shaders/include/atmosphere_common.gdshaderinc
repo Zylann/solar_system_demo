@@ -13,13 +13,13 @@ float get_atmosphere_density(float height) {
 	float sd = height - u_planet_radius;
 	float h = clamp(sd / u_atmosphere_height, 0.0, 1.0);
 	float y = 1.0 - h;
-	
+
 	float density = y * y * y * u_density;
-	
+
 	// Attenuates atmosphere in a radius around the camera
 //	float distance_from_ray_origin = 0.0;
 //	density *= min(1.0, (1.0 / u_attenuation_distance) * distance_from_ray_origin);
-	
+
 	return density;
 }
 

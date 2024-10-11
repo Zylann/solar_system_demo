@@ -13,7 +13,7 @@ void vertex() {
 	vec3 planet_center_viewspace;
 	vec3 sun_center_viewspace;
 
-	atmosphere_vertex(VERTEX, PROJECTION_MATRIX, MODELVIEW_MATRIX, MODEL_MATRIX, VIEW_MATRIX, 
+	atmosphere_vertex(VERTEX, PROJECTION_MATRIX, MODELVIEW_MATRIX, MODEL_MATRIX, VIEW_MATRIX,
 		POSITION, planet_center_viewspace, sun_center_viewspace);
 
 	v_planet_center_viewspace = planet_center_viewspace;
@@ -22,7 +22,7 @@ void vertex() {
 
 void fragment() {
 	bool b_discard = false;
-	atmosphere_fragment(u_depth_texture, SCREEN_UV, INV_PROJECTION_MATRIX, INV_VIEW_MATRIX, 
+	atmosphere_fragment(u_depth_texture, SCREEN_UV, INV_PROJECTION_MATRIX, INV_VIEW_MATRIX,
 		VIEWPORT_SIZE, v_planet_center_viewspace, v_sun_center_viewspace, ALBEDO, ALPHA, b_discard);
 	if (b_discard) {
 		discard;

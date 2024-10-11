@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://cltgsnrutmgt8"]
+
+[ext_resource type="Script" path="res://addons/zylann.atmosphere/demo/avatar.gd" id="1_lyave"]
+[ext_resource type="Script" path="res://addons/zylann.atmosphere/demo/mouse_look.gd" id="2_6q1l4"]
+
+[node name="Avatar" type="Node3D"]
+script = ExtResource("1_lyave")
+speed = 20.0
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.357289, 0.105603, 1.49554)
+near = 0.1
+far = 800.0
+script = ExtResource("2_6q1l4")

@@ -18,6 +18,7 @@ vec2 ray_box_intersection(in vec3 ro, in vec3 rd, vec3 boxSize)  {
 
 // x = first hit, y = second hit. Equal if not hit.
 vec2 ray_sphere(vec3 center, float radius, vec3 ray_origin, vec3 ray_dir) {
+	// Works when outside the sphere but breaks when inside at certain positions
 	/*
 	float t = max(dot(center - ray_origin, ray_dir), 0.0);
 	float y = length(center - (ray_origin + ray_dir * t));

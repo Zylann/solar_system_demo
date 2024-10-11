@@ -5,6 +5,12 @@ extends Cubemap
 # Procedural cubemap projecting 3D noise. It is mostly meant as a tool to prototype, and once a
 # good result is found, it can be saved as an image which won't need computations when loaded.
 
+# Unfortunately, Cubemap extends ImageTextureLayered, which means if you save it in a TSCN file,
+# it will also save all 6 images as text even though they are procedurally generated and not
+# intented at being used directly. This will bloat your scene and make it slow to load.
+# It's better to save the output as a PNG that can be imported as a proper cubemap with VRAM compression etc.
+# To workaround some of this, you may save this resource as a binary .res file.
+
 
 var _noise : Noise
 @export var noise : Noise:
