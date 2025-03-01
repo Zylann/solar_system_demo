@@ -1,12 +1,11 @@
-[gd_scene load_steps=24 format=3 uid="uid://gc7xwxp74opt"]
+[gd_scene load_steps=23 format=3 uid="uid://gc7xwxp74opt"]
 
 [ext_resource type="Texture2D" uid="uid://dtlptku1k7pm1" path="res://addons/zylann.atmosphere/demo/space_background.webp" id="1_j5n0u"]
 [ext_resource type="PackedScene" uid="uid://c36velgas3n3k" path="res://addons/zylann.atmosphere/planet_atmosphere.tscn" id="2"]
-[ext_resource type="Script" path="res://addons/zylann.atmosphere/demo/mouse_look.gd" id="3"]
 [ext_resource type="Shader" path="res://addons/zylann.atmosphere/shaders/planet_atmosphere_clouds.gdshader" id="3_ra2pw"]
 [ext_resource type="Texture2D" uid="uid://cvcg66612wjvw" path="res://tests/2k_earth_clouds.png" id="4"]
 [ext_resource type="Script" path="res://addons/zylann.atmosphere/noise_cubemap.gd" id="4_8lw7l"]
-[ext_resource type="Script" path="res://addons/zylann.atmosphere/demo/avatar.gd" id="5_mkng0"]
+[ext_resource type="PackedScene" uid="uid://cltgsnrutmgt8" path="res://addons/zylann.atmosphere/demo/flying_avatar.tscn" id="5_td3mm"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jc6bi"]
 shading_mode = 0
@@ -53,7 +52,6 @@ frequency = 0.1
 fractal_type = 2
 fractal_octaves = 8
 fractal_gain = 0.665
-cellular_jitter = 1.0
 
 [sub_resource type="NoiseTexture3D" id="NoiseTexture3D_8p07x"]
 seamless = true
@@ -126,27 +124,19 @@ shader_params/u_density = 0.5
 shader_params/u_scattering_strength = 1.0
 shader_params/u_atmosphere_modulate = Color(1, 0.980392, 0.964706, 1)
 shader_params/u_atmosphere_ambient_color = Color(0.0196078, 0.0196078, 0.0431373, 1)
-shader_params/u_cloud_shape_invert = 1.0
-shader_params/u_cloud_coverage_bias = 0.0
-shader_params/u_cloud_shape_factor = 0.5
-shader_params/u_cloud_shape_scale = 0.1
 shader_params/u_cloud_density_scale = 2.0
 shader_params/u_cloud_bottom = 0.2
 shader_params/u_cloud_top = 0.6
 shader_params/u_cloud_blend = 0.5
+shader_params/u_cloud_shape_invert = 1.0
+shader_params/u_cloud_coverage_bias = 0.0
+shader_params/u_cloud_shape_factor = 0.5
+shader_params/u_cloud_shape_scale = 0.1
 shader_params/u_cloud_shape_texture = SubResource("NoiseTexture3D_8p07x")
 shader_params/u_cloud_coverage_cubemap = SubResource("Cubemap_7kyfx")
 
-[node name="Avatar" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 213.345)
-script = ExtResource("5_mkng0")
-speed = 20.0
-
-[node name="Camera" type="Camera3D" parent="Avatar"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.357289, 0.105603, 1.49554)
-near = 0.1
-far = 800.0
-script = ExtResource("3")
+[node name="Avatar" parent="." instance=ExtResource("5_td3mm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 156.425)
 
 [node name="Clouds" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.02, 0, 0, 0, 1.02, 0, 0, 0, 1.02, 0, 0, 0)

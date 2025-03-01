@@ -16,17 +16,17 @@ render_mode blend_disabled;
 
 float get_optical_depth(vec2 ray_origin, vec2 ray_dir, float ray_len) {
 	const int steps = 64;
-	
+
 	float step_len = ray_len / float(steps);
 	float optical_depth = 0.0;
-	
+
 	for (int i = 0; i < steps; ++i) {
 		vec2 pos = ray_origin + ray_dir * step_len * float(i);
 		float d = length(pos);
 		float density = get_atmosphere_density(d);
 		optical_depth += density * step_len * u_density;
 	}
-	
+
 	return optical_depth;
 }
 
@@ -44,26 +44,26 @@ vec4 encode_float_to_viewport(float h) {
 
 void fragment() {
 	vec2 uv = UV;
-	
+
 	vec2 ray_dir;
 	ray_dir.y = 2.0 * uv.x - 1.0;
 //	ray_dir.x = sin(acos(ray_dir.y));
 	ray_dir.x = sqrt(1.0 - ray_dir.y * ray_dir.y);
-	
+
 	float height_ratio = uv.y;
-	
+
 	vec2 pos = vec2(0.0, u_planet_radius + u_atmosphere_height * height_ratio);
 	vec2 rs = ray_sphere(
-		vec3(0.0), 
-		u_planet_radius + u_atmosphere_height, 
-		vec3(pos, 0.0), 
+		vec3(0.0),
+		u_planet_radius + u_atmosphere_height,
+		vec3(pos, 0.0),
 		vec3(ray_dir, 0.0)
 	);
-	
+
 	float distance_through_atmosphere = rs.y - max(rs.x, 0.0);
-	
+
 	float od = get_optical_depth(pos, ray_dir, distance_through_atmosphere);
-	
+
 	COLOR = encode_float_to_viewport(od);
 	//COLOR = vec4(vec3(od), 1.0);
 }

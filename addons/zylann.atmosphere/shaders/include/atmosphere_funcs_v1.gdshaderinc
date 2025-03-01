@@ -16,7 +16,7 @@ float get_atmo_factor(vec3 ray_origin, vec3 ray_dir, vec3 planet_center,
 	float t_begin, float t_end, vec3 sun_dir, out float light_factor) {
 
 	const int steps = ATMOSPHERE_RAYMARCH_STEPS;
-	
+
 	float inv_steps = 1.0 / float(steps);
 	float step_len = (t_end - t_begin) * inv_steps;
 	vec3 stepv = step_len * ray_dir;
@@ -29,12 +29,12 @@ float get_atmo_factor(vec3 ray_origin, vec3 ray_dir, vec3 planet_center,
 	for (int i = 0; i < steps; ++i) {
 		float d = distance(pos, planet_center);
 		vec3 up = (pos - planet_center) / d;
-		
+
 		float density = get_atmosphere_density(d);
-		
+
 		float light = clamp(1.2 * dot(sun_dir, up) + 0.5, 0.0, 1.0);
 		light = light * light;
-		
+
 		light_sum += light * inv_steps;
 		factor *= (1.0 - density * step_len);
 		pos += stepv;
@@ -47,17 +47,17 @@ float get_atmo_factor(vec3 ray_origin, vec3 ray_dir, vec3 planet_center,
 // Returns RGBA
 vec4 compute_atmosphere(vec3 ray_origin, vec3 ray_dir, vec3 planet_center,
 	float t_begin, float t_end, vec3 sun_dir) {
-	
+
 	float light_factor;
 	float atmo_factor = get_atmo_factor(
-		ray_origin, ray_dir, planet_center, t_begin, t_end, sun_dir, 
+		ray_origin, ray_dir, planet_center, t_begin, t_end, sun_dir,
 		light_factor);
-	
+
 	vec3 night_col = mix(u_night_color0.rgb, u_night_color1.rgb, atmo_factor);
 	vec3 day_col = mix(u_day_color0.rgb, u_day_color1.rgb, atmo_factor);
-	
+
 	float day_factor = clamp(light_factor * u_day_night_transition_scale, 0.0, 1.0);
 	vec3 col = mix(night_col, day_col, day_factor);
-	
+
 	return vec4(col, clamp(atmo_factor, 0.0, 1.0));
 }
