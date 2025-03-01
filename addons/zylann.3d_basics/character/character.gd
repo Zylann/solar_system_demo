@@ -3,6 +3,9 @@
 # This is a simple implementation, enough for testing and simple games.
 # If you need more specialized behavior, feel free to fork it.
 
+# TODO For some reason after porting to Godot 4 the character is often jittering vertically.
+# This didnt happen before and I'm not sure why that happens.
+
 extends CharacterBody3D
 
 const VERTICAL_CORRECTION_SPEED = PI
@@ -31,9 +34,14 @@ func jump():
 	_jump_cmd = 5
 
 
+# TODO Deprecate, use `set_movement_input` instead
 # Local X and Z axes are used to strafe or move forward.
 func set_motor(motor: Vector3):
 	_motor = motor
+
+
+func set_movement_input(mi: Vector3):
+	_motor = mi
 
 
 # You can decide gravity has a different direction.

@@ -14,6 +14,10 @@ var _pitch := 0.0
 var _yaw := 0.0
 
 
+func set_enabled(enabled: bool):
+	set_process_unhandled_input(enabled)
+
+
 func _unhandled_input(event):
 	if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
 		return

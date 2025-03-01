@@ -15,12 +15,16 @@ func _ready():
 
 func capture():
 	# Remove focus from the HUD
-	var focus_owner = get_focus_owner()
+	var focus_owner = get_viewport().gui_get_focus_owner()
 	if focus_owner != null:
 		focus_owner.release_focus()
 	
 	# Capture the mouse for the game
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+
+func uncapture():
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 
 func _unhandled_input(event):

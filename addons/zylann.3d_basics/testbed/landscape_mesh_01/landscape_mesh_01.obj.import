@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://ccs6f6pkec0vt"
+path="res://.godot/imported/landscape_mesh_01.obj-5e62ed7e61a0984701e8949239fc2c59.mesh"
+
+[deps]
+
+files=["res://.godot/imported/landscape_mesh_01.obj-5e62ed7e61a0984701e8949239fc2c59.mesh"]
+
+source_file="res://addons/zylann.3d_basics/testbed/landscape_mesh_01/landscape_mesh_01.obj"
+dest_files=["res://.godot/imported/landscape_mesh_01.obj-5e62ed7e61a0984701e8949239fc2c59.mesh", "res://.godot/imported/landscape_mesh_01.obj-5e62ed7e61a0984701e8949239fc2c59.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
