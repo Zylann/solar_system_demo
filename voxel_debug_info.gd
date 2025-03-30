@@ -72,14 +72,12 @@ func _log_pointed_mesh_block_info():
 
 	var vt : VoxelToolLodTerrain = volume.get_voxel_tool()
 	vt.set_raycast_binary_search_iterations(4)
-	var vtrans := volume.get_global_transform()
-	var vtrans_inv := vtrans.affine_inverse()
 	var cam := get_viewport().get_camera_3d()
 	var vp_size := Vector2(get_viewport().size)
 	var vp_center := vp_size / 2.0
-	var ray_pos_local := vtrans_inv * cam.project_ray_origin(vp_center)
-	var ray_dir_local := vtrans_inv.basis * cam.project_ray_normal(vp_center)
-	var hit := vt.raycast(ray_pos_local, ray_dir_local, 20)
+	var ray_pos_world := cam.project_ray_origin(vp_center)
+	var ray_dir_world := cam.project_ray_normal(vp_center)
+	var hit := vt.raycast(ray_pos_world, ray_dir_world, 20)
 	if hit == null:
 		print("No hit")
 		return
@@ -127,8 +125,6 @@ func _debug_voxel_raycast_sweep():
 	if volume != null:
 		var vt : VoxelToolLodTerrain = volume.get_voxel_tool()
 		vt.set_raycast_binary_search_iterations(4)
-		var vtrans := volume.get_global_transform()
-		var vtrans_inv := vtrans.affine_inverse()
 		var cam := get_viewport().get_camera_3d()
 		var vp_size := Vector2(get_viewport().size)
 		var vp_center := vp_size / 2
@@ -140,13 +136,13 @@ func _debug_voxel_raycast_sweep():
 					float(cx) / float(ccount) - 0.5, 
 					float(cy) / float(ccount) - 0.5)
 				var spos := vp_center + vp_r * ndc
-				var ray_pos_local := vtrans_inv * cam.project_ray_origin(spos)
-				var ray_dir_local := vtrans_inv.basis * cam.project_ray_normal(spos)
-				var hit := vt.raycast(ray_pos_local, ray_dir_local, 20)
+				var ray_pos_world := cam.project_ray_origin(spos)
+				var ray_dir_world := cam.project_ray_normal(spos)
+				var hit := vt.raycast(ray_pos_world, ray_dir_world, 20)
 				if hit != null:
 					var mi := MeshInstance3D.new()
 					mi.mesh = cube_mesh
-					mi.position = vtrans * (ray_pos_local + ray_dir_local * hit.distance)
+					mi.position = ray_pos_world + ray_dir_world * hit.distance
 					mi.add_to_group("ddd_ray_cubes")
 					add_child(mi)
 
@@ -211,18 +207,19 @@ func _process(delta: float):
 func _debug_voxel_raycast(volume: VoxelLodTerrain):
 	var vt : VoxelToolLodTerrain = volume.get_voxel_tool()
 	vt.set_raycast_binary_search_iterations(4)
-	var vtrans := volume.get_global_transform()
-	var vtrans_inv := vtrans.affine_inverse()
 	var cam := get_viewport().get_camera_3d()
 	var vp_size := Vector2(get_viewport().size)
 	var vp_center := vp_size / 2
-	var ray_pos_local := vtrans_inv * cam.project_ray_origin(vp_center)
-	var ray_dir_local := vtrans_inv.basis * cam.project_ray_normal(vp_center)
-	var hit := vt.raycast(ray_pos_local, ray_dir_local, 20)
+	var ray_pos_world := cam.project_ray_origin(vp_center)
+	var ray_dir_world := cam.project_ray_normal(vp_center)
+	var hit := vt.raycast(ray_pos_world, ray_dir_world, 20)
 	if hit != null:
-		DDD.draw_box(vtrans * (Vector3(hit.position) + Vector3(0.5, 0.5, 0.5)),
-			Vector3(1.0, 1.0, 1.0), Color(0.5, 0.5, 0.5))
-		var wpos := vtrans * (ray_pos_local + ray_dir_local * hit.distance)
+		DDD.draw_box(
+			Vector3(hit.position) + Vector3(0.5, 0.5, 0.5),
+			Vector3(1.0, 1.0, 1.0), 
+			Color(0.5, 0.5, 0.5)
+		)
+		var wpos := (ray_pos_world + ray_dir_world * hit.distance)
 		var s := 0.2
 		DDD.draw_box(wpos, Vector3(s, s, s), Color(0, 1, 0))
 
