@@ -56,7 +56,7 @@ func _ready():
 	for i in len(_bodies):
 		var body : StellarBody = _bodies[i]
 		
-		progress_info.message = "Generating {0}...".format([body.name])
+		progress_info.message = "Setting up {0}...".format([body.name])
 		progress_info.progress = float(i) / float(len(_bodies))
 		loading_progressed.emit(progress_info)
 		await get_tree().process_frame
@@ -64,6 +64,22 @@ func _ready():
 		var sun_light := SolarSystemSetup.setup_stellar_body(body, self, _settings)
 		if sun_light != null:
 			_directional_light = sun_light
+
+	# In later versions of the voxel engine, compute shaders are compiled asynchronously,
+	# so we may wait for them in the loading screen.
+	# This actually waits for any GPU task but in practice compiling shaders is what takes most time
+	var initial_gpu_tasks : int = get_gpu_tasks_count()
+	if initial_gpu_tasks > 0:
+		var gpu_tasks := initial_gpu_tasks
+
+		while gpu_tasks > 0:
+			var gpu_tasks_done := initial_gpu_tasks - gpu_tasks
+			progress_info.message = "Compiling shaders ({0}/{1})".format([gpu_tasks_done, initial_gpu_tasks])
+			progress_info.progress = float(gpu_tasks_done) / float(initial_gpu_tasks)
+			loading_progressed.emit(progress_info)
+			await get_tree().process_frame
+
+			gpu_tasks = get_gpu_tasks_count()
 
 	# Spawn player
 	_mouse_capture.capture()
@@ -86,6 +102,13 @@ func _ready():
 	loading_progressed.emit(progress_info)
 	
 	_last_clouds_quality = _settings.clouds_quality
+
+
+static func get_gpu_tasks_count() -> int:
+	var stats := VoxelEngine.get_stats()
+	var task_counts : Dictionary = stats["tasks"]
+	# Older versions don't have this entry
+	return task_counts.get("gpu", 0)
 
 
 func set_settings(s: Settings):
