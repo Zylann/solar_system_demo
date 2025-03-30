@@ -55,7 +55,7 @@ vec4 triplanar_texture(sampler2D p_sampler, vec3 p_weights, vec3 p_triplanar_pos
 void vertex() {
 	VERTEX = get_transvoxel_position(VERTEX, CUSTOM0);
 	v_vertex_pos_model = VERTEX;
-	
+
 	// Note, this transform does not contain any scale or rotation...
 	// See `voxel_mesh_block_vlt.cpp`
 	mat4 planet_transform = u_block_local_transform;
@@ -70,7 +70,7 @@ void vertex() {
 	vec3 wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	vec3 cam_pos = (INV_VIEW_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
 	v_camera_distance = distance(wpos, cam_pos);
-	
+
 	TANGENT = vec3(0.0, 0.0, -1.0) * abs(NORMAL.x);
 	TANGENT += vec3(1.0, 0.0, 0.0) * abs(NORMAL.y);
 	TANGENT += vec3(1.0, 0.0, 0.0) * abs(NORMAL.z);
@@ -83,19 +83,19 @@ void vertex() {
 
 void fragment() {
 	vec3 normal_model;
-	vec3 normal_view = get_voxel_normal_view_model(v_vertex_pos_model, 
+	vec3 normal_view = get_voxel_normal_view_model(v_vertex_pos_model,
 		NORMAL, VIEW_MATRIX * MODEL_MATRIX,
 		v_normal_model, normal_model);
 	normal_model = normalize(normal_model);
-	
+
 	//vec3 normal = normalize(v_planet_normal);
 	float flatness = max(dot(normal_model, v_up_planet), 0.0);
 	float topness = smoothstep(0.85, 1.0, flatness);
-	
+
 	float mountain_height = u_mountain_height;
 	float mountain_smoothness = 3.0;
 	float mountain_factor = smoothstep(
-		mountain_height - mountain_smoothness, 
+		mountain_height - mountain_smoothness,
 		mountain_height + mountain_smoothness, v_planet_height);
 	topness = mix(topness, 0.0, mountain_factor);
 
@@ -117,7 +117,7 @@ void fragment() {
 	float far_min_distance = 100.0;
 	float far_max_distance = 200.0;
 	float far_uv_multiplier = 0.25;
-	float far_factor = 
+	float far_factor =
 		clamp((v_camera_distance - far_min_distance) / (far_max_distance - far_min_distance), 0.0, 1.0);
 	vec3 far_side_col = triplanar_texture(
 		u_side_albedo_texture, triplanar_power_normal, v_triplanar_uv * far_uv_multiplier).rgb;
@@ -125,7 +125,7 @@ void fragment() {
 		u_side_normal_texture, triplanar_power_normal, v_triplanar_uv * far_uv_multiplier).rgb;
 	side_col = mix(side_col, far_side_col, far_factor);
 	side_norm = mix(side_norm, far_side_norm, far_factor);
-	
+
 	ALBEDO = mix(side_col, top_col, topness);
 	NORMAL_MAP = mix(side_norm, top_norm, topness);
 	NORMAL = normal_view;

@@ -53,7 +53,7 @@ float get_density_full(vec3 pos_world, float time, CloudSettings settings, bool 
 	// For now it is mostly unused.
 	float detail = low ? 0.5 : texture(
 		u_cloud_shape_texture, pos_world * 15.0 + vec3(time * 0.01)).r;
-	
+
 	if (u_cloud_shape_invert == 1.0) {
 		shape = 1.0 - shape;
 	}
@@ -174,10 +174,10 @@ float get_light(vec3 pos, vec3 ray_dir, vec3 sun_dir, float jitter, float alpha,
 
 vec2 raymarch_cloud(vec3 ray_origin, vec3 ray_dir, float t_begin, float t_end, float jitter,
 	vec3 sun_dir, float time, CloudSettings settings) {
-	
+
 	const int steps = CLOUDS_MAX_RAYMARCH_STEPS;
 //	int steps = min(int((t_end - t_begin) / 0.005) + 1, CLOUDS_MAX_RAYMARCH_STEPS);
-	
+
 	// This is a hack limiting marching distance to increase horizon quality at certain heights.
 	// Without it, horizon peers too much through the cloud layer when seen from space.
 	// So we cut off how far we march, and gradually increase it as we descend through the clouds.
@@ -296,7 +296,7 @@ void render_clouds(
 			vec2 cloud_rr = raymarch_cloud(
 				ray_origin_world, ray_dir_world, cloud_rs.x, cloud_rs.y, jitter, sun_dir_world,
 				TIME, cloud_settings);
-			
+
 			vec3 cloud_albedo = vec3(cloud_rr.x);
 			float cloud_alpha = cloud_rr.y;
 
@@ -344,5 +344,3 @@ void render_clouds(
 //	}
 //	return rs;
 //}
-
-
