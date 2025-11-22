@@ -58,4 +58,3 @@ func _on_GameWorld_reference_body_changed(info: ReferenceChangeInfo):
 		if planet.night_ambient_sound != null:
 			_planet_night_player.stream = planet.night_ambient_sound
 			_planet_night_player.play()
-

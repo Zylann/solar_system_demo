@@ -15,4 +15,3 @@ func _process(delta: float):
 	
 	material_override.set_shader_parameter(&"u_position", global_transform.origin)
 	material_override.set_shader_parameter(&"u_velocity", velocity)
-

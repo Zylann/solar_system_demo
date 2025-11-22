@@ -54,4 +54,3 @@ func _notification(what: int):
 		if not static_bodies_are_in_tree:
 			for sb in static_bodies:
 				sb.free()
-

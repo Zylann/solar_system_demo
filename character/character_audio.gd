@@ -90,4 +90,3 @@ func _next_step_distance():
 
 func _play_step():
 	_step_multisound.play()
-

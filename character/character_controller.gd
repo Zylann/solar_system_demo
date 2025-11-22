@@ -260,4 +260,3 @@ static func get_flat_forward_not_normalized(basis: Basis, ground_up: Vector3) ->
 			forward_projected = plane.project(-basis.y)
 	# Output is not normalized because it is not always necessary depending on usage
 	return forward_projected
-

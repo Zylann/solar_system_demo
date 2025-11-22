@@ -1,4 +1,3 @@
-
 # Scripts
 
 const StellarBody = preload("./stellar_body.gd")
@@ -53,7 +52,7 @@ const LARGE_SCALE = 10.0
 
 
 static func create_solar_system_data(settings: Settings) -> Array[StellarBody]:
-	var bodies : Array[StellarBody] = []
+	var bodies: Array[StellarBody] = []
 	
 	var sun := StellarBody.new()
 	sun.type = StellarBody.TYPE_SUN
@@ -192,9 +191,9 @@ static func _setup_sun(body: StellarBody, root: Node3D) -> DirectionalLight3D:
 
 
 static func update_atmosphere_settings(body: StellarBody, settings: Settings):
-	var atmo : PlanetAtmosphere = body.atmosphere
+	var atmo: PlanetAtmosphere = body.atmosphere
 	
-	var has_clouds := (body.clouds_coverage_cubemap != null 
+	var has_clouds := (body.clouds_coverage_cubemap != null
 		and settings.clouds_quality != Settings.CLOUDS_DISABLED)
 
 	if has_clouds:
@@ -228,7 +227,7 @@ static func update_atmosphere_settings(body: StellarBody, settings: Settings):
 		# Scattered atmosphere settings
 		atmo_density = 0.04 if settings.world_scale_x10 else 0.05
 		atmo.set_shader_parameter(&"u_atmosphere_modulate", body.atmosphere_color)
-		atmo.set_shader_parameter(&"u_scattering_strength", 
+		atmo.set_shader_parameter(&"u_scattering_strength",
 			1.0 if settings.world_scale_x10 else 6.0)
 		atmo.set_shader_parameter(&"u_atmosphere_ambient_color", body.atmosphere_ambient_color)
 	else:
@@ -238,21 +237,21 @@ static func update_atmosphere_settings(body: StellarBody, settings: Settings):
 				atmo_density /= LARGE_SCALE
 		# Settings for the fake color atmospheres
 		atmo.set_shader_parameter(&"u_day_color0", body.atmosphere_color)
-		atmo.set_shader_parameter(&"u_day_color1", body.atmosphere_color.lerp(Color(1,1,1), 0.5))
+		atmo.set_shader_parameter(&"u_day_color1", body.atmosphere_color.lerp(Color(1, 1, 1), 0.5))
 		atmo.set_shader_parameter(&"u_night_color0", body.atmosphere_color.darkened(0.8))
-		atmo.set_shader_parameter(&"u_night_color1", 
-			body.atmosphere_color.darkened(0.8).lerp(Color(1,1,1), 0.0))
+		atmo.set_shader_parameter(&"u_night_color1",
+			body.atmosphere_color.darkened(0.8).lerp(Color(1, 1, 1), 0.0))
 
 	atmo.set_shader_parameter(&"u_density", atmo_density)
 #	atmo.set_shader_param("u_attenuation_distance", 50.0)
 
 	if has_clouds:
-		atmo.set_shader_parameter(&"u_cloud_density_scale", 
+		atmo.set_shader_parameter(&"u_cloud_density_scale",
 			0.01 if settings.world_scale_x10 else 0.02)
 		atmo.set_shader_parameter(&"u_cloud_shape_texture", CloudShapeTexture3D)
 		atmo.set_shader_parameter(&"u_cloud_coverage_cubemap", body.clouds_coverage_cubemap)
 		atmo.set_shader_parameter(&"u_cloud_shape_factor", 0.4)
-		atmo.set_shader_parameter(&"u_cloud_shape_scale", 
+		atmo.set_shader_parameter(&"u_cloud_shape_scale",
 			0.001 if settings.world_scale_x10 else 0.005)
 		atmo.set_shader_parameter(&"u_cloud_coverage_bias", body.clouds_coverage_bias)
 		atmo.set_shader_parameter(&"u_cloud_shape_invert", 1.0)
@@ -260,7 +259,7 @@ static func update_atmosphere_settings(body: StellarBody, settings: Settings):
 
 
 static func _setup_atmosphere(body: StellarBody, root: Node3D, settings: Settings):
-	var atmo : PlanetAtmosphere = VolumetricAtmosphereScene.instantiate()
+	var atmo: PlanetAtmosphere = VolumetricAtmosphereScene.instantiate()
 	body.atmosphere = atmo
 	
 	# TODO This is kinda bad to hardcode the path, need to find another robust way
@@ -292,7 +291,7 @@ static func _setup_sea(body: StellarBody, root: Node3D):
 
 
 static func _setup_rocky_planet(body: StellarBody, root: Node3D, settings: Settings):
-	var mat : ShaderMaterial
+	var mat: ShaderMaterial
 	# TODO Dont hardcode this
 	if body.name == "Earth":
 		mat = PlanetGrassyMaterial.duplicate()
@@ -303,8 +302,8 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D, settings: Setti
 	if body.name == "Mars":
 		mat.set_shader_parameter(&"u_top_modulate", Color(1.0, 0.6, 0.3))
 	
-	var generator : VoxelGeneratorGraph = BasePlanetVoxelGraph.duplicate(true)
-	var graph : VoxelGraphFunction = generator.get_main_function()
+	var generator: VoxelGeneratorGraph = BasePlanetVoxelGraph.duplicate(true)
+	var graph: VoxelGraphFunction = generator.get_main_function()
 	var sphere_node_id := graph.find_node_by_name("sphere")
 	# TODO Need an API that doesnt suck
 	var radius_param_id := 0
@@ -319,7 +318,7 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D, settings: Setti
 	var cave_noise = graph.get_node_param(cave_noise_node_id, noise_param_id)
 	cave_noise.period = 900.0 / body.radius
 	var ravine_depth_multiplier_node_id := graph.find_node_by_name("ravine_depth_multiplier")
-	var ravine_depth : float = graph.get_node_default_input(ravine_depth_multiplier_node_id, 1)
+	var ravine_depth: float = graph.get_node_default_input(ravine_depth_multiplier_node_id, 1)
 	if settings.world_scale_x10:
 		ravine_depth *= LARGE_SCALE
 	graph.set_node_default_input(ravine_depth_multiplier_node_id, 1, ravine_depth)
@@ -423,7 +422,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	var item := VoxelInstanceLibraryMultiMeshItem.new()
 	
 	if body.name == "Earth":
-		var grass_mesh : Node = GrassScene.instantiate()
+		var grass_mesh: Node = GrassScene.instantiate()
 		item.setup_from_template(grass_mesh)
 		grass_mesh.free()
 
@@ -453,7 +452,7 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	instance_generator.max_slope_degrees = 12
 	instance_generator.vertical_alignment = 0.0
 	item = VoxelInstanceLibraryMultiMeshItem.new()
-	var rock1_template : Node = Rock1Scene.instantiate()
+	var rock1_template: Node = Rock1Scene.instantiate()
 	item.setup_from_template(rock1_template)
 	rock1_template.free()
 	item.generator = instance_generator
@@ -511,15 +510,14 @@ static func _configure_instancing_for_planet(body: StellarBody, volume: VoxelLod
 	body.instancer = instancer
 
 
-static func setup_stellar_body(body: StellarBody, parent: Node, 
+static func setup_stellar_body(body: StellarBody, parent: Node,
 	settings: Settings) -> DirectionalLight3D:
-	
 	var root := Node3D.new()
 	root.name = body.name
 	body.node = root
 	parent.add_child(root)
 	
-	var sun_light : DirectionalLight3D = null
+	var sun_light: DirectionalLight3D = null
 
 	if body.type == StellarBody.TYPE_SUN:
 		sun_light = _setup_sun(body, root)
@@ -534,4 +532,3 @@ static func setup_stellar_body(body: StellarBody, parent: Node,
 		_setup_atmosphere(body, root, settings)
 	
 	return sun_light
-

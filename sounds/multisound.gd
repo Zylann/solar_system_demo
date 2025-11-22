@@ -39,5 +39,3 @@ func _next_sound():
 	_stream_round_index += 1
 	if _stream_round_index == _streams.size():
 		_stream_round_index = 0
-
-

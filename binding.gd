@@ -81,4 +81,3 @@ class OptionBinding extends BindingBase:
 		var i := _control.get_item_index(v)
 		_control.select(i)
 		_updating_ui = false
-

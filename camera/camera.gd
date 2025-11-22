@@ -150,4 +150,3 @@ func _physics_process(delta: float):
 		_wait_for_fucking_physics -= 1
 		if _wait_for_fucking_physics == 0:
 			_last_ref_change_info = null
-

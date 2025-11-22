@@ -21,4 +21,3 @@ func _on_ExitToMenu_pressed():
 
 func _on_ExitToOs_pressed():
 	exit_to_os_requested.emit()
-

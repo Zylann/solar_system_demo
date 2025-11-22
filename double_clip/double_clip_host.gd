@@ -83,4 +83,3 @@ func _on_output_resized():
 
 func get_world_viewport() -> Viewport:
 	return _world_viewport
-

@@ -434,4 +434,3 @@ func _on_PauseMenu_settings_requested():
 	# The settings UI exists before the game is instanced so it might be behind.
 	# This makes sure it shows in front.
 	_settings_ui.move_to_front()
-

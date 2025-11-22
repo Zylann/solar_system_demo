@@ -36,4 +36,3 @@ func _input(event: InputEvent):
 func update_rotations():
 	_head.rotation = Vector3(0, deg_to_rad(_yaw), 0)
 	_head.rotate(_head.transform.basis.x.normalized(), -deg_to_rad(_pitch))
-

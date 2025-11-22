@@ -31,4 +31,3 @@ func _unhandled_input(event: InputEvent):
 				# Get the mouse back
 				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 				emit_signal("escaped")
-

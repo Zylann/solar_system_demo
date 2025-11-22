@@ -65,4 +65,3 @@ func _unhandled_input(event: InputEvent):
 		if event.pressed and not event.is_echo():
 			if event.keycode == KEY_ESCAPE:
 				_settings_ui.hide()
-
