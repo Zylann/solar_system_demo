@@ -305,9 +305,13 @@ static func _setup_rocky_planet(body: StellarBody, root: Node3D, settings: Setti
 	var generator: VoxelGeneratorGraph = BasePlanetVoxelGraph.duplicate(true)
 	var graph: VoxelGraphFunction = generator.get_main_function()
 	var sphere_node_id := graph.find_node_by_name("sphere")
-	# TODO Need an API that doesnt suck
-	var radius_param_id := 0
-	graph.set_node_param(sphere_node_id, radius_param_id, body.radius)
+	
+	if VoxelVersion.get_v() >= Vector3i(1, 4, 2):
+		# TODO Could use a constant node now?
+		graph.set_node_default_input(sphere_node_id, 3, body.radius)
+	else:
+		graph.set_node_param(sphere_node_id, 0, body.radius)
+
 	var ravine_blend_noise_node_id := graph.find_node_by_name("ravine_blend_noise")
 	var noise_param_id := 0
 	var ravine_blend_noise = graph.get_node_param(ravine_blend_noise_node_id, noise_param_id)
